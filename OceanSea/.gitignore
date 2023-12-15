@@ -92,3 +92,4 @@ iOSInjectionProject/
 ## XCFrameworks
 #
 # XCFrameworks can be very large in size. Omitting them from source control
+*.xcframework

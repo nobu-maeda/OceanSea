@@ -10,10 +10,10 @@ import FatcrabTradingFFI
 
 struct ContentView: View {
     var body: some View {
-        let url = "testnet.aranguren.org"
-        let auth = Auth.none
-        let network = Network.regtest
-        let trader = Trader(url: url, auth: auth, network: network)
+        let url = "ssl://electrum.blockstream.info:60002"
+        let network = Network.testnet
+        let info = BlockchainInfo.electrum(url: url, network: network)
+        let trader = Trader(info: info)
         
         VStack {
             Image(systemName: "globe")
