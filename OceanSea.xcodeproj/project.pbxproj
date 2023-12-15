@@ -11,7 +11,24 @@
 		08DC5B392B2C446900B71A22 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08DC5B382B2C446900B71A22 /* ContentView.swift */; };
 		08DC5B3B2B2C446A00B71A22 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08DC5B3A2B2C446A00B71A22 /* Assets.xcassets */; };
 		08DC5B3F2B2C446A00B71A22 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08DC5B3E2B2C446A00B71A22 /* Preview Assets.xcassets */; };
+		08DC5B472B2C453600B71A22 /* FatcrabTrading_framework.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08DC5B462B2C453600B71A22 /* FatcrabTrading_framework.xcframework */; };
+		08DC5B482B2C453600B71A22 /* FatcrabTrading_framework.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 08DC5B462B2C453600B71A22 /* FatcrabTrading_framework.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		08DC5B4B2B2C45AD00B71A22 /* FatcrabTrading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08DC5B4A2B2C45AD00B71A22 /* FatcrabTrading.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		08DC5B492B2C453600B71A22 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				08DC5B482B2C453600B71A22 /* FatcrabTrading_framework.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		08DC5B332B2C446900B71A22 /* OceanSea.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OceanSea.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -20,6 +37,8 @@
 		08DC5B3A2B2C446A00B71A22 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		08DC5B3C2B2C446A00B71A22 /* OceanSea.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OceanSea.entitlements; sourceTree = "<group>"; };
 		08DC5B3E2B2C446A00B71A22 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		08DC5B462B2C453600B71A22 /* FatcrabTrading_framework.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FatcrabTrading_framework.xcframework; path = OceanSea/FatcrabTrading_framework.xcframework; sourceTree = "<group>"; };
+		08DC5B4A2B2C45AD00B71A22 /* FatcrabTrading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FatcrabTrading.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08DC5B472B2C453600B71A22 /* FatcrabTrading_framework.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38,6 +58,7 @@
 			children = (
 				08DC5B352B2C446900B71A22 /* OceanSea */,
 				08DC5B342B2C446900B71A22 /* Products */,
+				08DC5B452B2C453500B71A22 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -52,6 +73,7 @@
 		08DC5B352B2C446900B71A22 /* OceanSea */ = {
 			isa = PBXGroup;
 			children = (
+				08DC5B4A2B2C45AD00B71A22 /* FatcrabTrading.swift */,
 				08DC5B362B2C446900B71A22 /* OceanSeaApp.swift */,
 				08DC5B382B2C446900B71A22 /* ContentView.swift */,
 				08DC5B3A2B2C446A00B71A22 /* Assets.xcassets */,
@@ -69,6 +91,14 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		08DC5B452B2C453500B71A22 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				08DC5B462B2C453600B71A22 /* FatcrabTrading_framework.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -79,6 +109,7 @@
 				08DC5B2F2B2C446900B71A22 /* Sources */,
 				08DC5B302B2C446900B71A22 /* Frameworks */,
 				08DC5B312B2C446900B71A22 /* Resources */,
+				08DC5B492B2C453600B71A22 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -140,6 +171,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				08DC5B392B2C446900B71A22 /* ContentView.swift in Sources */,
+				08DC5B4B2B2C45AD00B71A22 /* FatcrabTrading.swift in Sources */,
 				08DC5B372B2C446900B71A22 /* OceanSeaApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
