@@ -6,22 +6,17 @@
 //
 
 import SwiftUI
-import FatcrabTradingFFI
+import FatCrabTradingFFI
 
 struct ContentView: View {
+    let fatCrabModel: FatCrabModel
+    
+    init() {
+        fatCrabModel = FatCrabModel()
+    }
+    
     var body: some View {
-        let url = "ssl://electrum.blockstream.info:60002"
-        let network = Network.testnet
-        let info = BlockchainInfo.electrum(url: url, network: network)
-        let trader = Trader(info: info)
-        
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        HomeView().environment(self.fatCrabModel)
     }
 }
 
