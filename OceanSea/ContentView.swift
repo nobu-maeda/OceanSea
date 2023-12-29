@@ -16,7 +16,7 @@ struct ContentView: View {
     }
     
     var body: some View {
-        HomeView().environment(self.fatCrabModel)
+        HomeView().environment(\.fatCrabModel, self.fatCrabModel)
     }
 }
 

@@ -52,6 +52,5 @@ struct WalletView: View {
     }
 }
 #Preview {
-    let fatCrabMock = FatCrabMock()
-    return WalletView().environment(\.fatCrabModel, fatCrabMock)
+    WalletView().environment(\.fatCrabModel, FatCrabMock())
 }

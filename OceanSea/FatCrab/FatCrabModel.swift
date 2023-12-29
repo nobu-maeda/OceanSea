@@ -7,13 +7,16 @@
 
 import Foundation
 
-@Observable class FatCrabModel: FatCrabProtocol {
+class FatCrabModel: FatCrabProtocol {
+    let MNEMONIC_KEYCHAIN_WRAPPER_KEY: String = "mnemonic"
+    
     private let trader: FatCrabTrader  // Should we inject this? Or is this good?
     
-    var totalBalance: Int
-    var spendableBalance: Int
-    var allocatedAmount: Int
-    var orders: [FatCrabOrder]
+    @Published var mnemonic: [String]
+    @Published var totalBalance: Int
+    @Published var spendableBalance: Int
+    @Published var allocatedAmount: Int
+    @Published var orders: [FatCrabOrder]
     
     init() {
         let url = "ssl://electrum.blockstream.info:60002"
@@ -21,11 +24,25 @@ import Foundation
         let info = BlockchainInfo.electrum(url: url, network: network)
         let appDir = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)
         
-        trader = FatCrabTrader(info: info, appDirPath: appDir[0])
+        mnemonic = []
         totalBalance = 0
         spendableBalance = 0
         allocatedAmount = 0
-        orders = [FatCrabOrder]()
+        orders = []
+        
+        if let mnemonic = KeychainWrapper.standard.string(forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked) {
+            trader = FatCrabTrader.newWithMnemonic(mnemonic: mnemonic, info: info, appDirPath: appDir[0])
+            self.mnemonic = mnemonic.components(separatedBy: " ")
+        } else {
+            trader = FatCrabTrader(info: info, appDirPath: appDir[0])
+            
+            Task {
+                // Update initial values asynchronously
+                let mnemonic = try trader.walletBip39Mnemonic()
+                KeychainWrapper.standard.set(mnemonic, forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked)
+                self.mnemonic = mnemonic.components(separatedBy: " ")
+            }
+        }
     }
     
     func updateBalances() async throws {
@@ -45,7 +62,6 @@ import Foundation
     }
     
     // Async/Await Task wrappers
-    
     func walletSpendableBalance() async throws -> Int {
         let balance = try await Task {
             try trader.walletSpendableBalance()

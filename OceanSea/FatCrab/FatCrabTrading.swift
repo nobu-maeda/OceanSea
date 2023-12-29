@@ -1204,10 +1204,10 @@ public class FatCrabTrader: FatCrabTraderProtocol {
         try! rustCall { uniffi_fatcrab_trading_fn_free_fatcrabtrader(pointer, $0) }
     }
 
-    public static func newWithKeys(key: String, info: BlockchainInfo, appDirPath: String) -> FatCrabTrader {
+    public static func newWithMnemonic(mnemonic: String, info: BlockchainInfo, appDirPath: String) -> FatCrabTrader {
         return FatCrabTrader(unsafeFromRawPointer: try! rustCall {
-            uniffi_fatcrab_trading_fn_constructor_fatcrabtrader_new_with_keys(
-                FfiConverterString.lower(key),
+            uniffi_fatcrab_trading_fn_constructor_fatcrabtrader_new_with_mnemonic(
+                FfiConverterString.lower(mnemonic),
                 FfiConverterTypeBlockchainInfo.lower(info),
                 FfiConverterString.lower(appDirPath), $0
             )
@@ -2165,7 +2165,7 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_constructor_fatcrabtrader_new() != 21331 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_constructor_fatcrabtrader_new_with_keys() != 26181 {
+    if uniffi_fatcrab_trading_checksum_constructor_fatcrabtrader_new_with_mnemonic() != 9598 {
         return InitializationResult.apiChecksumMismatch
     }
 
