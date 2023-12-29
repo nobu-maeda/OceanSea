@@ -9,21 +9,27 @@ import SwiftUI
 
 struct WalletView: View {
     enum WalletNavigationDestination: Hashable {
-        case showPubkey
+        case send
+        case receive
         case showSeedWords
         case newWallet
     }
+    
+    @Environment(\.fatCrabModel) var model
     
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    Text("Total Fund in Wallet")
-                    Text("Allocated Fund")
-                    Text("Spendable Fund")
+                    TitleValueHStack(title: "Total Funds in Wallet", value: "\(model.totalBalance)")
+                    TitleValueHStack(title: "Allocated Amount", value: "\(model.allocatedAmount)")
+                    TitleValueHStack(title: "Spendable Balance", value: "\(model.spendableBalance)")
                 }
                 Section {
-                    NavigationLink("Show Pubkey", value: WalletNavigationDestination.showPubkey)
+                    NavigationLink("Send Funds", value: WalletNavigationDestination.send)
+                    NavigationLink("Receive Funds", value: WalletNavigationDestination.receive)
+                }
+                Section {
                     NavigationLink("Show Seed Words", value: WalletNavigationDestination.showSeedWords)
                     NavigationLink("Delete Wallet & Enter new Seed", value: WalletNavigationDestination.newWallet)
                 }
@@ -31,8 +37,10 @@ struct WalletView: View {
             .navigationTitle("Wallet")
             .navigationDestination(for: WalletNavigationDestination.self) { destination in
                 switch destination {
-                case .showPubkey:
-                    ShowPubkeyView()
+                case .send:
+                    SendView()
+                case .receive:
+                    ReceiveView()
                 case .showSeedWords:
                     ShowSeedsView()
                 case .newWallet:
@@ -44,5 +52,6 @@ struct WalletView: View {
     }
 }
 #Preview {
-    WalletView()
+    let fatCrabMock = FatCrabMock()
+    return WalletView().environment(\.fatCrabModel, fatCrabMock)
 }
