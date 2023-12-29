@@ -8,11 +8,23 @@
 import SwiftUI
 
 struct ReceiveView: View {
+    @Environment(\.fatCrabModel) var model
+    
+    @State var receive_address: String = ""
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text(receive_address)
+            .textSelection(.enabled)
+            .onAppear(perform: {
+                Task {
+                    self.receive_address = try await model.walletGenerateReceiveAddress()
+                }
+            })
+            .navigationTitle("Receive Address")
     }
+    
 }
 
 #Preview {
-    ReceiveView()
+    ReceiveView().environment(\.fatCrabModel, FatCrabMock())
 }

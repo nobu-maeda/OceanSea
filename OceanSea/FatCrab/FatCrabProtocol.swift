@@ -22,6 +22,7 @@ protocol FatCrabProtocol: ObservableObject {
     var totalBalance: Int { get }
     var spendableBalance: Int { get }
     var allocatedAmount: Int { get }
-    
     var mnemonic: [String] { get }
+    
+    func walletGenerateReceiveAddress() async throws -> String
 }

@@ -20,7 +20,7 @@ class FatCrabModel: FatCrabProtocol {
     
     init() {
         let url = "ssl://electrum.blockstream.info:60002"
-        let network = Network.regtest
+        let network = Network.testnet
         let info = BlockchainInfo.electrum(url: url, network: network)
         let appDir = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)
         
@@ -62,6 +62,13 @@ class FatCrabModel: FatCrabProtocol {
     }
     
     // Async/Await Task wrappers
+    func walletGenerateReceiveAddress() async throws -> String {
+        let address = try await Task {
+            try trader.walletGenerateReceiveAddress()
+        }.value
+        return address
+    }
+    
     func walletSpendableBalance() async throws -> Int {
         let balance = try await Task {
             try trader.walletSpendableBalance()
