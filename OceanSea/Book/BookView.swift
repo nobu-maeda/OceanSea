@@ -9,11 +9,21 @@ import SwiftUI
 
 struct BookView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-//        Table {
-//            TableColumn("Price", value: \.price)
-//            TableColumn("Amount", value: \.amount)
-//        }
+        NavigationStack {
+            Text("Hello, World!")
+                .toolbar(content: {
+                    ToolbarItem(placement: .primaryAction) {
+                        NavigationLink {
+                            Text("Make new Order")
+                        } label: {
+                            Image(systemName: "plus.circle")
+                                .font(.title)
+                                .foregroundColor(.blue)
+                        }
+                    }
+                })
+                .navigationTitle("Order Book")
+        }
     }
 }
 

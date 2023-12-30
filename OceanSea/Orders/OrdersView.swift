@@ -9,7 +9,21 @@ import SwiftUI
 
 struct OrdersView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+                .toolbar(content: {
+                    ToolbarItem(placement: .primaryAction) {
+                        NavigationLink {
+                            Text("Make new Order")
+                        } label: {
+                            Image(systemName: "plus.circle")
+                                .font(.title)
+                                .foregroundColor(.blue)
+                        }
+                    }
+                })
+                .navigationTitle("Order Status")
+        }
     }
 }
 
