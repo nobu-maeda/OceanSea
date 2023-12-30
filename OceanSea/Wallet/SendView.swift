@@ -7,12 +7,13 @@
 
 import SwiftUI
 
-struct SendView: View {
+struct SendView<T: FatCrabProtocol>: View {
+    @ObservedObject var fatCrabModel: T
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
 
 #Preview {
-    SendView()
+    SendView(fatCrabModel: FatCrabMock())
 }

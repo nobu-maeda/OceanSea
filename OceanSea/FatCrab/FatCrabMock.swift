@@ -21,7 +21,19 @@ class FatCrabMock: FatCrabProtocol {
     }
     
     func walletGenerateReceiveAddress() async throws -> String {
-        try await Task.sleep(nanoseconds: 3_000_000_000)
+        try await Task.sleep(nanoseconds: 1_000_000_000)
         return "bc1q3048unvsjhdfgpvw9ehmyvp0ijgmcwhergvmw0eirjgcm"
+    }
+    
+    func updateBalances() {
+        Task {
+            try await Task.sleep(nanoseconds: 1_000_000_000)
+            
+            Task { @MainActor in
+                self.totalBalance = 123456
+                self.spendableBalance = 234567
+                self.allocatedAmount = 345678
+            }
+        }
     }
 }

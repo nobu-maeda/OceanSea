@@ -32,7 +32,10 @@ class FatCrabModel: FatCrabProtocol {
         
         if let mnemonic = KeychainWrapper.standard.string(forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked) {
             trader = FatCrabTrader.newWithMnemonic(mnemonic: mnemonic, info: info, appDirPath: appDir[0])
-            self.mnemonic = mnemonic.components(separatedBy: " ")
+            
+            Task { @MainActor in
+                self.mnemonic = mnemonic.components(separatedBy: " ")
+            }
         } else {
             trader = FatCrabTrader(info: info, appDirPath: appDir[0])
             
@@ -40,16 +43,28 @@ class FatCrabModel: FatCrabProtocol {
                 // Update initial values asynchronously
                 let mnemonic = try trader.walletBip39Mnemonic()
                 KeychainWrapper.standard.set(mnemonic, forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked)
-                self.mnemonic = mnemonic.components(separatedBy: " ")
+                
+                Task { @MainActor in
+                    self.mnemonic = mnemonic.components(separatedBy: " ")
+                }
             }
         }
+        updateBalances()
     }
     
-    func updateBalances() async throws {
-        async let allocatedAmount = self.walletAllocatedAmount()
-        async let spendableBalance = self.walletSpendableBalance()
-        await (self.spendableBalance, self.allocatedAmount) = try (spendableBalance, allocatedAmount)
-        self.totalBalance = self.spendableBalance + self.allocatedAmount
+    func updateBalances() {
+        Task {
+            try self.trader.walletBlockchainSync()
+            let allocatedAmount = Int(try self.trader.walletAllocatedAmount())
+            let spendableBalance = Int(try self.trader.walletSpendableBalance())
+            
+            Task { @MainActor in
+                self.allocatedAmount = allocatedAmount
+                self.spendableBalance = spendableBalance
+                self.totalBalance = allocatedAmount + spendableBalance
+                
+            }
+        }
     }
     
     func updateOrders() {
@@ -62,6 +77,7 @@ class FatCrabModel: FatCrabProtocol {
     }
     
     // Async/Await Task wrappers
+    
     func walletGenerateReceiveAddress() async throws -> String {
         let address = try await Task {
             try trader.walletGenerateReceiveAddress()

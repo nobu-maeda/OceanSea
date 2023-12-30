@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-struct BookView: View {
+struct BookView<T: FatCrabProtocol>: View {
+    @ObservedObject var fatCrabModel: T
     var body: some View {
         NavigationStack {
             Text("Hello, World!")
@@ -28,5 +29,5 @@ struct BookView: View {
 }
 
 #Preview {
-    BookView()
+    BookView(fatCrabModel: FatCrabMock())
 }

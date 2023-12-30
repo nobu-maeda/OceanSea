@@ -9,14 +9,10 @@ import SwiftUI
 import FatCrabTradingFFI
 
 struct ContentView: View {
-    let fatCrabModel: FatCrabModel
-    
-    init() {
-        fatCrabModel = FatCrabModel()
-    }
+    @StateObject var fatCrabModel = FatCrabModel()
     
     var body: some View {
-        HomeView().environment(\.fatCrabModel, self.fatCrabModel)
+        HomeView(fatCrabModel: fatCrabModel)
     }
 }
 

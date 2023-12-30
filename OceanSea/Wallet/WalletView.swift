@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct WalletView: View {
+struct WalletView<T: FatCrabProtocol>: View {
     enum WalletNavigationDestination: Hashable {
         case send
         case receive
@@ -15,15 +15,15 @@ struct WalletView: View {
         case newWallet
     }
     
-    @Environment(\.fatCrabModel) var model
+    @ObservedObject var fatCrabModel: T
     
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    TitleValueHStack(title: "Total Funds in Wallet", value: "\(model.totalBalance)")
-                    TitleValueHStack(title: "Allocated Amount", value: "\(model.allocatedAmount)")
-                    TitleValueHStack(title: "Spendable Balance", value: "\(model.spendableBalance)")
+                    TitleValueHStack(title: "Total Funds in Wallet", value: "\(fatCrabModel.totalBalance)")
+                    TitleValueHStack(title: "Allocated Amount", value: "\(fatCrabModel.allocatedAmount)")
+                    TitleValueHStack(title: "Spendable Balance", value: "\(fatCrabModel.spendableBalance)")
                 }
                 Section {
                     NavigationLink("Send Funds", value: WalletNavigationDestination.send)
@@ -35,16 +35,23 @@ struct WalletView: View {
                 }
             }
             .navigationTitle("Wallet")
+            .toolbar(content: {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Refresh Wallet", systemImage: "arrow.clockwise.circle") {
+                        fatCrabModel.updateBalances()
+                    }
+                }
+            })
             .navigationDestination(for: WalletNavigationDestination.self) { destination in
                 switch destination {
                 case .send:
-                    SendView()
+                    SendView(fatCrabModel: fatCrabModel)
                 case .receive:
-                    ReceiveView()
+                    ReceiveView(fatCrabModel: fatCrabModel)
                 case .showSeedWords:
-                    ShowSeedsView()
+                    ShowSeedsView(fatCrabModel: fatCrabModel)
                 case .newWallet:
-                    EnterSeedsView()
+                    EnterSeedsView(fatCrabModel: fatCrabModel)
                     
                 }
             }
@@ -52,5 +59,5 @@ struct WalletView: View {
     }
 }
 #Preview {
-    WalletView().environment(\.fatCrabModel, FatCrabMock())
+    WalletView(fatCrabModel: FatCrabMock())
 }

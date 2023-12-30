@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct ReceiveView: View {
-    @Environment(\.fatCrabModel) var model
+struct ReceiveView<T: FatCrabProtocol>: View {
+    @ObservedObject var fatCrabModel: T
     
     @State var receive_address: String = ""
     
@@ -17,7 +17,7 @@ struct ReceiveView: View {
             .textSelection(.enabled)
             .onAppear(perform: {
                 Task {
-                    self.receive_address = try await model.walletGenerateReceiveAddress()
+                    self.receive_address = try await fatCrabModel.walletGenerateReceiveAddress()
                 }
             })
             .navigationTitle("Receive Address")
@@ -26,5 +26,5 @@ struct ReceiveView: View {
 }
 
 #Preview {
-    ReceiveView().environment(\.fatCrabModel, FatCrabMock())
+    ReceiveView(fatCrabModel: FatCrabMock())
 }

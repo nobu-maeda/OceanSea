@@ -24,5 +24,6 @@ protocol FatCrabProtocol: ObservableObject {
     var allocatedAmount: Int { get }
     var mnemonic: [String] { get }
     
+    func updateBalances()
     func walletGenerateReceiveAddress() async throws -> String
 }

@@ -7,12 +7,13 @@
 
 import SwiftUI
 
-struct EnterSeedsView: View {
+struct EnterSeedsView<T: FatCrabProtocol>: View {
+    @ObservedObject var fatCrabModel: T
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
 
 #Preview {
-    EnterSeedsView()
+    EnterSeedsView(fatCrabModel: FatCrabMock())
 }

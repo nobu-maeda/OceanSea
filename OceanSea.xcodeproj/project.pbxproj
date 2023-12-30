@@ -196,9 +196,9 @@
 			isa = PBXGroup;
 			children = (
 				08DC5B7F2B3DD29000B71A22 /* FatCrabTrading.swift */,
-				085FE4DF2B3ECBF10061DF95 /* FatCrabMock.swift */,
-				08DC5B6E2B3D7E0E00B71A22 /* FatCrabModel.swift */,
 				085FE4DD2B3EC6550061DF95 /* FatCrabProtocol.swift */,
+				08DC5B6E2B3D7E0E00B71A22 /* FatCrabModel.swift */,
+				085FE4DF2B3ECBF10061DF95 /* FatCrabMock.swift */,
 			);
 			path = FatCrab;
 			sourceTree = "<group>";
