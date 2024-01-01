@@ -93,3 +93,8 @@ iOSInjectionProject/
 #
 # XCFrameworks can be very large in size. Omitting them from source control
 *.xcframework
+
+## Xcode Breakpoints
+#
+# Xcode stores breakpoints in a file inside the project's `xcuserdata` folder
+*.xcbkptlist

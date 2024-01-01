@@ -7,8 +7,9 @@
 
 import SwiftUI
 
-struct RelaysView<T: FatCrabProtocol>: View {
-    @ObservedObject var fatCrabModel: T
+struct RelaysView: View {
+    @Environment(\.fatCrabModel) var model
+    
     var body: some View {
         NavigationStack {
             Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
@@ -18,5 +19,5 @@ struct RelaysView<T: FatCrabProtocol>: View {
 }
 
 #Preview {
-    RelaysView(fatCrabModel: FatCrabMock())
+    RelaysView().environment(\.fatCrabModel, FatCrabMock())
 }

@@ -7,35 +7,34 @@
 
 import SwiftUI
 
-struct HomeView<T: FatCrabProtocol>: View {
+struct HomeView: View {
     enum Tab {
         case wallet, book, orders, relays
     }
     
-    @ObservedObject var fatCrabModel: T
     @State private var selectedTab: Tab = .wallet
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            WalletView(fatCrabModel: fatCrabModel)
+            WalletView()
                 .tabItem {
                     Label("Wallet", systemImage: "bitcoinsign.square")
                 }
                 .tag(Tab.wallet)
             
-            BookView(fatCrabModel: fatCrabModel)
+            BookView()
                 .tabItem {
                     Label("Book", systemImage: "text.book.closed")
                 }
                 .tag(Tab.book)
             
-            OrdersView(fatCrabModel: fatCrabModel)
+            OrdersView()
                 .tabItem {
                     Label("Orders", systemImage: "list.bullet")
                 }
                 .tag(Tab.orders)
             
-            RelaysView(fatCrabModel: fatCrabModel)
+            RelaysView()
                 .tabItem {
                     Label("Relays", systemImage: "network")
                 }
@@ -45,5 +44,5 @@ struct HomeView<T: FatCrabProtocol>: View {
 }
 
 #Preview {
-    HomeView(fatCrabModel: FatCrabMock())
+    HomeView()
 }

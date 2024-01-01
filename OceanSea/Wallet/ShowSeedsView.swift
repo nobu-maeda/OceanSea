@@ -7,18 +7,18 @@
 
 import SwiftUI
 
-struct ShowSeedsView<T: FatCrabProtocol>: View {
-    @ObservedObject var fatCrabModel: T
+struct ShowSeedsView: View {
+    @Environment(\.fatCrabModel) var model
     
     var body: some View {
-        let numSeedWords = fatCrabModel.mnemonic.count
+        let numSeedWords = model.mnemonic.count
         
         List {
             ForEach(0..<(numSeedWords/2), id:\.self) { i in
                 let firstIndex = 2*i
                 let secondIndex = 2*i+1
-                TitleValueHStack(title: "\(firstIndex+1). \(fatCrabModel.mnemonic[firstIndex])",
-                                 value: "\(secondIndex+1). \(fatCrabModel.mnemonic[secondIndex])",
+                TitleValueHStack(title: "\(firstIndex+1). \(model.mnemonic[firstIndex])",
+                                 value: "\(secondIndex+1). \(model.mnemonic[secondIndex])",
                                  format: .around)
             }
         }
@@ -27,5 +27,5 @@ struct ShowSeedsView<T: FatCrabProtocol>: View {
 }
 
 #Preview {
-    ShowSeedsView(fatCrabModel: FatCrabMock())
+    ShowSeedsView().environment(\.fatCrabModel, FatCrabMock())
 }

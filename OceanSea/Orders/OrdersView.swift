@@ -7,8 +7,9 @@
 
 import SwiftUI
 
-struct OrdersView<T: FatCrabProtocol>: View {
-    @ObservedObject var fatCrabModel: T
+struct OrdersView: View {
+    @Environment(\.fatCrabModel) var model
+    
     var body: some View {
         NavigationStack {
             Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
@@ -29,5 +30,5 @@ struct OrdersView<T: FatCrabProtocol>: View {
 }
 
 #Preview {
-    OrdersView(fatCrabModel: FatCrabMock())
+    OrdersView().environment(\.fatCrabModel, FatCrabMock())
 }

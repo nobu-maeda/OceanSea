@@ -7,16 +7,16 @@
 
 import Foundation
 
-class FatCrabModel: FatCrabProtocol {
+@Observable class FatCrabModel: FatCrabProtocol {
     let MNEMONIC_KEYCHAIN_WRAPPER_KEY: String = "mnemonic"
     
     private let trader: FatCrabTrader  // Should we inject this? Or is this good?
     
-    @Published var mnemonic: [String]
-    @Published var totalBalance: Int
-    @Published var spendableBalance: Int
-    @Published var allocatedAmount: Int
-    @Published var orders: [FatCrabOrder]
+    var mnemonic: [String]
+    var totalBalance: Int
+    var spendableBalance: Int
+    var allocatedAmount: Int
+    var orders: [FatCrabOrder]
     
     init() {
         let url = "ssl://electrum.blockstream.info:60002"
