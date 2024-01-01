@@ -10,21 +10,18 @@ import SwiftUI
 struct BookView: View {
     @Environment(\.fatCrabModel) var model
     
+    @State var showMakeNewOrderView = false
+    
     var body: some View {
         NavigationStack {
             Text("Hello, World!")
                 .toolbar(content: {
-                    ToolbarItem(placement: .primaryAction) {
-                        NavigationLink {
-                            Text("Make new Order")
-                        } label: {
-                            Image(systemName: "plus.circle")
-                                .font(.title)
-                                .foregroundColor(.blue)
-                        }
-                    }
+                    MakeNewOrderToolbarItem(showMakeNewOrderView: $showMakeNewOrderView)
                 })
                 .navigationTitle("Order Book")
+        }
+        .sheet(isPresented: $showMakeNewOrderView) {
+            MakeNewOrderView()
         }
     }
 }
