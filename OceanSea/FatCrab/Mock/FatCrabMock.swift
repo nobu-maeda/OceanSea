@@ -37,4 +37,21 @@ import Foundation
             }
         }
     }
+    
+    func makeBuyOrder(price: Double, amount: Double, fatcrabRxAddr: String) -> any FatCrabMakerBuyProtocol {
+        FatCrabMakerBuyMock()
+    }
+    
+    func makeSellOrder(price: Double, amount: Double) -> any FatCrabMakerSellProtocol {
+        FatCrabMakerSellMock()
+        
+    }
+    
+    func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) -> any FatCrabTakerBuyProtocol {
+        FatCrabTakerBuyMock()
+    }
+    
+    func takeSellOrder(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) -> any FatCrabTakerSellProtocol {
+        FatCrabTakerSellMock()
+    }
 }
