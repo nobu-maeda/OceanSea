@@ -31,9 +31,9 @@ import Foundation
             try await Task.sleep(nanoseconds: 1_000_000_000)
             
             Task { @MainActor in
-                self.totalBalance = 123456
-                self.spendableBalance = 234567
-                self.allocatedAmount = 345678
+                totalBalance = 123456
+                spendableBalance = 234567
+                allocatedAmount = 345678
             }
         }
     }

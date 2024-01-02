@@ -12,19 +12,19 @@ public struct AppSecureStorage: DynamicProperty {
     
     public var wrappedValue: String? {
         get {
-            KeychainWrapper.standard.string(forKey: key, withAccessibility: self.accessibility)
+            KeychainWrapper.standard.string(forKey: key, withAccessibility: accessibility)
         }
         nonmutating set {
             if let newValue, !newValue.isEmpty {
-                KeychainWrapper.standard.set( newValue, forKey: key, withAccessibility: self.accessibility)
+                KeychainWrapper.standard.set( newValue, forKey: key, withAccessibility: accessibility)
             }
             else {
-                KeychainWrapper.standard.removeObject(forKey: key, withAccessibility: self.accessibility)
+                KeychainWrapper.standard.removeObject(forKey: key, withAccessibility: accessibility)
             }
         }
     }
     
-    public init(_ key: String, accessibility:KeychainItemAccessibility = .whenUnlocked ) {
+    public init(_ key: String, accessibility: KeychainItemAccessibility = .whenUnlocked ) {
         self.key = key
         self.accessibility = accessibility
     }

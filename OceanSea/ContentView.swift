@@ -12,7 +12,7 @@ struct ContentView: View {
     let fatCrabModel = FatCrabModel()
     
     var body: some View {
-        HomeView().environment(\.fatCrabModel, self.fatCrabModel)
+        HomeView().environment(\.fatCrabModel, fatCrabModel)
     }
 }
 

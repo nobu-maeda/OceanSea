@@ -30,22 +30,22 @@ import Foundation
         allocatedAmount = 0
         orders = []
         
-        if let mnemonic = KeychainWrapper.standard.string(forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked) {
-            trader = FatCrabTrader.newWithMnemonic(mnemonic: mnemonic, info: info, appDirPath: appDir[0])
+        if let storedMnemonic = KeychainWrapper.standard.string(forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked) {
+            trader = FatCrabTrader.newWithMnemonic(mnemonic: storedMnemonic, info: info, appDirPath: appDir[0])
             
             Task { @MainActor in
-                self.mnemonic = mnemonic.components(separatedBy: " ")
+                mnemonic = storedMnemonic.components(separatedBy: " ")
             }
         } else {
             trader = FatCrabTrader(info: info, appDirPath: appDir[0])
             
             Task {
                 // Update initial values asynchronously
-                let mnemonic = try trader.walletBip39Mnemonic()
-                KeychainWrapper.standard.set(mnemonic, forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked)
+                let walletMnemonic = try trader.walletBip39Mnemonic()
+                KeychainWrapper.standard.set(walletMnemonic, forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked)
                 
                 Task { @MainActor in
-                    self.mnemonic = mnemonic.components(separatedBy: " ")
+                    mnemonic = walletMnemonic.components(separatedBy: " ")
                 }
             }
         }
@@ -54,14 +54,14 @@ import Foundation
     
     func updateBalances() {
         Task {
-            try self.trader.walletBlockchainSync()
-            let allocatedAmount = Int(try self.trader.walletAllocatedAmount())
-            let spendableBalance = Int(try self.trader.walletSpendableBalance())
+            try trader.walletBlockchainSync()
+            let walletAllocatedAmount = Int(try trader.walletAllocatedAmount())
+            let walletSpendableBalance = Int(try trader.walletSpendableBalance())
             
             Task { @MainActor in
-                self.allocatedAmount = allocatedAmount
-                self.spendableBalance = spendableBalance
-                self.totalBalance = allocatedAmount + spendableBalance
+                allocatedAmount = walletAllocatedAmount
+                spendableBalance = walletSpendableBalance
+                totalBalance = walletAllocatedAmount + walletSpendableBalance
                 
             }
         }

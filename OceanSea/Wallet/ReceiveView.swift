@@ -16,7 +16,7 @@ struct ReceiveView: View {
             .textSelection(.enabled)
             .onAppear(perform: {
                 Task {
-                    self.receive_address = try await model.walletGenerateReceiveAddress()
+                    receive_address = try await model.walletGenerateReceiveAddress()
                 }
             })
             .navigationTitle("Receive Address")
