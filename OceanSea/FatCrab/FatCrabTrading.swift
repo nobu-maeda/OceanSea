@@ -1699,6 +1699,8 @@ public enum FatCrabError {
     case JoinError(description: String)
     case SerdesJson(description: String)
     case UrlParse(description: String)
+    case MpscSend(description: String)
+    case OneshotRecv(description: String)
 
     fileprivate static func uniffiErrorHandler(_ error: RustBuffer) throws -> Error {
         return try FfiConverterTypeFatCrabError.lift(error)
@@ -1735,6 +1737,12 @@ public struct FfiConverterTypeFatCrabError: FfiConverterRustBuffer {
                 description: FfiConverterString.read(from: &buf)
             )
         case 10: return try .UrlParse(
+                description: FfiConverterString.read(from: &buf)
+            )
+        case 11: return try .MpscSend(
+                description: FfiConverterString.read(from: &buf)
+            )
+        case 12: return try .OneshotRecv(
                 description: FfiConverterString.read(from: &buf)
             )
 
@@ -1780,6 +1788,14 @@ public struct FfiConverterTypeFatCrabError: FfiConverterRustBuffer {
 
         case let .UrlParse(description):
             writeInt(&buf, Int32(10))
+            FfiConverterString.write(description, into: &buf)
+
+        case let .MpscSend(description):
+            writeInt(&buf, Int32(11))
+            FfiConverterString.write(description, into: &buf)
+
+        case let .OneshotRecv(description):
+            writeInt(&buf, Int32(12))
             FfiConverterString.write(description, into: &buf)
         }
     }
