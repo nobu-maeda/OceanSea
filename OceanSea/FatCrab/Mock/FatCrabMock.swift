@@ -38,20 +38,20 @@ import Foundation
         }
     }
     
-    func makeBuyOrder(price: Double, amount: Double, fatcrabRxAddr: String) -> any FatCrabMakerBuyProtocol {
+    func makeBuyOrder(price: Double, amount: Double, fatcrabRxAddr: String) throws -> any FatCrabMakerBuyProtocol {
         FatCrabMakerBuyMock()
     }
     
-    func makeSellOrder(price: Double, amount: Double) -> any FatCrabMakerSellProtocol {
+    func makeSellOrder(price: Double, amount: Double) throws -> any FatCrabMakerSellProtocol {
         FatCrabMakerSellMock()
         
     }
     
-    func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) -> any FatCrabTakerBuyProtocol {
+    func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) throws -> any FatCrabTakerBuyProtocol {
         FatCrabTakerBuyMock()
     }
     
-    func takeSellOrder(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) -> any FatCrabTakerSellProtocol {
+    func takeSellOrder(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) throws -> any FatCrabTakerSellProtocol {
         FatCrabTakerSellMock()
     }
 }

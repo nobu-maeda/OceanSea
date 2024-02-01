@@ -7,7 +7,7 @@
 
 import Foundation
 
-@Observable class FatCrabModel: FatCrabProtocol {
+@Observable class FatCrabModel: FatCrabProtocol {    
     enum FatCrabTrade {
         case buyMaker(maker: FatCrabBuyMaker)
         case sellMaker(maker: FatCrabSellMaker)
@@ -86,10 +86,10 @@ import Foundation
         }
     }
     
-    func makeBuyOrder(price: Double, amount: Double, fatcrabRxAddr: String) -> any FatCrabMakerBuyProtocol {
+    func makeBuyOrder(price: Double, amount: Double, fatcrabRxAddr: String) throws -> any FatCrabMakerBuyProtocol {
         let uuid = UUID()
         let order = FatCrabOrder(orderType: FatCrabOrderType.buy, tradeUuid: uuid.uuidString, amount: amount, price: price)
-        let maker = trader.newBuyMaker(order: order, fatcrabRxAddr: fatcrabRxAddr)
+        let maker = try trader.newBuyMaker(order: order, fatcrabRxAddr: fatcrabRxAddr)
         trades.updateValue(.buyMaker(maker: maker), forKey: uuid)
         
         // TODO: How to hook-up Maker events?
@@ -100,10 +100,10 @@ import Foundation
         return makerModel
     }
     
-    func makeSellOrder(price: Double, amount: Double) -> any FatCrabMakerSellProtocol {
+    func makeSellOrder(price: Double, amount: Double) throws -> any FatCrabMakerSellProtocol {
         let uuid = UUID()
         let order = FatCrabOrder(orderType: FatCrabOrderType.sell, tradeUuid: uuid.uuidString, amount: amount, price: price)
-        let maker = trader.newSellMaker(order: order)
+        let maker = try trader.newSellMaker(order: order)
         trades.updateValue(.sellMaker(maker: maker), forKey: uuid)
         
         // TODO: How to hook-up Maker events?
@@ -114,9 +114,9 @@ import Foundation
         return makerModel
     }
     
-    func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) -> any FatCrabTakerBuyProtocol {
+    func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) throws -> any FatCrabTakerBuyProtocol {
         let uuid = UUID()
-        let taker = trader.newBuyTaker(orderEnvelope: orderEnvelope)
+        let taker = try trader.newBuyTaker(orderEnvelope: orderEnvelope)
         trades.updateValue(.buyTaker(taker: taker), forKey: uuid)
         
         // TODO: How to hook-up Taker events?
@@ -127,9 +127,9 @@ import Foundation
         return takerModel
     }
     
-    func takeSellOrder(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) -> any FatCrabTakerSellProtocol {
+    func takeSellOrder(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) throws -> any FatCrabTakerSellProtocol {
         let uuid = UUID()
-        let taker = trader.newSellTaker(orderEnvelope: orderEnvelope, fatcrabRxAddr: fatcrabRxAddr)
+        let taker = try trader.newSellTaker(orderEnvelope: orderEnvelope, fatcrabRxAddr: fatcrabRxAddr)
         trades.updateValue(.sellTaker(taker: taker), forKey: uuid)
         
         // TODO: How to hook-up Taker events?

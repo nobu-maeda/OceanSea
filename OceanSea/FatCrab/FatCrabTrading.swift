@@ -1198,10 +1198,10 @@ public func FfiConverterTypeFatCrabTradeRspEnvelope_lower(_ value: FatCrabTradeR
 
 public protocol FatCrabTraderProtocol {
     func addRelays(relaysInfo: [RelayInfo]) throws
-    func newBuyMaker(order: FatCrabOrder, fatcrabRxAddr: String) -> FatCrabBuyMaker
-    func newBuyTaker(orderEnvelope: FatCrabOrderEnvelope) -> FatCrabBuyTaker
-    func newSellMaker(order: FatCrabOrder) -> FatCrabSellMaker
-    func newSellTaker(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) -> FatCrabSellTaker
+    func newBuyMaker(order: FatCrabOrder, fatcrabRxAddr: String) throws -> FatCrabBuyMaker
+    func newBuyTaker(orderEnvelope: FatCrabOrderEnvelope) throws -> FatCrabBuyTaker
+    func newSellMaker(order: FatCrabOrder) throws -> FatCrabSellMaker
+    func newSellTaker(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) throws -> FatCrabSellTaker
     func nostrPubkey() -> String
     func queryOrders(orderType: FatCrabOrderType?) throws -> [FatCrabOrderEnvelope]
     func shutdown() throws
@@ -1254,45 +1254,41 @@ public class FatCrabTrader: FatCrabTraderProtocol {
             }
     }
 
-    public func newBuyMaker(order: FatCrabOrder, fatcrabRxAddr: String) -> FatCrabBuyMaker {
-        return try! FfiConverterTypeFatCrabBuyMaker.lift(
-            try!
-                rustCall {
-                    uniffi_fatcrab_trading_fn_method_fatcrabtrader_new_buy_maker(self.pointer,
-                                                                                 FfiConverterTypeFatCrabOrder.lower(order),
-                                                                                 FfiConverterString.lower(fatcrabRxAddr), $0)
-                }
+    public func newBuyMaker(order: FatCrabOrder, fatcrabRxAddr: String) throws -> FatCrabBuyMaker {
+        return try FfiConverterTypeFatCrabBuyMaker.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabtrader_new_buy_maker(self.pointer,
+                                                                             FfiConverterTypeFatCrabOrder.lower(order),
+                                                                             FfiConverterString.lower(fatcrabRxAddr), $0)
+            }
         )
     }
 
-    public func newBuyTaker(orderEnvelope: FatCrabOrderEnvelope) -> FatCrabBuyTaker {
-        return try! FfiConverterTypeFatCrabBuyTaker.lift(
-            try!
-                rustCall {
-                    uniffi_fatcrab_trading_fn_method_fatcrabtrader_new_buy_taker(self.pointer,
-                                                                                 FfiConverterTypeFatCrabOrderEnvelope.lower(orderEnvelope), $0)
-                }
+    public func newBuyTaker(orderEnvelope: FatCrabOrderEnvelope) throws -> FatCrabBuyTaker {
+        return try FfiConverterTypeFatCrabBuyTaker.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabtrader_new_buy_taker(self.pointer,
+                                                                             FfiConverterTypeFatCrabOrderEnvelope.lower(orderEnvelope), $0)
+            }
         )
     }
 
-    public func newSellMaker(order: FatCrabOrder) -> FatCrabSellMaker {
-        return try! FfiConverterTypeFatCrabSellMaker.lift(
-            try!
-                rustCall {
-                    uniffi_fatcrab_trading_fn_method_fatcrabtrader_new_sell_maker(self.pointer,
-                                                                                  FfiConverterTypeFatCrabOrder.lower(order), $0)
-                }
+    public func newSellMaker(order: FatCrabOrder) throws -> FatCrabSellMaker {
+        return try FfiConverterTypeFatCrabSellMaker.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabtrader_new_sell_maker(self.pointer,
+                                                                              FfiConverterTypeFatCrabOrder.lower(order), $0)
+            }
         )
     }
 
-    public func newSellTaker(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) -> FatCrabSellTaker {
-        return try! FfiConverterTypeFatCrabSellTaker.lift(
-            try!
-                rustCall {
-                    uniffi_fatcrab_trading_fn_method_fatcrabtrader_new_sell_taker(self.pointer,
-                                                                                  FfiConverterTypeFatCrabOrderEnvelope.lower(orderEnvelope),
-                                                                                  FfiConverterString.lower(fatcrabRxAddr), $0)
-                }
+    public func newSellTaker(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) throws -> FatCrabSellTaker {
+        return try FfiConverterTypeFatCrabSellTaker.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabtrader_new_sell_taker(self.pointer,
+                                                                              FfiConverterTypeFatCrabOrderEnvelope.lower(orderEnvelope),
+                                                                              FfiConverterString.lower(fatcrabRxAddr), $0)
+            }
         )
     }
 
@@ -2183,16 +2179,16 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_add_relays() != 12881 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_new_buy_maker() != 43522 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_new_buy_maker() != 40030 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_new_buy_taker() != 55754 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_new_buy_taker() != 12728 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_new_sell_maker() != 15216 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_new_sell_maker() != 14196 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_new_sell_taker() != 17262 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_new_sell_taker() != 13525 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_nostr_pubkey() != 2194 {
