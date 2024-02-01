@@ -8,13 +8,25 @@
 import SwiftUI
 
 struct MakeNewOrderView: View {
+    private enum FocusedField: Hashable {
+        case price
+        case amount
+        case fatcrabAddr
+    }
+    
     @Environment(\.dismiss) private var dismiss
     @Environment(\.fatCrabModel) var model
     
-    @State var priceInputString = ""
-    @State var amountInputString = ""
-    @State var fatcrabRxAddrInputString = ""
-    @State var orderType: FatCrabOrderType = .buy
+    @State private var orderType: FatCrabOrderType = .buy
+    @State private var priceInputString = ""
+    @State private var amountInputString = ""
+    @State private var fatcrabRxAddrInputString = ""
+    
+    @FocusState private var focusedField: FocusedField?
+
+    @State private var showAlert = false
+    @State private var alertTitleString = ""
+    @State private var alertBodyString = ""
     
     var body: some View {
         NavigationStack {
@@ -23,11 +35,41 @@ struct MakeNewOrderView: View {
                     Text("Buy").tag(FatCrabOrderType.buy)
                     Text("Sell").tag(FatCrabOrderType.sell)
                 }.pickerStyle(SegmentedPickerStyle())
+                
                 TextField("Price (Sats / Fatcrab)", text: $priceInputString)
+                    .focused($focusedField, equals: .price)
+                    .onSubmit { 
+                        if validatePriceField() != nil {
+                            focusedField = .amount
+                        } else {
+                            focusedField = .price
+                        }
+                    }
+                
                 TextField("Amount (# of Fatcrabs)", text: $amountInputString)
+                    .focused($focusedField, equals: .amount)
+                    .onSubmit {
+                        if validateAmountField() != nil {
+                            if orderType == .buy {
+                                focusedField = .fatcrabAddr
+                            } else {
+                                createNewOrder()
+                            }
+                        } else {
+                            focusedField = .amount
+                        }
+                    }
                 
                 if orderType == .buy {
                     TextField("Fatcrab Receive Address", text: $fatcrabRxAddrInputString)
+                        .focused($focusedField, equals: .fatcrabAddr)
+                        .onSubmit {
+                            if validateFatCrabAddrField() != nil {
+                                createNewOrder()
+                            } else {
+                                focusedField = .fatcrabAddr
+                            }
+                        }
                 }
             }
             .navigationTitle("Make New Order")
@@ -35,36 +77,61 @@ struct MakeNewOrderView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Create") {
-                        
+                        self.createNewOrder()
                     }
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Dismiss", action: dismiss.callAsFunction)
                 }
             }
+            .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
+        }
+        .onAppear(perform: { focusedField = .price })
+    }
+    
+    private func createNewOrder() {
+        guard let price = validatePriceField() else { return }
+        guard let amount = validateAmountField() else { return }
+        
+        // Is there a way to validate the input string against valid Fatcrab address?
+        do {
+            switch orderType {
+            case .buy:
+                _ = try model.makeBuyOrder(price: price, amount: amount, fatcrabRxAddr: fatcrabRxAddrInputString)
+                
+                
+            case .sell:
+                _ = try model.makeSellOrder(price: price, amount: amount)
+            }
+        } catch {
+            alertTitleString = "Error"
+            alertBodyString = error.localizedDescription
+            showAlert = true
         }
     }
     
-    func createNewOrder() {
+    func validatePriceField() -> Double? {
         guard let price = Double(priceInputString) else {
-            // TODO: Alert user for invalid price
-            return
+            alertTitleString = "Error"
+            alertBodyString = "Input price not of decimal numerical value"
+            showAlert = true
+            return nil
         }
-        
+        return price
+    }
+    
+    func validateAmountField() -> Double? {
         guard let amount = Double(amountInputString) else {
-            // TODO: Alert user for invalid amount
-            return
+            alertTitleString = "Error"
+            alertBodyString = "Input amount not of demical numerical value"
+            showAlert = true
+            return nil
         }
-        
-        // Is there a way to validate the input string against valid Fatcrab address?
-        
-        switch orderType {
-        case .buy:
-            _ = model.makeBuyOrder(price: price, amount: amount, fatcrabRxAddr: fatcrabRxAddrInputString)
-            
-        case .sell:
-            _ = model.makeSellOrder(price: price, amount: amount)
-        }
+        return amount
+    }
+    
+    func validateFatCrabAddrField() -> String? {
+        return fatcrabRxAddrInputString
     }
 }
 
