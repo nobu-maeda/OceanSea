@@ -29,7 +29,7 @@
 		08DC5B3F2B2C446A00B71A22 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08DC5B3E2B2C446A00B71A22 /* Preview Assets.xcassets */; };
 		08DC5B632B3D76F600B71A22 /* WalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08DC5B622B3D76F600B71A22 /* WalletView.swift */; };
 		08DC5B652B3D770000B71A22 /* BookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08DC5B642B3D770000B71A22 /* BookView.swift */; };
-		08DC5B692B3D771300B71A22 /* OrdersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08DC5B682B3D771300B71A22 /* OrdersView.swift */; };
+		08DC5B692B3D771300B71A22 /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08DC5B682B3D771300B71A22 /* StatusView.swift */; };
 		08DC5B6B2B3D771A00B71A22 /* RelaysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08DC5B6A2B3D771A00B71A22 /* RelaysView.swift */; };
 		08DC5B6D2B3D7B0900B71A22 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08DC5B6C2B3D7B0800B71A22 /* HomeView.swift */; };
 		08DC5B6F2B3D7E0E00B71A22 /* FatCrabModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08DC5B6E2B3D7E0E00B71A22 /* FatCrabModel.swift */; };
@@ -76,7 +76,7 @@
 		08DC5B3E2B2C446A00B71A22 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		08DC5B622B3D76F600B71A22 /* WalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletView.swift; sourceTree = "<group>"; };
 		08DC5B642B3D770000B71A22 /* BookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookView.swift; sourceTree = "<group>"; };
-		08DC5B682B3D771300B71A22 /* OrdersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersView.swift; sourceTree = "<group>"; };
+		08DC5B682B3D771300B71A22 /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
 		08DC5B6A2B3D771A00B71A22 /* RelaysView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelaysView.swift; sourceTree = "<group>"; };
 		08DC5B6C2B3D7B0800B71A22 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		08DC5B6E2B3D7E0E00B71A22 /* FatCrabModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FatCrabModel.swift; sourceTree = "<group>"; };
@@ -144,6 +144,13 @@
 			path = Mock;
 			sourceTree = "<group>";
 		};
+		08C1EFD42B67A8EF000F4527 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
 		08DC5B2A2B2C446900B71A22 = {
 			isa = PBXGroup;
 			children = (
@@ -164,6 +171,7 @@
 		08DC5B352B2C446900B71A22 /* OceanSea */ = {
 			isa = PBXGroup;
 			children = (
+				08C1EFD42B67A8EF000F4527 /* Common */,
 				08C1EFB52B3EFA4D000F4527 /* AppSecureStorage */,
 				08DC5B7E2B3DA6C300B71A22 /* FatCrab */,
 				08DC5B362B2C446900B71A22 /* OceanSeaApp.swift */,
@@ -172,7 +180,7 @@
 				08C1EFBA2B42D863000F4527 /* MakeNewOrder */,
 				08DC5B702B3DA41300B71A22 /* Wallet */,
 				08DC5B7B2B3DA66000B71A22 /* Book */,
-				08DC5B7C2B3DA67700B71A22 /* Orders */,
+				08DC5B7C2B3DA67700B71A22 /* Status */,
 				08DC5B7D2B3DA68700B71A22 /* Relays */,
 				08DC5B3A2B2C446A00B71A22 /* Assets.xcassets */,
 				08DC5B3C2B2C446A00B71A22 /* OceanSea.entitlements */,
@@ -218,12 +226,12 @@
 			path = Book;
 			sourceTree = "<group>";
 		};
-		08DC5B7C2B3DA67700B71A22 /* Orders */ = {
+		08DC5B7C2B3DA67700B71A22 /* Status */ = {
 			isa = PBXGroup;
 			children = (
-				08DC5B682B3D771300B71A22 /* OrdersView.swift */,
+				08DC5B682B3D771300B71A22 /* StatusView.swift */,
 			);
-			path = Orders;
+			path = Status;
 			sourceTree = "<group>";
 		};
 		08DC5B7D2B3DA68700B71A22 /* Relays */ = {
@@ -337,7 +345,7 @@
 				08DC5B632B3D76F600B71A22 /* WalletView.swift in Sources */,
 				08DC5B7A2B3DA56E00B71A22 /* EnterSeedsView.swift in Sources */,
 				08DC5B652B3D770000B71A22 /* BookView.swift in Sources */,
-				08DC5B692B3D771300B71A22 /* OrdersView.swift in Sources */,
+				08DC5B692B3D771300B71A22 /* StatusView.swift in Sources */,
 				08C1EFB42B3EF8C3000F4527 /* AppSecureStorage.swift in Sources */,
 				085FE4E62B3EDBCA0061DF95 /* TitleValueHStack.swift in Sources */,
 				08DC5B782B3DA55500B71A22 /* ShowSeedsView.swift in Sources */,

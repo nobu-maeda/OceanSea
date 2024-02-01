@@ -1,5 +1,5 @@
 //
-//  OrdersView.swift
+//  StatusView.swift
 //  OceanSea
 //
 //  Created by Nobu Maeda on 2023/12/28.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct OrdersView: View {
+struct StatusView: View {
     @Environment(\.fatCrabModel) var model
     
     @State var showMakeNewOrderView = false
@@ -27,5 +27,5 @@ struct OrdersView: View {
 }
 
 #Preview {
-    OrdersView().environment(\.fatCrabModel, FatCrabMock())
+    StatusView().environment(\.fatCrabModel, FatCrabMock())
 }
