@@ -45,6 +45,8 @@ struct MakeNewOrderView: View {
                             focusedField = .price
                         }
                     }
+                    .textInputAutocapitalization(.never)
+                    .disableAutocorrection(true)
                 
                 TextField("Amount (# of Fatcrabs)", text: $amountInputString)
                     .focused($focusedField, equals: .amount)
@@ -59,6 +61,8 @@ struct MakeNewOrderView: View {
                             focusedField = .amount
                         }
                     }
+                    .textInputAutocapitalization(.never)
+                    .disableAutocorrection(true)
                 
                 if orderType == .buy {
                     TextField("Fatcrab Receive Address", text: $fatcrabRxAddrInputString)
@@ -70,6 +74,8 @@ struct MakeNewOrderView: View {
                                 focusedField = .fatcrabAddr
                             }
                         }
+                        .textInputAutocapitalization(.never)
+                        .disableAutocorrection(true)
                 }
             }
             .navigationTitle("Make New Order")

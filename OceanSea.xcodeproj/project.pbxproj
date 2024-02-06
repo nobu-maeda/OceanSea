@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0825B6492B7271BC00E7AC0E /* AddRelayToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0825B6482B7271BC00E7AC0E /* AddRelayToolbarItem.swift */; };
+		0825B64B2B7271CF00E7AC0E /* AddRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0825B64A2B7271CF00E7AC0E /* AddRelayView.swift */; };
 		085FE4DA2B3EB77D0061DF95 /* SendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085FE4D92B3EB77D0061DF95 /* SendView.swift */; };
 		085FE4DC2B3EB78B0061DF95 /* ReceiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085FE4DB2B3EB78B0061DF95 /* ReceiveView.swift */; };
 		085FE4DE2B3EC6550061DF95 /* FatCrabProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085FE4DD2B3EC6550061DF95 /* FatCrabProtocol.swift */; };
@@ -53,6 +55,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0825B6482B7271BC00E7AC0E /* AddRelayToolbarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRelayToolbarItem.swift; sourceTree = "<group>"; };
+		0825B64A2B7271CF00E7AC0E /* AddRelayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRelayView.swift; sourceTree = "<group>"; };
 		085FE4D92B3EB77D0061DF95 /* SendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendView.swift; sourceTree = "<group>"; };
 		085FE4DB2B3EB78B0061DF95 /* ReceiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveView.swift; sourceTree = "<group>"; };
 		085FE4DD2B3EC6550061DF95 /* FatCrabProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FatCrabProtocol.swift; sourceTree = "<group>"; };
@@ -238,6 +242,8 @@
 			isa = PBXGroup;
 			children = (
 				08DC5B6A2B3D771A00B71A22 /* RelaysView.swift */,
+				0825B6482B7271BC00E7AC0E /* AddRelayToolbarItem.swift */,
+				0825B64A2B7271CF00E7AC0E /* AddRelayView.swift */,
 			);
 			path = Relays;
 			sourceTree = "<group>";
@@ -326,6 +332,7 @@
 			files = (
 				08C1EFC72B4426FD000F4527 /* FatCrabTakerModel.swift in Sources */,
 				085FE4DC2B3EB78B0061DF95 /* ReceiveView.swift in Sources */,
+				0825B6492B7271BC00E7AC0E /* AddRelayToolbarItem.swift in Sources */,
 				08C1EFC32B4426D9000F4527 /* FatCrabMakerModel.swift in Sources */,
 				08C1EFCF2B442743000F4527 /* FatCrabMakerMock.swift in Sources */,
 				08DC5B6F2B3D7E0E00B71A22 /* FatCrabModel.swift in Sources */,
@@ -345,6 +352,7 @@
 				08DC5B632B3D76F600B71A22 /* WalletView.swift in Sources */,
 				08DC5B7A2B3DA56E00B71A22 /* EnterSeedsView.swift in Sources */,
 				08DC5B652B3D770000B71A22 /* BookView.swift in Sources */,
+				0825B64B2B7271CF00E7AC0E /* AddRelayView.swift in Sources */,
 				08DC5B692B3D771300B71A22 /* StatusView.swift in Sources */,
 				08C1EFB42B3EF8C3000F4527 /* AppSecureStorage.swift in Sources */,
 				085FE4E62B3EDBCA0061DF95 /* TitleValueHStack.swift in Sources */,

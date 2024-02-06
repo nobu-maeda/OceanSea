@@ -27,6 +27,10 @@ protocol FatCrabProtocol: ObservableObject {
     func updateBalances()
     func walletGenerateReceiveAddress() async throws -> String
     
+    var relays: [RelayInfo] { get }
+    func addRelays(relayAddrs: [RelayAddr]) throws
+    func removeRelay(url: String) throws
+    
     func makeBuyOrder(price: Double, amount: Double, fatcrabRxAddr: String) throws -> any FatCrabMakerBuyProtocol
     func makeSellOrder(price: Double, amount: Double) throws -> any FatCrabMakerSellProtocol
     func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) throws -> any FatCrabTakerBuyProtocol

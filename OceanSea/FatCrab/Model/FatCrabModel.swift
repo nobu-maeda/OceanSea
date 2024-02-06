@@ -23,6 +23,7 @@ import Foundation
     var totalBalance: Int
     var spendableBalance: Int
     var allocatedAmount: Int
+    var relays: [RelayInfo]
     
     var queriedOrders: [FatCrabOrder]
     var trades: [UUID: FatCrabTrade]
@@ -37,6 +38,7 @@ import Foundation
         totalBalance = 0
         spendableBalance = 0
         allocatedAmount = 0
+        relays = []
         
         queriedOrders = []
         trades = [:]
@@ -61,6 +63,8 @@ import Foundation
             }
         }
         updateBalances()
+        
+        relays = trader.getRelays()
     }
     
     func updateBalances() {
@@ -75,6 +79,16 @@ import Foundation
                 totalBalance = walletAllocatedAmount + walletSpendableBalance
             }
         }
+    }
+    
+    func addRelays(relayAddrs: [RelayAddr]) throws {
+        try trader.addRelays(relayAddrs: relayAddrs)
+        relays = trader.getRelays()
+    }
+    
+    func removeRelay(url: String) throws {
+        try trader.removeRelay(url: url)
+        relays = trader.getRelays()
     }
     
     func updateOrders() {

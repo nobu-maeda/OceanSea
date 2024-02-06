@@ -10,10 +10,38 @@ import SwiftUI
 struct RelaysView: View {
     @Environment(\.fatCrabModel) var model
     
+    @State var showAddRelayToolbarView = false
+    
     var body: some View {
         NavigationStack {
-            Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-                .navigationTitle("Nostr Relays")
+            List {
+                ForEach(model.relays, id: \.self) { relay in
+                    HStack {
+                        Text(relay.url)
+                        Spacer()
+                        Button {
+                            removeRelay(url: relay.url)
+                        } label: {
+                            Image(systemName: "multiply").foregroundColor(.black)
+                        }
+                    }
+                }
+            }
+            .toolbar(content: {
+                AddRelayToolbarItem(showAddRelayToolbarView: $showAddRelayToolbarView)
+            })
+            .navigationTitle("Nostr Relays")
+        }
+        .sheet(isPresented: $showAddRelayToolbarView) {
+            AddRelayView()
+        }
+    }
+    
+    func removeRelay(url: String) {
+        do {
+            try model.removeRelay(url: url)
+        } catch {
+            print("Error removing relay: \(error)")
         }
     }
 }

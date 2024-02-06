@@ -298,6 +298,19 @@ private func uniffiCheckCallStatus(
 
 // Public interface members begin here.
 
+private struct FfiConverterUInt16: FfiConverterPrimitive {
+    typealias FfiType = UInt16
+    typealias SwiftType = UInt16
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> UInt16 {
+        return try lift(readInt(&buf))
+    }
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(value))
+    }
+}
+
 private struct FfiConverterUInt32: FfiConverterPrimitive {
     typealias FfiType = UInt32
     typealias SwiftType = UInt32
@@ -1197,13 +1210,15 @@ public func FfiConverterTypeFatCrabTradeRspEnvelope_lower(_ value: FatCrabTradeR
 }
 
 public protocol FatCrabTraderProtocol {
-    func addRelays(relaysInfo: [RelayInfo]) throws
+    func addRelays(relayAddrs: [RelayAddr]) throws
+    func getRelays() -> [RelayInfo]
     func newBuyMaker(order: FatCrabOrder, fatcrabRxAddr: String) throws -> FatCrabBuyMaker
     func newBuyTaker(orderEnvelope: FatCrabOrderEnvelope) throws -> FatCrabBuyTaker
     func newSellMaker(order: FatCrabOrder) throws -> FatCrabSellMaker
     func newSellTaker(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) throws -> FatCrabSellTaker
     func nostrPubkey() -> String
     func queryOrders(orderType: FatCrabOrderType?) throws -> [FatCrabOrderEnvelope]
+    func removeRelay(url: String) throws
     func shutdown() throws
     func walletAllocatedAmount() throws -> UInt64
     func walletBip39Mnemonic() throws -> String
@@ -1246,12 +1261,21 @@ public class FatCrabTrader: FatCrabTraderProtocol {
         })
     }
 
-    public func addRelays(relaysInfo: [RelayInfo]) throws {
+    public func addRelays(relayAddrs: [RelayAddr]) throws {
         try
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabtrader_add_relays(self.pointer,
-                                                                          FfiConverterSequenceTypeRelayInfo.lower(relaysInfo), $0)
+                                                                          FfiConverterSequenceTypeRelayAddr.lower(relayAddrs), $0)
             }
+    }
+
+    public func getRelays() -> [RelayInfo] {
+        return try! FfiConverterSequenceTypeRelayInfo.lift(
+            try!
+                rustCall {
+                    uniffi_fatcrab_trading_fn_method_fatcrabtrader_get_relays(self.pointer, $0)
+                }
+        )
     }
 
     public func newBuyMaker(order: FatCrabOrder, fatcrabRxAddr: String) throws -> FatCrabBuyMaker {
@@ -1308,6 +1332,14 @@ public class FatCrabTrader: FatCrabTraderProtocol {
                                                                             FfiConverterOptionTypeFatCrabOrderType.lower(orderType), $0)
             }
         )
+    }
+
+    public func removeRelay(url: String) throws {
+        try
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabtrader_remove_relay(self.pointer,
+                                                                            FfiConverterString.lower(url), $0)
+            }
     }
 
     public func shutdown() throws {
@@ -1523,21 +1555,21 @@ public func FfiConverterTypeFatCrabPeerMessage_lower(_ value: FatCrabPeerMessage
     return FfiConverterTypeFatCrabPeerMessage.lower(value)
 }
 
-public struct RelayInfo {
-    public var addr: String
+public struct RelayAddr {
+    public var url: String
     public var socketAddr: String?
 
     // Default memberwise initializers are never public by default, so we
     // declare one manually.
-    public init(addr: String, socketAddr: String?) {
-        self.addr = addr
+    public init(url: String, socketAddr: String?) {
+        self.url = url
         self.socketAddr = socketAddr
     }
 }
 
-extension RelayInfo: Equatable, Hashable {
-    public static func == (lhs: RelayInfo, rhs: RelayInfo) -> Bool {
-        if lhs.addr != rhs.addr {
+extension RelayAddr: Equatable, Hashable {
+    public static func == (lhs: RelayAddr, rhs: RelayAddr) -> Bool {
+        if lhs.url != rhs.url {
             return false
         }
         if lhs.socketAddr != rhs.socketAddr {
@@ -1547,22 +1579,81 @@ extension RelayInfo: Equatable, Hashable {
     }
 
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(addr)
+        hasher.combine(url)
         hasher.combine(socketAddr)
+    }
+}
+
+public struct FfiConverterTypeRelayAddr: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> RelayAddr {
+        return try RelayAddr(
+            url: FfiConverterString.read(from: &buf),
+            socketAddr: FfiConverterOptionString.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: RelayAddr, into buf: inout [UInt8]) {
+        FfiConverterString.write(value.url, into: &buf)
+        FfiConverterOptionString.write(value.socketAddr, into: &buf)
+    }
+}
+
+public func FfiConverterTypeRelayAddr_lift(_ buf: RustBuffer) throws -> RelayAddr {
+    return try FfiConverterTypeRelayAddr.lift(buf)
+}
+
+public func FfiConverterTypeRelayAddr_lower(_ value: RelayAddr) -> RustBuffer {
+    return FfiConverterTypeRelayAddr.lower(value)
+}
+
+public struct RelayInfo {
+    public var url: String
+    public var status: RelayStatus
+    public var document: RelayInformationDocument
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(url: String, status: RelayStatus, document: RelayInformationDocument) {
+        self.url = url
+        self.status = status
+        self.document = document
+    }
+}
+
+extension RelayInfo: Equatable, Hashable {
+    public static func == (lhs: RelayInfo, rhs: RelayInfo) -> Bool {
+        if lhs.url != rhs.url {
+            return false
+        }
+        if lhs.status != rhs.status {
+            return false
+        }
+        if lhs.document != rhs.document {
+            return false
+        }
+        return true
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(url)
+        hasher.combine(status)
+        hasher.combine(document)
     }
 }
 
 public struct FfiConverterTypeRelayInfo: FfiConverterRustBuffer {
     public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> RelayInfo {
         return try RelayInfo(
-            addr: FfiConverterString.read(from: &buf),
-            socketAddr: FfiConverterOptionString.read(from: &buf)
+            url: FfiConverterString.read(from: &buf),
+            status: FfiConverterTypeRelayStatus.read(from: &buf),
+            document: FfiConverterTypeRelayInformationDocument.read(from: &buf)
         )
     }
 
     public static func write(_ value: RelayInfo, into buf: inout [UInt8]) {
-        FfiConverterString.write(value.addr, into: &buf)
-        FfiConverterOptionString.write(value.socketAddr, into: &buf)
+        FfiConverterString.write(value.url, into: &buf)
+        FfiConverterTypeRelayStatus.write(value.status, into: &buf)
+        FfiConverterTypeRelayInformationDocument.write(value.document, into: &buf)
     }
 }
 
@@ -1572,6 +1663,145 @@ public func FfiConverterTypeRelayInfo_lift(_ buf: RustBuffer) throws -> RelayInf
 
 public func FfiConverterTypeRelayInfo_lower(_ value: RelayInfo) -> RustBuffer {
     return FfiConverterTypeRelayInfo.lower(value)
+}
+
+public struct RelayInformationDocument {
+    public var name: String?
+    public var description: String?
+    public var pubkey: String?
+    public var contact: String?
+    public var supportedNips: [UInt16]?
+    public var software: String?
+    public var version: String?
+    public var relayCountries: [String]
+    public var languageTags: [String]
+    public var tags: [String]
+    public var postingPolicy: String?
+    public var paymentsUrl: String?
+    public var icon: String?
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(name: String?, description: String?, pubkey: String?, contact: String?, supportedNips: [UInt16]?, software: String?, version: String?, relayCountries: [String], languageTags: [String], tags: [String], postingPolicy: String?, paymentsUrl: String?, icon: String?) {
+        self.name = name
+        self.description = description
+        self.pubkey = pubkey
+        self.contact = contact
+        self.supportedNips = supportedNips
+        self.software = software
+        self.version = version
+        self.relayCountries = relayCountries
+        self.languageTags = languageTags
+        self.tags = tags
+        self.postingPolicy = postingPolicy
+        self.paymentsUrl = paymentsUrl
+        self.icon = icon
+    }
+}
+
+extension RelayInformationDocument: Equatable, Hashable {
+    public static func == (lhs: RelayInformationDocument, rhs: RelayInformationDocument) -> Bool {
+        if lhs.name != rhs.name {
+            return false
+        }
+        if lhs.description != rhs.description {
+            return false
+        }
+        if lhs.pubkey != rhs.pubkey {
+            return false
+        }
+        if lhs.contact != rhs.contact {
+            return false
+        }
+        if lhs.supportedNips != rhs.supportedNips {
+            return false
+        }
+        if lhs.software != rhs.software {
+            return false
+        }
+        if lhs.version != rhs.version {
+            return false
+        }
+        if lhs.relayCountries != rhs.relayCountries {
+            return false
+        }
+        if lhs.languageTags != rhs.languageTags {
+            return false
+        }
+        if lhs.tags != rhs.tags {
+            return false
+        }
+        if lhs.postingPolicy != rhs.postingPolicy {
+            return false
+        }
+        if lhs.paymentsUrl != rhs.paymentsUrl {
+            return false
+        }
+        if lhs.icon != rhs.icon {
+            return false
+        }
+        return true
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
+        hasher.combine(description)
+        hasher.combine(pubkey)
+        hasher.combine(contact)
+        hasher.combine(supportedNips)
+        hasher.combine(software)
+        hasher.combine(version)
+        hasher.combine(relayCountries)
+        hasher.combine(languageTags)
+        hasher.combine(tags)
+        hasher.combine(postingPolicy)
+        hasher.combine(paymentsUrl)
+        hasher.combine(icon)
+    }
+}
+
+public struct FfiConverterTypeRelayInformationDocument: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> RelayInformationDocument {
+        return try RelayInformationDocument(
+            name: FfiConverterOptionString.read(from: &buf),
+            description: FfiConverterOptionString.read(from: &buf),
+            pubkey: FfiConverterOptionString.read(from: &buf),
+            contact: FfiConverterOptionString.read(from: &buf),
+            supportedNips: FfiConverterOptionSequenceUInt16.read(from: &buf),
+            software: FfiConverterOptionString.read(from: &buf),
+            version: FfiConverterOptionString.read(from: &buf),
+            relayCountries: FfiConverterSequenceString.read(from: &buf),
+            languageTags: FfiConverterSequenceString.read(from: &buf),
+            tags: FfiConverterSequenceString.read(from: &buf),
+            postingPolicy: FfiConverterOptionString.read(from: &buf),
+            paymentsUrl: FfiConverterOptionString.read(from: &buf),
+            icon: FfiConverterOptionString.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: RelayInformationDocument, into buf: inout [UInt8]) {
+        FfiConverterOptionString.write(value.name, into: &buf)
+        FfiConverterOptionString.write(value.description, into: &buf)
+        FfiConverterOptionString.write(value.pubkey, into: &buf)
+        FfiConverterOptionString.write(value.contact, into: &buf)
+        FfiConverterOptionSequenceUInt16.write(value.supportedNips, into: &buf)
+        FfiConverterOptionString.write(value.software, into: &buf)
+        FfiConverterOptionString.write(value.version, into: &buf)
+        FfiConverterSequenceString.write(value.relayCountries, into: &buf)
+        FfiConverterSequenceString.write(value.languageTags, into: &buf)
+        FfiConverterSequenceString.write(value.tags, into: &buf)
+        FfiConverterOptionString.write(value.postingPolicy, into: &buf)
+        FfiConverterOptionString.write(value.paymentsUrl, into: &buf)
+        FfiConverterOptionString.write(value.icon, into: &buf)
+    }
+}
+
+public func FfiConverterTypeRelayInformationDocument_lift(_ buf: RustBuffer) throws -> RelayInformationDocument {
+    return try FfiConverterTypeRelayInformationDocument.lift(buf)
+}
+
+public func FfiConverterTypeRelayInformationDocument_lower(_ value: RelayInformationDocument) -> RustBuffer {
+    return FfiConverterTypeRelayInformationDocument.lower(value)
 }
 
 // Note that we don't yet support `indirect` for enums.
@@ -1984,6 +2214,78 @@ public func FfiConverterTypeNetwork_lower(_ value: Network) -> RustBuffer {
 
 extension Network: Equatable, Hashable {}
 
+// Note that we don't yet support `indirect` for enums.
+// See https://github.com/mozilla/uniffi-rs/issues/396 for further discussion.
+public enum RelayStatus {
+    case initialized
+    case pending
+    case connecting
+    case connected
+    case disconnected
+    case stopped
+    case terminated
+}
+
+public struct FfiConverterTypeRelayStatus: FfiConverterRustBuffer {
+    typealias SwiftType = RelayStatus
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> RelayStatus {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        case 1: return .initialized
+
+        case 2: return .pending
+
+        case 3: return .connecting
+
+        case 4: return .connected
+
+        case 5: return .disconnected
+
+        case 6: return .stopped
+
+        case 7: return .terminated
+
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: RelayStatus, into buf: inout [UInt8]) {
+        switch value {
+        case .initialized:
+            writeInt(&buf, Int32(1))
+
+        case .pending:
+            writeInt(&buf, Int32(2))
+
+        case .connecting:
+            writeInt(&buf, Int32(3))
+
+        case .connected:
+            writeInt(&buf, Int32(4))
+
+        case .disconnected:
+            writeInt(&buf, Int32(5))
+
+        case .stopped:
+            writeInt(&buf, Int32(6))
+
+        case .terminated:
+            writeInt(&buf, Int32(7))
+        }
+    }
+}
+
+public func FfiConverterTypeRelayStatus_lift(_ buf: RustBuffer) throws -> RelayStatus {
+    return try FfiConverterTypeRelayStatus.lift(buf)
+}
+
+public func FfiConverterTypeRelayStatus_lower(_ value: RelayStatus) -> RustBuffer {
+    return FfiConverterTypeRelayStatus.lower(value)
+}
+
+extension RelayStatus: Equatable, Hashable {}
+
 private struct FfiConverterOptionString: FfiConverterRustBuffer {
     typealias SwiftType = String?
 
@@ -2026,6 +2328,71 @@ private struct FfiConverterOptionTypeFatCrabOrderType: FfiConverterRustBuffer {
     }
 }
 
+private struct FfiConverterOptionSequenceUInt16: FfiConverterRustBuffer {
+    typealias SwiftType = [UInt16]?
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        guard let value = value else {
+            writeInt(&buf, Int8(0))
+            return
+        }
+        writeInt(&buf, Int8(1))
+        FfiConverterSequenceUInt16.write(value, into: &buf)
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        switch try readInt(&buf) as Int8 {
+        case 0: return nil
+        case 1: return try FfiConverterSequenceUInt16.read(from: &buf)
+        default: throw UniffiInternalError.unexpectedOptionalTag
+        }
+    }
+}
+
+private struct FfiConverterSequenceUInt16: FfiConverterRustBuffer {
+    typealias SwiftType = [UInt16]
+
+    public static func write(_ value: [UInt16], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterUInt16.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [UInt16] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [UInt16]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            try seq.append(FfiConverterUInt16.read(from: &buf))
+        }
+        return seq
+    }
+}
+
+private struct FfiConverterSequenceString: FfiConverterRustBuffer {
+    typealias SwiftType = [String]
+
+    public static func write(_ value: [String], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterString.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [String] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [String]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            try seq.append(FfiConverterString.read(from: &buf))
+        }
+        return seq
+    }
+}
+
 private struct FfiConverterSequenceTypeFatCrabOrderEnvelope: FfiConverterRustBuffer {
     typealias SwiftType = [FatCrabOrderEnvelope]
 
@@ -2043,6 +2410,28 @@ private struct FfiConverterSequenceTypeFatCrabOrderEnvelope: FfiConverterRustBuf
         seq.reserveCapacity(Int(len))
         for _ in 0 ..< len {
             try seq.append(FfiConverterTypeFatCrabOrderEnvelope.read(from: &buf))
+        }
+        return seq
+    }
+}
+
+private struct FfiConverterSequenceTypeRelayAddr: FfiConverterRustBuffer {
+    typealias SwiftType = [RelayAddr]
+
+    public static func write(_ value: [RelayAddr], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterTypeRelayAddr.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [RelayAddr] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [RelayAddr]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            try seq.append(FfiConverterTypeRelayAddr.read(from: &buf))
         }
         return seq
     }
@@ -2176,7 +2565,10 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_method_fatcrabtraderspenvelope_trade_rsp() != 57113 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_add_relays() != 12881 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_add_relays() != 10218 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_get_relays() != 36556 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_new_buy_maker() != 40030 {
@@ -2195,6 +2587,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_query_orders() != 8424 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_remove_relay() != 39796 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_shutdown() != 46823 {
