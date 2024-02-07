@@ -24,6 +24,12 @@ struct BookView: View {
                     }
                 }
             }
+            .refreshable {
+                model.updateOrderBook()
+            }
+            .onAppear() {
+                model.updateOrderBook()
+            }
             .toolbar(content: {
                 MakeNewOrderToolbarItem(showMakeNewOrderView: $showMakeNewOrderView)
             })
