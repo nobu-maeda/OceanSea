@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		0825B6492B7271BC00E7AC0E /* AddRelayToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0825B6482B7271BC00E7AC0E /* AddRelayToolbarItem.swift */; };
 		0825B64B2B7271CF00E7AC0E /* AddRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0825B64A2B7271CF00E7AC0E /* AddRelayView.swift */; };
+		0825B64D2B7396F500E7AC0E /* OrderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0825B64C2B7396F500E7AC0E /* OrderDetailView.swift */; };
+		0825B64F2B73970300E7AC0E /* OrderRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0825B64E2B73970300E7AC0E /* OrderRowView.swift */; };
 		085FE4DA2B3EB77D0061DF95 /* SendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085FE4D92B3EB77D0061DF95 /* SendView.swift */; };
 		085FE4DC2B3EB78B0061DF95 /* ReceiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085FE4DB2B3EB78B0061DF95 /* ReceiveView.swift */; };
 		085FE4DE2B3EC6550061DF95 /* FatCrabProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085FE4DD2B3EC6550061DF95 /* FatCrabProtocol.swift */; };
@@ -57,6 +59,8 @@
 /* Begin PBXFileReference section */
 		0825B6482B7271BC00E7AC0E /* AddRelayToolbarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRelayToolbarItem.swift; sourceTree = "<group>"; };
 		0825B64A2B7271CF00E7AC0E /* AddRelayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRelayView.swift; sourceTree = "<group>"; };
+		0825B64C2B7396F500E7AC0E /* OrderDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailView.swift; sourceTree = "<group>"; };
+		0825B64E2B73970300E7AC0E /* OrderRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderRowView.swift; sourceTree = "<group>"; };
 		085FE4D92B3EB77D0061DF95 /* SendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendView.swift; sourceTree = "<group>"; };
 		085FE4DB2B3EB78B0061DF95 /* ReceiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveView.swift; sourceTree = "<group>"; };
 		085FE4DD2B3EC6550061DF95 /* FatCrabProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FatCrabProtocol.swift; sourceTree = "<group>"; };
@@ -226,6 +230,8 @@
 			isa = PBXGroup;
 			children = (
 				08DC5B642B3D770000B71A22 /* BookView.swift */,
+				0825B64C2B7396F500E7AC0E /* OrderDetailView.swift */,
+				0825B64E2B73970300E7AC0E /* OrderRowView.swift */,
 			);
 			path = Book;
 			sourceTree = "<group>";
@@ -336,6 +342,7 @@
 				08C1EFC32B4426D9000F4527 /* FatCrabMakerModel.swift in Sources */,
 				08C1EFCF2B442743000F4527 /* FatCrabMakerMock.swift in Sources */,
 				08DC5B6F2B3D7E0E00B71A22 /* FatCrabModel.swift in Sources */,
+				0825B64F2B73970300E7AC0E /* OrderRowView.swift in Sources */,
 				08C1EFBC2B42D887000F4527 /* MakeNewOrderToolbarItem.swift in Sources */,
 				085FE4E02B3ECBF10061DF95 /* FatCrabMock.swift in Sources */,
 				08C1EFBE2B42D9A4000F4527 /* MakeNewOrderView.swift in Sources */,
@@ -356,6 +363,7 @@
 				08DC5B692B3D771300B71A22 /* StatusView.swift in Sources */,
 				08C1EFB42B3EF8C3000F4527 /* AppSecureStorage.swift in Sources */,
 				085FE4E62B3EDBCA0061DF95 /* TitleValueHStack.swift in Sources */,
+				0825B64D2B7396F500E7AC0E /* OrderDetailView.swift in Sources */,
 				08DC5B782B3DA55500B71A22 /* ShowSeedsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -7,12 +7,26 @@
 
 import Foundation
 
+class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
+    let innerOrder: FatCrabOrder
+    
+    init(order: FatCrabOrder) {
+        self.innerOrder = order
+    }
+    
+    func order() -> FatCrabOrder { innerOrder }
+}
+
 @Observable class FatCrabMock: FatCrabProtocol {
     var totalBalance: Int
     var spendableBalance: Int
     var allocatedAmount: Int
     var mnemonic: [String]
     var relays: [RelayInfo]
+    
+    var queriedOrders: [UUID: FatCrabOrderEnvelopeProtocol]
+    var makerTrades: [UUID: FatCrabMakerTrade]
+    var takerTrades: [UUID: FatCrabTakerTrade]
     
     init() {
         totalBalance = 0
@@ -26,7 +40,17 @@ import Foundation
         let relayInfo2 = Self.createRelayInfo(relayAddr: relayAddr2)
         relays = [relayInfo1, relayInfo2]
         
+        makerTrades = [:]
+        takerTrades = [:]
+        queriedOrders = [:]
+        
         updateBalances()
+        
+        addToOrderBook()
+        addToOrderBook()
+        addToOrderBook()
+        addToOrderBook()
+        addToOrderBook()
     }
     
     func walletGenerateReceiveAddress() async throws -> String {
@@ -62,6 +86,33 @@ import Foundation
     func removeRelay(url: String) throws {
         relays.removeAll { relayInfo in
             relayInfo.url == url
+        }
+    }
+    
+    func generateOrderEnvelope() -> FatCrabOrderEnvelopeProtocol {
+        let orderType: FatCrabOrderType = Bool.random() ? .buy : .sell
+        let tradeUuid = UUID()
+        let amount = Double.random(in: 1...1000000)
+        let price = Double.random(in: 1...1000000)
+        
+        let queriedOrder = FatCrabOrder(orderType: orderType, tradeUuid: tradeUuid.uuidString, amount: amount, price: price)
+        queriedOrders.updateValue(FatCrabOrderEnvelopeMock(order: queriedOrder), forKey: tradeUuid)
+        
+        return FatCrabOrderEnvelopeMock(order: queriedOrder)
+    }
+    
+    func addToOrderBook() {
+        let orderEnvelope = generateOrderEnvelope()
+        let uuid = UUID(uuidString: orderEnvelope.order().tradeUuid)!
+        self.queriedOrders.updateValue(orderEnvelope, forKey: uuid)
+    }
+    
+    func updateOrderBook() {
+        if Bool.random() {
+            addToOrderBook()
+        } else {
+            let index = Int.random(in: 0..<queriedOrders.count)
+            self.queriedOrders.removeValue(forKey: Array(queriedOrders.keys)[index])
         }
     }
     

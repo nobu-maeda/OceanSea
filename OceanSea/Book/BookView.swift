@@ -14,11 +14,20 @@ struct BookView: View {
     
     var body: some View {
         NavigationStack {
-            Text("Hello, World!")
-                .toolbar(content: {
-                    MakeNewOrderToolbarItem(showMakeNewOrderView: $showMakeNewOrderView)
-                })
-                .navigationTitle("Order Book")
+            List {
+                let orderUuids: [UUID] = model.queriedOrders.keys.map({ $0 })
+                ForEach(orderUuids, id: \.self) { orderUuid in
+                    if let order = model.queriedOrders[orderUuid]?.order() {
+                        NavigationLink(destination: OrderDetailView(order: order)) {
+                            OrderRowView(order: order)
+                        }
+                    }
+                }
+            }
+            .toolbar(content: {
+                MakeNewOrderToolbarItem(showMakeNewOrderView: $showMakeNewOrderView)
+            })
+            .navigationTitle("Order Book")
         }
         .sheet(isPresented: $showMakeNewOrderView) {
             MakeNewOrderView()

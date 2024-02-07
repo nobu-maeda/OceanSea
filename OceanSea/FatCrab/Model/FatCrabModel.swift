@@ -7,14 +7,7 @@
 
 import Foundation
 
-@Observable class FatCrabModel: FatCrabProtocol {    
-    enum FatCrabTrade {
-        case buyMaker(maker: FatCrabBuyMaker)
-        case sellMaker(maker: FatCrabSellMaker)
-        case buyTaker(taker: FatCrabBuyTaker)
-        case sellTaker(taker: FatCrabSellTaker)
-    }
-    
+@Observable class FatCrabModel: FatCrabProtocol {
     private let trader: FatCrabTrader  // Should we inject this? Or is this good?
     
     let MNEMONIC_KEYCHAIN_WRAPPER_KEY: String = "mnemonic"
@@ -25,8 +18,9 @@ import Foundation
     var allocatedAmount: Int
     var relays: [RelayInfo]
     
-    var queriedOrders: [FatCrabOrder]
-    var trades: [UUID: FatCrabTrade]
+    var queriedOrders: [UUID: FatCrabOrderEnvelopeProtocol]
+    var makerTrades: [UUID: FatCrabMakerTrade]
+    var takerTrades: [UUID: FatCrabTakerTrade]
     
     init() {
         let url = "ssl://electrum.blockstream.info:60002"
@@ -40,8 +34,9 @@ import Foundation
         allocatedAmount = 0
         relays = []
         
-        queriedOrders = []
-        trades = [:]
+        queriedOrders = [:]
+        makerTrades = [:]
+        takerTrades = [:]
         
         if let storedMnemonic = KeychainWrapper.standard.string(forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked) {
             trader = FatCrabTrader.newWithMnemonic(mnemonic: storedMnemonic, info: info, appDirPath: appDir[0])
@@ -91,10 +86,12 @@ import Foundation
         relays = trader.getRelays()
     }
     
-    func updateOrders() {
+    func updateOrderBook() {
         do {
             let envelopes = try trader.queryOrders(orderType: nil)
-            queriedOrders = envelopes.map { $0.order() }
+            queriedOrders = envelopes.reduce(into: [UUID: FatCrabOrderEnvelope]()) {
+                $0[UUID(uuidString: $1.order().tradeUuid)!] = $1
+            }
         } catch {
             print(error)
         }
@@ -104,13 +101,13 @@ import Foundation
         let uuid = UUID()
         let order = FatCrabOrder(orderType: FatCrabOrderType.buy, tradeUuid: uuid.uuidString, amount: amount, price: price)
         let maker = try trader.newBuyMaker(order: order, fatcrabRxAddr: fatcrabRxAddr)
-        trades.updateValue(.buyMaker(maker: maker), forKey: uuid)
+        let makerModel = FatCrabMakerBuyModel(maker: maker)
+        makerTrades.updateValue(.buy(maker: makerModel), forKey: uuid)
         
         // TODO: How to hook-up Maker events?
         
         // TODO: Do we just go-ahead and post the order here?
         
-        let makerModel = FatCrabMakerBuyModel(maker: maker)
         return makerModel
     }
     
@@ -118,39 +115,39 @@ import Foundation
         let uuid = UUID()
         let order = FatCrabOrder(orderType: FatCrabOrderType.sell, tradeUuid: uuid.uuidString, amount: amount, price: price)
         let maker = try trader.newSellMaker(order: order)
-        trades.updateValue(.sellMaker(maker: maker), forKey: uuid)
+        let makerModel = FatCrabMakerSellModel(maker: maker)
+        makerTrades.updateValue(.sell(maker: makerModel), forKey: uuid)
         
         // TODO: How to hook-up Maker events?
         
         // TODO: Do we just go-ahead and post the order here?
         
-        let makerModel = FatCrabMakerSellModel(maker: maker)
         return makerModel
     }
     
     func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) throws -> any FatCrabTakerBuyProtocol {
         let uuid = UUID()
         let taker = try trader.newBuyTaker(orderEnvelope: orderEnvelope)
-        trades.updateValue(.buyTaker(taker: taker), forKey: uuid)
+        let takerModel = FatCrabTakerBuyModel(taker: taker)
+        takerTrades.updateValue(.buy(taker: takerModel), forKey: uuid)
         
         // TODO: How to hook-up Taker events?
         
         // TODO: Do we just go-ahead and take the order here?
         
-        let takerModel = FatCrabTakerBuyModel(taker: taker)
         return takerModel
     }
     
     func takeSellOrder(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) throws -> any FatCrabTakerSellProtocol {
         let uuid = UUID()
         let taker = try trader.newSellTaker(orderEnvelope: orderEnvelope, fatcrabRxAddr: fatcrabRxAddr)
-        trades.updateValue(.sellTaker(taker: taker), forKey: uuid)
+        let takerModel = FatCrabTakerSellModel(taker: taker)
+        takerTrades.updateValue(.sell(taker: takerModel), forKey: uuid)
         
         // TODO: How to hook-up Taker events?
         
         // TODO: Do we just go-ahead and take the order here?
         
-        let takerModel = FatCrabTakerSellModel(taker: taker)
         return takerModel
     }
     

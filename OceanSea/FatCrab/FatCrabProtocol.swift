@@ -7,6 +7,16 @@
 
 import SwiftUI
 
+enum FatCrabMakerTrade {
+    case buy(maker: any FatCrabMakerBuyProtocol)
+    case sell(maker: any FatCrabMakerSellProtocol)
+}
+
+enum FatCrabTakerTrade {
+    case buy(taker: any FatCrabTakerBuyProtocol)
+    case sell(taker: any FatCrabTakerSellProtocol)
+}
+
 struct FatCrabModelKey: EnvironmentKey {
     static let defaultValue: any FatCrabProtocol = FatCrabMock()
 }
@@ -31,6 +41,11 @@ protocol FatCrabProtocol: ObservableObject {
     func addRelays(relayAddrs: [RelayAddr]) throws
     func removeRelay(url: String) throws
     
+    var queriedOrders: [UUID: FatCrabOrderEnvelopeProtocol] { get }
+    func updateOrderBook()
+    
+    var makerTrades: [UUID: FatCrabMakerTrade] { get }
+    var takerTrades: [UUID: FatCrabTakerTrade] { get }
     func makeBuyOrder(price: Double, amount: Double, fatcrabRxAddr: String) throws -> any FatCrabMakerBuyProtocol
     func makeSellOrder(price: Double, amount: Double) throws -> any FatCrabMakerSellProtocol
     func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) throws -> any FatCrabTakerBuyProtocol
