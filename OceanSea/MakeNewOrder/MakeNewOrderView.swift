@@ -109,7 +109,14 @@ struct MakeNewOrderView: View {
             case .sell:
                 _ = try model.makeSellOrder(price: price, amount: amount)
             }
-        } catch {
+            
+            dismiss.callAsFunction()
+        } catch let fatCrabError as FatCrabError {
+            alertTitleString = "Error"
+            alertBodyString = fatCrabError.description()
+            showAlert = true
+        }
+        catch {
             alertTitleString = "Error"
             alertBodyString = error.localizedDescription
             showAlert = true

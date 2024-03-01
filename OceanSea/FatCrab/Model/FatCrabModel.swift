@@ -160,3 +160,34 @@ import Foundation
         return address
     }
 }
+
+extension FatCrabError {
+    func description() -> String {
+        switch self {
+        case .TxNotFound:
+            return "FatCrab-Error | Transaction not found"
+        case .TxUnconfirmed:
+            return "FatCrab-Error | Transaction unconfirmed"
+        case .Simple(let description):
+            return description
+        case .N3xb(let description):
+            return description
+        case .BdkBip39(let description):
+            return description
+        case .Bdk(let description):
+            return description
+        case .Io(let description):
+            return description
+        case .JoinError(let description):
+            return description
+        case .SerdesJson(let description):
+            return description
+        case .UrlParse(let description):
+            return description
+        case .MpscSend(let description):
+            return description
+        case .OneshotRecv(let description):
+            return description
+        }
+    }
+}
