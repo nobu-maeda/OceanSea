@@ -1218,6 +1218,7 @@ public protocol FatCrabTraderProtocol {
     func newSellTaker(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) throws -> FatCrabSellTaker
     func nostrPubkey() -> String
     func queryOrders(orderType: FatCrabOrderType?) throws -> [FatCrabOrderEnvelope]
+    func reconnect() throws
     func removeRelay(url: String) throws
     func shutdown() throws
     func walletAllocatedAmount() throws -> UInt64
@@ -1332,6 +1333,13 @@ public class FatCrabTrader: FatCrabTraderProtocol {
                                                                             FfiConverterOptionTypeFatCrabOrderType.lower(orderType), $0)
             }
         )
+    }
+
+    public func reconnect() throws {
+        try
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabtrader_reconnect(self.pointer, $0)
+            }
     }
 
     public func removeRelay(url: String) throws {
@@ -2587,6 +2595,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_query_orders() != 8424 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_reconnect() != 47971 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_remove_relay() != 39796 {

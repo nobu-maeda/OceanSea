@@ -60,6 +60,11 @@ import Foundation
         updateBalances()
         
         relays = trader.getRelays()
+
+        Task { @MainActor in
+            // Should make sure all Maker & Taker notif is hooked up before reconnecting
+            try trader.reconnect()
+        }
     }
     
     func updateBalances() {
@@ -121,6 +126,7 @@ import Foundation
         // TODO: How to hook-up Maker events?
         
         // TODO: Do we just go-ahead and post the order here?
+        try maker.postNewOrder()
         
         return makerModel
     }
