@@ -55,6 +55,9 @@ struct WalletView: View {
                     
                 }
             }
+            .onAppear() {
+                model.updateBalances()
+            }
         }
     }
 }

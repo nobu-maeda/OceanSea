@@ -1211,7 +1211,11 @@ public func FfiConverterTypeFatCrabTradeRspEnvelope_lower(_ value: FatCrabTradeR
 
 public protocol FatCrabTraderProtocol {
     func addRelays(relayAddrs: [RelayAddr]) throws
+    func getBuyMakers() -> [String: FatCrabBuyMaker]
+    func getBuyTakers() -> [String: FatCrabBuyTaker]
     func getRelays() -> [RelayInfo]
+    func getSellMakers() -> [String: FatCrabSellMaker]
+    func getSellTakers() -> [String: FatCrabSellTaker]
     func newBuyMaker(order: FatCrabOrder, fatcrabRxAddr: String) throws -> FatCrabBuyMaker
     func newBuyTaker(orderEnvelope: FatCrabOrderEnvelope) throws -> FatCrabBuyTaker
     func newSellMaker(order: FatCrabOrder) throws -> FatCrabSellMaker
@@ -1270,11 +1274,47 @@ public class FatCrabTrader: FatCrabTraderProtocol {
             }
     }
 
+    public func getBuyMakers() -> [String: FatCrabBuyMaker] {
+        return try! FfiConverterDictionaryStringTypeFatCrabBuyMaker.lift(
+            try!
+                rustCall {
+                    uniffi_fatcrab_trading_fn_method_fatcrabtrader_get_buy_makers(self.pointer, $0)
+                }
+        )
+    }
+
+    public func getBuyTakers() -> [String: FatCrabBuyTaker] {
+        return try! FfiConverterDictionaryStringTypeFatCrabBuyTaker.lift(
+            try!
+                rustCall {
+                    uniffi_fatcrab_trading_fn_method_fatcrabtrader_get_buy_takers(self.pointer, $0)
+                }
+        )
+    }
+
     public func getRelays() -> [RelayInfo] {
         return try! FfiConverterSequenceTypeRelayInfo.lift(
             try!
                 rustCall {
                     uniffi_fatcrab_trading_fn_method_fatcrabtrader_get_relays(self.pointer, $0)
+                }
+        )
+    }
+
+    public func getSellMakers() -> [String: FatCrabSellMaker] {
+        return try! FfiConverterDictionaryStringTypeFatCrabSellMaker.lift(
+            try!
+                rustCall {
+                    uniffi_fatcrab_trading_fn_method_fatcrabtrader_get_sell_makers(self.pointer, $0)
+                }
+        )
+    }
+
+    public func getSellTakers() -> [String: FatCrabSellTaker] {
+        return try! FfiConverterDictionaryStringTypeFatCrabSellTaker.lift(
+            try!
+                rustCall {
+                    uniffi_fatcrab_trading_fn_method_fatcrabtrader_get_sell_takers(self.pointer, $0)
                 }
         )
     }
@@ -2467,6 +2507,98 @@ private struct FfiConverterSequenceTypeRelayInfo: FfiConverterRustBuffer {
     }
 }
 
+private struct FfiConverterDictionaryStringTypeFatCrabBuyMaker: FfiConverterRustBuffer {
+    public static func write(_ value: [String: FatCrabBuyMaker], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for (key, value) in value {
+            FfiConverterString.write(key, into: &buf)
+            FfiConverterTypeFatCrabBuyMaker.write(value, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [String: FatCrabBuyMaker] {
+        let len: Int32 = try readInt(&buf)
+        var dict = [String: FatCrabBuyMaker]()
+        dict.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            let key = try FfiConverterString.read(from: &buf)
+            let value = try FfiConverterTypeFatCrabBuyMaker.read(from: &buf)
+            dict[key] = value
+        }
+        return dict
+    }
+}
+
+private struct FfiConverterDictionaryStringTypeFatCrabBuyTaker: FfiConverterRustBuffer {
+    public static func write(_ value: [String: FatCrabBuyTaker], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for (key, value) in value {
+            FfiConverterString.write(key, into: &buf)
+            FfiConverterTypeFatCrabBuyTaker.write(value, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [String: FatCrabBuyTaker] {
+        let len: Int32 = try readInt(&buf)
+        var dict = [String: FatCrabBuyTaker]()
+        dict.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            let key = try FfiConverterString.read(from: &buf)
+            let value = try FfiConverterTypeFatCrabBuyTaker.read(from: &buf)
+            dict[key] = value
+        }
+        return dict
+    }
+}
+
+private struct FfiConverterDictionaryStringTypeFatCrabSellMaker: FfiConverterRustBuffer {
+    public static func write(_ value: [String: FatCrabSellMaker], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for (key, value) in value {
+            FfiConverterString.write(key, into: &buf)
+            FfiConverterTypeFatCrabSellMaker.write(value, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [String: FatCrabSellMaker] {
+        let len: Int32 = try readInt(&buf)
+        var dict = [String: FatCrabSellMaker]()
+        dict.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            let key = try FfiConverterString.read(from: &buf)
+            let value = try FfiConverterTypeFatCrabSellMaker.read(from: &buf)
+            dict[key] = value
+        }
+        return dict
+    }
+}
+
+private struct FfiConverterDictionaryStringTypeFatCrabSellTaker: FfiConverterRustBuffer {
+    public static func write(_ value: [String: FatCrabSellTaker], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for (key, value) in value {
+            FfiConverterString.write(key, into: &buf)
+            FfiConverterTypeFatCrabSellTaker.write(value, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [String: FatCrabSellTaker] {
+        let len: Int32 = try readInt(&buf)
+        var dict = [String: FatCrabSellTaker]()
+        dict.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            let key = try FfiConverterString.read(from: &buf)
+            let value = try FfiConverterTypeFatCrabSellTaker.read(from: &buf)
+            dict[key] = value
+        }
+        return dict
+    }
+}
+
 private enum InitializationResult {
     case ok
     case contractVersionMismatch
@@ -2576,7 +2708,19 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_add_relays() != 10218 {
         return InitializationResult.apiChecksumMismatch
     }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_get_buy_makers() != 19543 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_get_buy_takers() != 24230 {
+        return InitializationResult.apiChecksumMismatch
+    }
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_get_relays() != 36556 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_get_sell_makers() != 41920 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_get_sell_takers() != 44106 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_new_buy_maker() != 40030 {

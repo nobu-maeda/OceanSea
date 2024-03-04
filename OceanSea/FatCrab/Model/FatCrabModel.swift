@@ -19,8 +19,7 @@ import Foundation
     var relays: [RelayInfo]
     
     var queriedOrders: [UUID: FatCrabOrderEnvelopeProtocol]
-    var makerTrades: [UUID: FatCrabMakerTrade]
-    var takerTrades: [UUID: FatCrabTakerTrade]
+    var trades: [UUID: FatCrabTrade]
     
     init() {
         let url = "ssl://electrum.blockstream.info:60002"
@@ -35,8 +34,7 @@ import Foundation
         relays = []
         
         queriedOrders = [:]
-        makerTrades = [:]
-        takerTrades = [:]
+        trades = [:]
         
         if let storedMnemonic = KeychainWrapper.standard.string(forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked) {
             trader = FatCrabTrader.newWithMnemonic(mnemonic: storedMnemonic, info: info, appDirPath: appDir[0])
@@ -57,7 +55,6 @@ import Foundation
                 }
             }
         }
-        updateBalances()
         
         relays = trader.getRelays()
 
@@ -92,13 +89,15 @@ import Foundation
     }
     
     func updateOrderBook() {
-        do {
-            let envelopes = try trader.queryOrders(orderType: nil)
-            queriedOrders = envelopes.reduce(into: [UUID: FatCrabOrderEnvelope]()) {
-                $0[UUID(uuidString: $1.order().tradeUuid)!] = $1
+        Task {
+            do {
+                let envelopes = try trader.queryOrders(orderType: nil)
+                queriedOrders = envelopes.reduce(into: [UUID: FatCrabOrderEnvelope]()) {
+                    $0[UUID(uuidString: $1.order().tradeUuid)!] = $1
+                }
+            } catch {
+                print(error)
             }
-        } catch {
-            print(error)
         }
     }
     
@@ -107,11 +106,13 @@ import Foundation
         let order = FatCrabOrder(orderType: FatCrabOrderType.buy, tradeUuid: uuid.uuidString, amount: amount, price: price)
         let maker = try trader.newBuyMaker(order: order, fatcrabRxAddr: fatcrabRxAddr)
         let makerModel = FatCrabMakerBuyModel(maker: maker)
-        makerTrades.updateValue(.buy(maker: makerModel), forKey: uuid)
+        let makerTrade = FatCrabMakerTrade.buy(maker: makerModel)
+        trades.updateValue(.maker(maker: makerTrade), forKey: uuid)
         
         // TODO: How to hook-up Maker events?
         
         // TODO: Do we just go-ahead and post the order here?
+        try maker.postNewOrder()
         
         return makerModel
     }
@@ -121,7 +122,8 @@ import Foundation
         let order = FatCrabOrder(orderType: FatCrabOrderType.sell, tradeUuid: uuid.uuidString, amount: amount, price: price)
         let maker = try trader.newSellMaker(order: order)
         let makerModel = FatCrabMakerSellModel(maker: maker)
-        makerTrades.updateValue(.sell(maker: makerModel), forKey: uuid)
+        let makerTrade = FatCrabMakerTrade.sell(maker: makerModel)
+        trades.updateValue(.maker(maker: makerTrade), forKey: uuid)
         
         // TODO: How to hook-up Maker events?
         
@@ -135,7 +137,8 @@ import Foundation
         let uuid = UUID()
         let taker = try trader.newBuyTaker(orderEnvelope: orderEnvelope)
         let takerModel = FatCrabTakerBuyModel(taker: taker)
-        takerTrades.updateValue(.buy(taker: takerModel), forKey: uuid)
+        let takerTrade = FatCrabTakerTrade.buy(taker: takerModel)
+        trades.updateValue(.taker(taker: takerTrade), forKey: uuid)
         
         // TODO: How to hook-up Taker events?
         
@@ -148,13 +151,49 @@ import Foundation
         let uuid = UUID()
         let taker = try trader.newSellTaker(orderEnvelope: orderEnvelope, fatcrabRxAddr: fatcrabRxAddr)
         let takerModel = FatCrabTakerSellModel(taker: taker)
-        takerTrades.updateValue(.sell(taker: takerModel), forKey: uuid)
+        let takerTrade = FatCrabTakerTrade.sell(taker: takerModel)
+        trades.updateValue(.taker(taker: takerTrade), forKey: uuid)
         
         // TODO: How to hook-up Taker events?
         
         // TODO: Do we just go-ahead and take the order here?
         
         return takerModel
+    }
+    
+    func updateTrades() {
+        Task {
+            var newTrades = [UUID: FatCrabTrade]()
+            
+            trader.getBuyMakers().forEach { (uuid: String, buyMaker: FatCrabBuyMaker) in
+                let buyMakerModel = FatCrabMakerBuyModel(maker: buyMaker)
+                let makerTrade = FatCrabMakerTrade.buy(maker: buyMakerModel)
+                newTrades.updateValue(FatCrabTrade.maker(maker: makerTrade), forKey: UUID(uuidString: uuid)!)
+            }
+            
+            trader.getSellMakers().forEach { (uuid: String, sellMaker: FatCrabSellMaker) in
+                let sellMakerModel = FatCrabMakerSellModel(maker: sellMaker)
+                let makerTrade = FatCrabMakerTrade.sell(maker: sellMakerModel)
+                newTrades.updateValue(FatCrabTrade.maker(maker: makerTrade), forKey: UUID(uuidString: uuid)!)
+            }
+            
+            
+            trader.getBuyTakers().forEach { (uuid: String, buyTaker: FatCrabBuyTaker) in
+                let buyTakerModel = FatCrabTakerBuyModel(taker: buyTaker)
+                let takerTrade = FatCrabTakerTrade.buy(taker: buyTakerModel)
+                newTrades.updateValue(FatCrabTrade.taker(taker: takerTrade), forKey: UUID(uuidString: uuid)!)
+            }
+            
+            trader.getSellTakers().forEach { (uuid: String, sellTaker: FatCrabSellTaker) in
+                let sellTakerModel = FatCrabTakerSellModel(taker: sellTaker)
+                let takerTrade = FatCrabTakerTrade.sell(taker: sellTakerModel)
+                newTrades.updateValue(FatCrabTrade.taker(taker: takerTrade), forKey: UUID(uuidString: uuid)!)
+            }
+
+            Task { @MainActor [newTrades] in
+                trades = newTrades
+            }
+        }
     }
     
     // Async/Await Task wrappers

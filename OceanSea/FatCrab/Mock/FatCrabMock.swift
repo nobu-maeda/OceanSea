@@ -25,8 +25,7 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
     var relays: [RelayInfo]
     
     var queriedOrders: [UUID: FatCrabOrderEnvelopeProtocol]
-    var makerTrades: [UUID: FatCrabMakerTrade]
-    var takerTrades: [UUID: FatCrabTakerTrade]
+    var trades: [UUID : FatCrabTrade]
     
     init() {
         totalBalance = 0
@@ -40,8 +39,7 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
         let relayInfo2 = Self.createRelayInfo(relayAddr: relayAddr2)
         relays = [relayInfo1, relayInfo2]
         
-        makerTrades = [:]
-        takerTrades = [:]
+        trades = [:]
         queriedOrders = [:]
         
         updateBalances()

@@ -17,6 +17,14 @@ enum FatCrabTakerTrade {
     case sell(taker: any FatCrabTakerSellProtocol)
 }
 
+enum FatCrabTrade {
+    case maker(maker: FatCrabMakerTrade)
+    case taker(taker: FatCrabTakerTrade)
+    
+    // TODO: Function to get status to assist in sorting
+    // TODO: Function to get last updated to assit in sorting
+}
+
 struct FatCrabModelKey: EnvironmentKey {
     static let defaultValue: any FatCrabProtocol = FatCrabMock()
 }
@@ -44,8 +52,7 @@ protocol FatCrabProtocol: ObservableObject {
     var queriedOrders: [UUID: FatCrabOrderEnvelopeProtocol] { get }
     func updateOrderBook()
     
-    var makerTrades: [UUID: FatCrabMakerTrade] { get }
-    var takerTrades: [UUID: FatCrabTakerTrade] { get }
+    var trades: [UUID: FatCrabTrade] { get }
     func makeBuyOrder(price: Double, amount: Double, fatcrabRxAddr: String) throws -> any FatCrabMakerBuyProtocol
     func makeSellOrder(price: Double, amount: Double) throws -> any FatCrabMakerSellProtocol
     func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) throws -> any FatCrabTakerBuyProtocol
