@@ -8,7 +8,21 @@
 import Foundation
 
 @Observable class FatCrabMakerBuyMock: FatCrabMakerBuyProtocol {
+    var orderAmount: Double
+    var orderPrice: Double
+    
+    init(amount: Double, price: Double) {
+        self.orderAmount = amount
+        self.orderPrice = price
+    }
 }
 
 @Observable class FatCrabMakerSellMock: FatCrabMakerSellProtocol {
+    var orderAmount: Double
+    var orderPrice: Double
+    
+    init(amount: Double, price: Double) {
+        self.orderAmount = amount
+        self.orderPrice = price
+    }
 }

@@ -28,9 +28,9 @@ struct HomeView: View {
                 }
                 .tag(Tab.book)
             
-            StatusView()
+            TradesView()
                 .tabItem {
-                    Label("Status", systemImage: "list.bullet")
+                    Label("Trades", systemImage: "list.bullet")
                 }
                 .tag(Tab.orders)
             

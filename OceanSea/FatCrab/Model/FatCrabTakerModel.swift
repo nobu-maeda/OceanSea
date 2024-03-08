@@ -8,17 +8,43 @@
 import Foundation
 
 @Observable class FatCrabTakerBuyModel: FatCrabTakerBuyProtocol {
-    let taker: FatCrabBuyTaker
+    private let taker: FatCrabBuyTaker
+    var orderAmount: Double
+    var orderPrice: Double
     
     init(taker: FatCrabBuyTaker) {
         self.taker = taker
+        self.orderAmount = 0.0
+        self.orderPrice = 0.0
+        
+        Task {
+            let order_envelope = try taker.getOrderDetails()
+            
+            Task { @MainActor in
+                self.orderAmount = order_envelope.order().amount
+                self.orderPrice = order_envelope.order().price
+            }
+        }
     }
 }
 
 @Observable class FatCrabTakerSellModel: FatCrabTakerSellProtocol {
-    let taker: FatCrabSellTaker
+    private let taker: FatCrabSellTaker
+    var orderAmount: Double
+    var orderPrice: Double
     
     init(taker: FatCrabSellTaker) {
         self.taker = taker
+        self.orderAmount = 0.0
+        self.orderPrice = 0.0
+        
+        Task {
+            let order_envelope = try taker.getOrderDetails()
+            
+            Task { @MainActor in
+                self.orderAmount = order_envelope.order().amount
+                self.orderPrice = order_envelope.order().price
+            }
+        }
     }
 }

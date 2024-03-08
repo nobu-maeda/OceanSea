@@ -389,6 +389,7 @@ private struct FfiConverterString: FfiConverter {
 }
 
 public protocol FatCrabBuyMakerProtocol {
+    func getOrderDetails() throws -> FatCrabOrder
     func postNewOrder() throws
     func registerNotifDelegate(delegate: FatCrabMakerNotifDelegate) throws
     func releaseNotifyPeer() throws
@@ -409,6 +410,14 @@ public class FatCrabBuyMaker: FatCrabBuyMakerProtocol {
 
     deinit {
         try! rustCall { uniffi_fatcrab_trading_fn_free_fatcrabbuymaker(pointer, $0) }
+    }
+
+    public func getOrderDetails() throws -> FatCrabOrder {
+        return try FfiConverterTypeFatCrabOrder.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabbuymaker_get_order_details(self.pointer, $0)
+            }
+        )
     }
 
     public func postNewOrder() throws {
@@ -497,6 +506,7 @@ public func FfiConverterTypeFatCrabBuyMaker_lower(_ value: FatCrabBuyMaker) -> U
 
 public protocol FatCrabBuyTakerProtocol {
     func checkBtcTxConfirmation() throws -> UInt32
+    func getOrderDetails() throws -> FatCrabOrderEnvelope
     func notifyPeer(fatcrabTxid: String) throws
     func registerNotifDelegate(delegate: FatCrabTakerNotifDelegate) throws
     func takeOrder() throws
@@ -522,6 +532,14 @@ public class FatCrabBuyTaker: FatCrabBuyTakerProtocol {
         return try FfiConverterUInt32.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabbuytaker_check_btc_tx_confirmation(self.pointer, $0)
+            }
+        )
+    }
+
+    public func getOrderDetails() throws -> FatCrabOrderEnvelope {
+        return try FfiConverterTypeFatCrabOrderEnvelope.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabbuytaker_get_order_details(self.pointer, $0)
             }
         )
     }
@@ -865,6 +883,7 @@ public func FfiConverterTypeFatCrabPeerEnvelope_lower(_ value: FatCrabPeerEnvelo
 
 public protocol FatCrabSellMakerProtocol {
     func checkBtcTxConfirmation() throws -> UInt32
+    func getOrderDetails() throws -> FatCrabOrder
     func notifyPeer(fatcrabTxid: String) throws
     func postNewOrder() throws
     func registerNotifDelegate(delegate: FatCrabMakerNotifDelegate) throws
@@ -891,6 +910,14 @@ public class FatCrabSellMaker: FatCrabSellMakerProtocol {
         return try FfiConverterUInt32.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabsellmaker_check_btc_tx_confirmation(self.pointer, $0)
+            }
+        )
+    }
+
+    public func getOrderDetails() throws -> FatCrabOrder {
+        return try FfiConverterTypeFatCrabOrder.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabsellmaker_get_order_details(self.pointer, $0)
             }
         )
     }
@@ -981,6 +1008,7 @@ public func FfiConverterTypeFatCrabSellMaker_lower(_ value: FatCrabSellMaker) ->
 }
 
 public protocol FatCrabSellTakerProtocol {
+    func getOrderDetails() throws -> FatCrabOrderEnvelope
     func registerNotifDelegate(delegate: FatCrabTakerNotifDelegate) throws
     func takeOrder() throws
     func tradeComplete() throws
@@ -999,6 +1027,14 @@ public class FatCrabSellTaker: FatCrabSellTakerProtocol {
 
     deinit {
         try! rustCall { uniffi_fatcrab_trading_fn_free_fatcrabselltaker(pointer, $0) }
+    }
+
+    public func getOrderDetails() throws -> FatCrabOrderEnvelope {
+        return try FfiConverterTypeFatCrabOrderEnvelope.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabselltaker_get_order_details(self.pointer, $0)
+            }
+        )
     }
 
     public func registerNotifDelegate(delegate: FatCrabTakerNotifDelegate) throws {
@@ -2615,6 +2651,9 @@ private var initializationResult: InitializationResult {
     if bindings_contract_version != scaffolding_contract_version {
         return InitializationResult.contractVersionMismatch
     }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_get_order_details() != 12671 {
+        return InitializationResult.apiChecksumMismatch
+    }
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_post_new_order() != 25893 {
         return InitializationResult.apiChecksumMismatch
     }
@@ -2634,6 +2673,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_check_btc_tx_confirmation() != 27499 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_get_order_details() != 20662 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_notify_peer() != 19199 {
@@ -2666,6 +2708,9 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_check_btc_tx_confirmation() != 60693 {
         return InitializationResult.apiChecksumMismatch
     }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_get_order_details() != 31864 {
+        return InitializationResult.apiChecksumMismatch
+    }
     if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_notify_peer() != 15855 {
         return InitializationResult.apiChecksumMismatch
     }
@@ -2682,6 +2727,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_unregister_notif_delegate() != 4314 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabselltaker_get_order_details() != 21692 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabselltaker_register_notif_delegate() != 5154 {

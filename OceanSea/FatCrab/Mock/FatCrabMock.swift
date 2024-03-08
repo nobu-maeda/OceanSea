@@ -44,11 +44,17 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
         
         updateBalances()
         
-        addToOrderBook()
-        addToOrderBook()
-        addToOrderBook()
-        addToOrderBook()
-        addToOrderBook()
+        // This will randomly generate up to 5 orders
+        updateOrderBook()
+        updateOrderBook()
+        updateOrderBook()
+        updateOrderBook()
+        updateOrderBook()
+        
+        // This will randomly generate up to 3 trades
+        updateTrades()
+        updateTrades()
+        updateTrades()
     }
     
     func walletGenerateReceiveAddress() async throws -> String {
@@ -108,25 +114,71 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
     func updateOrderBook() {
         if Bool.random() {
             addToOrderBook()
-        } else {
+        } else if queriedOrders.count > 0 {
             let index = Int.random(in: 0..<queriedOrders.count)
             self.queriedOrders.removeValue(forKey: Array(queriedOrders.keys)[index])
         }
     }
     
     func makeBuyOrder(price: Double, amount: Double, fatcrabRxAddr: String) throws -> any FatCrabMakerBuyProtocol {
-        FatCrabMakerBuyMock()
+        FatCrabMakerBuyMock(amount: amount, price: price)
     }
     
     func makeSellOrder(price: Double, amount: Double) throws -> any FatCrabMakerSellProtocol {
-        FatCrabMakerSellMock()
+        FatCrabMakerSellMock(amount: amount, price: price)
     }
     
     func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) throws -> any FatCrabTakerBuyProtocol {
-        FatCrabTakerBuyMock()
+        let order = orderEnvelope.order()
+        return FatCrabTakerBuyMock(amount: order.amount, price: order.price)
     }
     
     func takeSellOrder(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) throws -> any FatCrabTakerSellProtocol {
-        FatCrabTakerSellMock()
+        let order = orderEnvelope.order()
+        return FatCrabTakerSellMock(amount: order.amount, price: order.price)
+    }
+    
+    func generateTrade() -> FatCrabTrade {
+        let orderType: FatCrabOrderType = Bool.random() ? .buy : .sell
+        let amount = Double.random(in: 1...1000000)
+        let price = Double.random(in: 1...1000000)
+        let isMaker = Bool.random()
+        
+        if isMaker {
+            switch orderType {
+            case .buy:
+                let maker = FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(amount: amount, price: price))
+                return FatCrabTrade.maker(maker: maker)
+                
+            case .sell:
+                let maker =  FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(amount: amount, price: price))
+                return FatCrabTrade.maker(maker: maker)
+            }
+        } else {
+            switch orderType {
+            case .buy:
+                let taker = FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(amount: amount, price: price))
+                return FatCrabTrade.taker(taker: taker)
+                
+            case .sell:
+                let taker = FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(amount: amount, price: price))
+                return FatCrabTrade.taker(taker: taker)
+            }
+        }
+    }
+    
+    func addToCurrentTrades() {
+        let trade = generateTrade()
+        let uuid = UUID()
+        trades.updateValue(trade, forKey: uuid)
+    }
+    
+    func updateTrades() {
+        if Bool.random() {
+            addToCurrentTrades()
+        } else if trades.count > 0 {
+            let index = Int.random(in: 0..<trades.count)
+            self.trades.removeValue(forKey: Array(trades.keys)[index])
+        }
     }
 }

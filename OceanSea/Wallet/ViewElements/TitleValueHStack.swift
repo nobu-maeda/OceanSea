@@ -24,7 +24,6 @@ struct TitleValueHStack: View {
     }
     
     var body: some View {
-        
         HStack {
             switch format {
             case .ends:

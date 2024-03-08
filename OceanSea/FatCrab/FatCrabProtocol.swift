@@ -57,20 +57,25 @@ protocol FatCrabProtocol: ObservableObject {
     func makeSellOrder(price: Double, amount: Double) throws -> any FatCrabMakerSellProtocol
     func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) throws -> any FatCrabTakerBuyProtocol
     func takeSellOrder(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) throws -> any FatCrabTakerSellProtocol
+    func updateTrades()
 }
 
 protocol FatCrabMakerBuyProtocol: ObservableObject {
-    
+    var orderAmount: Double { get }
+    var orderPrice: Double { get }
 }
 
 protocol FatCrabMakerSellProtocol: ObservableObject {
-    
+    var orderAmount: Double { get }
+    var orderPrice: Double { get }
 }
 
 protocol FatCrabTakerBuyProtocol: ObservableObject {
-    
+    var orderAmount: Double { get }
+    var orderPrice: Double { get }
 }
 
 protocol FatCrabTakerSellProtocol: ObservableObject {
-    
+    var orderAmount: Double { get }
+    var orderPrice: Double { get }
 }
