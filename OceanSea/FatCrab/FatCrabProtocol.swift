@@ -61,21 +61,49 @@ protocol FatCrabProtocol: ObservableObject {
 }
 
 protocol FatCrabMakerBuyProtocol: ObservableObject {
+    var state: FatCrabMakerState { get }
     var orderAmount: Double { get }
     var orderPrice: Double { get }
+    var offers: [FatCrabOfferEnvelope] { get }
+    var peerEnvelope: FatCrabPeerEnvelope? { get }
+    
+    func postNewOrder() throws
+    func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws
+    func releaseNotifyPeer() throws
+    func tradeComplete() throws
 }
 
 protocol FatCrabMakerSellProtocol: ObservableObject {
+    var state: FatCrabMakerState { get }
     var orderAmount: Double { get }
     var orderPrice: Double { get }
+    var offers: [FatCrabOfferEnvelope] { get }
+    var peerEnvelope: FatCrabPeerEnvelope? { get }
+    
+    func postNewOrder() throws
+    func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws
+    func checkBtcTxConfirmation() throws -> UInt32
+    func notifyPeer(fatcrabTxid: String) throws
+    func tradeComplete() throws
 }
 
 protocol FatCrabTakerBuyProtocol: ObservableObject {
+    var state: FatCrabTakerState { get }
     var orderAmount: Double { get }
     var orderPrice: Double { get }
+    var tradeRspEnvelope: FatCrabTradeRspEnvelope? { get }
+    
+    func takeOrder() throws
+    func notifyPeer(fatcrabTxid: String) throws
+    func checkBtcTxConfirmation() throws -> UInt32
+    func tradeComplete() throws
 }
 
 protocol FatCrabTakerSellProtocol: ObservableObject {
+    var state: FatCrabTakerState { get }
     var orderAmount: Double { get }
     var orderPrice: Double { get }
+    
+    func takeOrder() throws
+    func tradeComplete() throws
 }

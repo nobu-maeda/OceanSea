@@ -390,11 +390,14 @@ private struct FfiConverterString: FfiConverter {
 
 public protocol FatCrabBuyMakerProtocol {
     func getOrderDetails() throws -> FatCrabOrder
-    func postNewOrder() throws
+    func getState() throws -> FatCrabMakerState
+    func postNewOrder() throws -> FatCrabMakerState
+    func queryOffers() throws -> [FatCrabOfferEnvelope]
+    func queryPeerMsg() throws -> FatCrabPeerEnvelope?
     func registerNotifDelegate(delegate: FatCrabMakerNotifDelegate) throws
-    func releaseNotifyPeer() throws
-    func tradeComplete() throws
-    func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws
+    func releaseNotifyPeer() throws -> FatCrabMakerState
+    func tradeComplete() throws -> FatCrabMakerState
+    func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws -> FatCrabMakerState
     func unregisterNotifDelegate() throws
 }
 
@@ -420,11 +423,36 @@ public class FatCrabBuyMaker: FatCrabBuyMakerProtocol {
         )
     }
 
-    public func postNewOrder() throws {
-        try
+    public func getState() throws -> FatCrabMakerState {
+        return try FfiConverterTypeFatCrabMakerState.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabbuymaker_get_state(self.pointer, $0)
+            }
+        )
+    }
+
+    public func postNewOrder() throws -> FatCrabMakerState {
+        return try FfiConverterTypeFatCrabMakerState.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabbuymaker_post_new_order(self.pointer, $0)
             }
+        )
+    }
+
+    public func queryOffers() throws -> [FatCrabOfferEnvelope] {
+        return try FfiConverterSequenceTypeFatCrabOfferEnvelope.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabbuymaker_query_offers(self.pointer, $0)
+            }
+        )
+    }
+
+    public func queryPeerMsg() throws -> FatCrabPeerEnvelope? {
+        return try FfiConverterOptionTypeFatCrabPeerEnvelope.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabbuymaker_query_peer_msg(self.pointer, $0)
+            }
+        )
     }
 
     public func registerNotifDelegate(delegate: FatCrabMakerNotifDelegate) throws {
@@ -435,27 +463,30 @@ public class FatCrabBuyMaker: FatCrabBuyMakerProtocol {
             }
     }
 
-    public func releaseNotifyPeer() throws {
-        try
+    public func releaseNotifyPeer() throws -> FatCrabMakerState {
+        return try FfiConverterTypeFatCrabMakerState.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabbuymaker_release_notify_peer(self.pointer, $0)
             }
+        )
     }
 
-    public func tradeComplete() throws {
-        try
+    public func tradeComplete() throws -> FatCrabMakerState {
+        return try FfiConverterTypeFatCrabMakerState.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabbuymaker_trade_complete(self.pointer, $0)
             }
+        )
     }
 
-    public func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws {
-        try
+    public func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws -> FatCrabMakerState {
+        return try FfiConverterTypeFatCrabMakerState.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabbuymaker_trade_response(self.pointer,
                                                                                 FfiConverterTypeFatCrabTradeRspType.lower(tradeRspType),
                                                                                 FfiConverterTypeFatCrabOfferEnvelope.lower(offerEnvelope), $0)
             }
+        )
     }
 
     public func unregisterNotifDelegate() throws {
@@ -507,10 +538,12 @@ public func FfiConverterTypeFatCrabBuyMaker_lower(_ value: FatCrabBuyMaker) -> U
 public protocol FatCrabBuyTakerProtocol {
     func checkBtcTxConfirmation() throws -> UInt32
     func getOrderDetails() throws -> FatCrabOrderEnvelope
-    func notifyPeer(fatcrabTxid: String) throws
+    func getState() throws -> FatCrabTakerState
+    func notifyPeer(fatcrabTxid: String) throws -> FatCrabTakerState
+    func queryTradeRsp() throws -> FatCrabTradeRspEnvelope?
     func registerNotifDelegate(delegate: FatCrabTakerNotifDelegate) throws
-    func takeOrder() throws
-    func tradeComplete() throws
+    func takeOrder() throws -> FatCrabTakerState
+    func tradeComplete() throws -> FatCrabTakerState
     func unregisterNotifDelegate() throws
 }
 
@@ -544,12 +577,29 @@ public class FatCrabBuyTaker: FatCrabBuyTakerProtocol {
         )
     }
 
-    public func notifyPeer(fatcrabTxid: String) throws {
-        try
+    public func getState() throws -> FatCrabTakerState {
+        return try FfiConverterTypeFatCrabTakerState.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabbuytaker_get_state(self.pointer, $0)
+            }
+        )
+    }
+
+    public func notifyPeer(fatcrabTxid: String) throws -> FatCrabTakerState {
+        return try FfiConverterTypeFatCrabTakerState.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabbuytaker_notify_peer(self.pointer,
                                                                              FfiConverterString.lower(fatcrabTxid), $0)
             }
+        )
+    }
+
+    public func queryTradeRsp() throws -> FatCrabTradeRspEnvelope? {
+        return try FfiConverterOptionTypeFatCrabTradeRspEnvelope.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabbuytaker_query_trade_rsp(self.pointer, $0)
+            }
+        )
     }
 
     public func registerNotifDelegate(delegate: FatCrabTakerNotifDelegate) throws {
@@ -560,18 +610,20 @@ public class FatCrabBuyTaker: FatCrabBuyTakerProtocol {
             }
     }
 
-    public func takeOrder() throws {
-        try
+    public func takeOrder() throws -> FatCrabTakerState {
+        return try FfiConverterTypeFatCrabTakerState.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabbuytaker_take_order(self.pointer, $0)
             }
+        )
     }
 
-    public func tradeComplete() throws {
-        try
+    public func tradeComplete() throws -> FatCrabTakerState {
+        return try FfiConverterTypeFatCrabTakerState.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabbuytaker_trade_complete(self.pointer, $0)
             }
+        )
     }
 
     public func unregisterNotifDelegate() throws {
@@ -621,8 +673,8 @@ public func FfiConverterTypeFatCrabBuyTaker_lower(_ value: FatCrabBuyTaker) -> U
 }
 
 public protocol FatCrabMakerNotifDelegateProtocol {
-    func onMakerOfferNotif(offerEnvelope: FatCrabOfferEnvelope)
-    func onMakerPeerNotif(peerEnvelope: FatCrabPeerEnvelope)
+    func onMakerOfferNotif(offerNotif: FatCrabMakerNotifOfferStruct)
+    func onMakerPeerNotif(peerNotif: FatCrabMakerNotifPeerStruct)
 }
 
 public class FatCrabMakerNotifDelegate: FatCrabMakerNotifDelegateProtocol {
@@ -639,19 +691,19 @@ public class FatCrabMakerNotifDelegate: FatCrabMakerNotifDelegateProtocol {
         try! rustCall { uniffi_fatcrab_trading_fn_free_fatcrabmakernotifdelegate(pointer, $0) }
     }
 
-    public func onMakerOfferNotif(offerEnvelope: FatCrabOfferEnvelope) {
+    public func onMakerOfferNotif(offerNotif: FatCrabMakerNotifOfferStruct) {
         try!
             rustCall {
                 uniffi_fatcrab_trading_fn_method_fatcrabmakernotifdelegate_on_maker_offer_notif(self.pointer,
-                                                                                                FfiConverterTypeFatCrabOfferEnvelope.lower(offerEnvelope), $0)
+                                                                                                FfiConverterTypeFatCrabMakerNotifOfferStruct.lower(offerNotif), $0)
             }
     }
 
-    public func onMakerPeerNotif(peerEnvelope: FatCrabPeerEnvelope) {
+    public func onMakerPeerNotif(peerNotif: FatCrabMakerNotifPeerStruct) {
         try!
             rustCall {
                 uniffi_fatcrab_trading_fn_method_fatcrabmakernotifdelegate_on_maker_peer_notif(self.pointer,
-                                                                                               FfiConverterTypeFatCrabPeerEnvelope.lower(peerEnvelope), $0)
+                                                                                               FfiConverterTypeFatCrabMakerNotifPeerStruct.lower(peerNotif), $0)
             }
     }
 }
@@ -884,11 +936,14 @@ public func FfiConverterTypeFatCrabPeerEnvelope_lower(_ value: FatCrabPeerEnvelo
 public protocol FatCrabSellMakerProtocol {
     func checkBtcTxConfirmation() throws -> UInt32
     func getOrderDetails() throws -> FatCrabOrder
-    func notifyPeer(fatcrabTxid: String) throws
-    func postNewOrder() throws
+    func getState() throws -> FatCrabMakerState
+    func notifyPeer(fatcrabTxid: String) throws -> FatCrabMakerState
+    func postNewOrder() throws -> FatCrabMakerState
+    func queryOffers() throws -> [FatCrabOfferEnvelope]
+    func queryPeerMsg() throws -> FatCrabPeerEnvelope?
     func registerNotifDelegate(delegate: FatCrabMakerNotifDelegate) throws
-    func tradeComplete() throws
-    func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws
+    func tradeComplete() throws -> FatCrabMakerState
+    func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws -> FatCrabMakerState
     func unregisterNotifDelegate() throws
 }
 
@@ -922,19 +977,45 @@ public class FatCrabSellMaker: FatCrabSellMakerProtocol {
         )
     }
 
-    public func notifyPeer(fatcrabTxid: String) throws {
-        try
+    public func getState() throws -> FatCrabMakerState {
+        return try FfiConverterTypeFatCrabMakerState.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabsellmaker_get_state(self.pointer, $0)
+            }
+        )
+    }
+
+    public func notifyPeer(fatcrabTxid: String) throws -> FatCrabMakerState {
+        return try FfiConverterTypeFatCrabMakerState.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabsellmaker_notify_peer(self.pointer,
                                                                               FfiConverterString.lower(fatcrabTxid), $0)
             }
+        )
     }
 
-    public func postNewOrder() throws {
-        try
+    public func postNewOrder() throws -> FatCrabMakerState {
+        return try FfiConverterTypeFatCrabMakerState.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabsellmaker_post_new_order(self.pointer, $0)
             }
+        )
+    }
+
+    public func queryOffers() throws -> [FatCrabOfferEnvelope] {
+        return try FfiConverterSequenceTypeFatCrabOfferEnvelope.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabsellmaker_query_offers(self.pointer, $0)
+            }
+        )
+    }
+
+    public func queryPeerMsg() throws -> FatCrabPeerEnvelope? {
+        return try FfiConverterOptionTypeFatCrabPeerEnvelope.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabsellmaker_query_peer_msg(self.pointer, $0)
+            }
+        )
     }
 
     public func registerNotifDelegate(delegate: FatCrabMakerNotifDelegate) throws {
@@ -945,20 +1026,22 @@ public class FatCrabSellMaker: FatCrabSellMakerProtocol {
             }
     }
 
-    public func tradeComplete() throws {
-        try
+    public func tradeComplete() throws -> FatCrabMakerState {
+        return try FfiConverterTypeFatCrabMakerState.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabsellmaker_trade_complete(self.pointer, $0)
             }
+        )
     }
 
-    public func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws {
-        try
+    public func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws -> FatCrabMakerState {
+        return try FfiConverterTypeFatCrabMakerState.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabsellmaker_trade_response(self.pointer,
                                                                                  FfiConverterTypeFatCrabTradeRspType.lower(tradeRspType),
                                                                                  FfiConverterTypeFatCrabOfferEnvelope.lower(offerEnvelope), $0)
             }
+        )
     }
 
     public func unregisterNotifDelegate() throws {
@@ -1009,9 +1092,10 @@ public func FfiConverterTypeFatCrabSellMaker_lower(_ value: FatCrabSellMaker) ->
 
 public protocol FatCrabSellTakerProtocol {
     func getOrderDetails() throws -> FatCrabOrderEnvelope
+    func getState() throws -> FatCrabTakerState
     func registerNotifDelegate(delegate: FatCrabTakerNotifDelegate) throws
-    func takeOrder() throws
-    func tradeComplete() throws
+    func takeOrder() throws -> FatCrabTakerState
+    func tradeComplete() throws -> FatCrabTakerState
     func unregisterNotifDelegate() throws
 }
 
@@ -1037,6 +1121,14 @@ public class FatCrabSellTaker: FatCrabSellTakerProtocol {
         )
     }
 
+    public func getState() throws -> FatCrabTakerState {
+        return try FfiConverterTypeFatCrabTakerState.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabselltaker_get_state(self.pointer, $0)
+            }
+        )
+    }
+
     public func registerNotifDelegate(delegate: FatCrabTakerNotifDelegate) throws {
         try
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
@@ -1045,18 +1137,20 @@ public class FatCrabSellTaker: FatCrabSellTakerProtocol {
             }
     }
 
-    public func takeOrder() throws {
-        try
+    public func takeOrder() throws -> FatCrabTakerState {
+        return try FfiConverterTypeFatCrabTakerState.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabselltaker_take_order(self.pointer, $0)
             }
+        )
     }
 
-    public func tradeComplete() throws {
-        try
+    public func tradeComplete() throws -> FatCrabTakerState {
+        return try FfiConverterTypeFatCrabTakerState.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabselltaker_trade_complete(self.pointer, $0)
             }
+        )
     }
 
     public func unregisterNotifDelegate() throws {
@@ -1106,8 +1200,8 @@ public func FfiConverterTypeFatCrabSellTaker_lower(_ value: FatCrabSellTaker) ->
 }
 
 public protocol FatCrabTakerNotifDelegateProtocol {
-    func onTakerPeerNotif(peerEnvelope: FatCrabPeerEnvelope)
-    func onTakerTradeRspNotif(tradeRspEnvelope: FatCrabTradeRspEnvelope)
+    func onTakerPeerNotif(peerNotif: FatCrabTakerNotifPeerStruct)
+    func onTakerTradeRspNotif(tradeRspNotif: FatCrabTakerNotifTradeRspStruct)
 }
 
 public class FatCrabTakerNotifDelegate: FatCrabTakerNotifDelegateProtocol {
@@ -1124,19 +1218,19 @@ public class FatCrabTakerNotifDelegate: FatCrabTakerNotifDelegateProtocol {
         try! rustCall { uniffi_fatcrab_trading_fn_free_fatcrabtakernotifdelegate(pointer, $0) }
     }
 
-    public func onTakerPeerNotif(peerEnvelope: FatCrabPeerEnvelope) {
+    public func onTakerPeerNotif(peerNotif: FatCrabTakerNotifPeerStruct) {
         try!
             rustCall {
                 uniffi_fatcrab_trading_fn_method_fatcrabtakernotifdelegate_on_taker_peer_notif(self.pointer,
-                                                                                               FfiConverterTypeFatCrabPeerEnvelope.lower(peerEnvelope), $0)
+                                                                                               FfiConverterTypeFatCrabTakerNotifPeerStruct.lower(peerNotif), $0)
             }
     }
 
-    public func onTakerTradeRspNotif(tradeRspEnvelope: FatCrabTradeRspEnvelope) {
+    public func onTakerTradeRspNotif(tradeRspNotif: FatCrabTakerNotifTradeRspStruct) {
         try!
             rustCall {
                 uniffi_fatcrab_trading_fn_method_fatcrabtakernotifdelegate_on_taker_trade_rsp_notif(self.pointer,
-                                                                                                    FfiConverterTypeFatCrabTradeRspEnvelope.lower(tradeRspEnvelope), $0)
+                                                                                                    FfiConverterTypeFatCrabTakerNotifTradeRspStruct.lower(tradeRspNotif), $0)
             }
     }
 }
@@ -1521,6 +1615,74 @@ public func FfiConverterTypeFatCrabTrader_lower(_ value: FatCrabTrader) -> Unsaf
     return FfiConverterTypeFatCrabTrader.lower(value)
 }
 
+public struct FatCrabMakerNotifOfferStruct {
+    public var state: FatCrabMakerState
+    public var offerEnvelope: FatCrabOfferEnvelope
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(state: FatCrabMakerState, offerEnvelope: FatCrabOfferEnvelope) {
+        self.state = state
+        self.offerEnvelope = offerEnvelope
+    }
+}
+
+public struct FfiConverterTypeFatCrabMakerNotifOfferStruct: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> FatCrabMakerNotifOfferStruct {
+        return try FatCrabMakerNotifOfferStruct(
+            state: FfiConverterTypeFatCrabMakerState.read(from: &buf),
+            offerEnvelope: FfiConverterTypeFatCrabOfferEnvelope.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: FatCrabMakerNotifOfferStruct, into buf: inout [UInt8]) {
+        FfiConverterTypeFatCrabMakerState.write(value.state, into: &buf)
+        FfiConverterTypeFatCrabOfferEnvelope.write(value.offerEnvelope, into: &buf)
+    }
+}
+
+public func FfiConverterTypeFatCrabMakerNotifOfferStruct_lift(_ buf: RustBuffer) throws -> FatCrabMakerNotifOfferStruct {
+    return try FfiConverterTypeFatCrabMakerNotifOfferStruct.lift(buf)
+}
+
+public func FfiConverterTypeFatCrabMakerNotifOfferStruct_lower(_ value: FatCrabMakerNotifOfferStruct) -> RustBuffer {
+    return FfiConverterTypeFatCrabMakerNotifOfferStruct.lower(value)
+}
+
+public struct FatCrabMakerNotifPeerStruct {
+    public var state: FatCrabMakerState
+    public var peerEnvelope: FatCrabPeerEnvelope
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(state: FatCrabMakerState, peerEnvelope: FatCrabPeerEnvelope) {
+        self.state = state
+        self.peerEnvelope = peerEnvelope
+    }
+}
+
+public struct FfiConverterTypeFatCrabMakerNotifPeerStruct: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> FatCrabMakerNotifPeerStruct {
+        return try FatCrabMakerNotifPeerStruct(
+            state: FfiConverterTypeFatCrabMakerState.read(from: &buf),
+            peerEnvelope: FfiConverterTypeFatCrabPeerEnvelope.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: FatCrabMakerNotifPeerStruct, into buf: inout [UInt8]) {
+        FfiConverterTypeFatCrabMakerState.write(value.state, into: &buf)
+        FfiConverterTypeFatCrabPeerEnvelope.write(value.peerEnvelope, into: &buf)
+    }
+}
+
+public func FfiConverterTypeFatCrabMakerNotifPeerStruct_lift(_ buf: RustBuffer) throws -> FatCrabMakerNotifPeerStruct {
+    return try FfiConverterTypeFatCrabMakerNotifPeerStruct.lift(buf)
+}
+
+public func FfiConverterTypeFatCrabMakerNotifPeerStruct_lower(_ value: FatCrabMakerNotifPeerStruct) -> RustBuffer {
+    return FfiConverterTypeFatCrabMakerNotifPeerStruct.lower(value)
+}
+
 public struct FatCrabOrder {
     public var orderType: FatCrabOrderType
     public var tradeUuid: String
@@ -1637,6 +1799,74 @@ public func FfiConverterTypeFatCrabPeerMessage_lift(_ buf: RustBuffer) throws ->
 
 public func FfiConverterTypeFatCrabPeerMessage_lower(_ value: FatCrabPeerMessage) -> RustBuffer {
     return FfiConverterTypeFatCrabPeerMessage.lower(value)
+}
+
+public struct FatCrabTakerNotifPeerStruct {
+    public var state: FatCrabTakerState
+    public var peerEnvelope: FatCrabPeerEnvelope
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(state: FatCrabTakerState, peerEnvelope: FatCrabPeerEnvelope) {
+        self.state = state
+        self.peerEnvelope = peerEnvelope
+    }
+}
+
+public struct FfiConverterTypeFatCrabTakerNotifPeerStruct: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> FatCrabTakerNotifPeerStruct {
+        return try FatCrabTakerNotifPeerStruct(
+            state: FfiConverterTypeFatCrabTakerState.read(from: &buf),
+            peerEnvelope: FfiConverterTypeFatCrabPeerEnvelope.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: FatCrabTakerNotifPeerStruct, into buf: inout [UInt8]) {
+        FfiConverterTypeFatCrabTakerState.write(value.state, into: &buf)
+        FfiConverterTypeFatCrabPeerEnvelope.write(value.peerEnvelope, into: &buf)
+    }
+}
+
+public func FfiConverterTypeFatCrabTakerNotifPeerStruct_lift(_ buf: RustBuffer) throws -> FatCrabTakerNotifPeerStruct {
+    return try FfiConverterTypeFatCrabTakerNotifPeerStruct.lift(buf)
+}
+
+public func FfiConverterTypeFatCrabTakerNotifPeerStruct_lower(_ value: FatCrabTakerNotifPeerStruct) -> RustBuffer {
+    return FfiConverterTypeFatCrabTakerNotifPeerStruct.lower(value)
+}
+
+public struct FatCrabTakerNotifTradeRspStruct {
+    public var state: FatCrabTakerState
+    public var tradeRspEnvelope: FatCrabTradeRspEnvelope
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(state: FatCrabTakerState, tradeRspEnvelope: FatCrabTradeRspEnvelope) {
+        self.state = state
+        self.tradeRspEnvelope = tradeRspEnvelope
+    }
+}
+
+public struct FfiConverterTypeFatCrabTakerNotifTradeRspStruct: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> FatCrabTakerNotifTradeRspStruct {
+        return try FatCrabTakerNotifTradeRspStruct(
+            state: FfiConverterTypeFatCrabTakerState.read(from: &buf),
+            tradeRspEnvelope: FfiConverterTypeFatCrabTradeRspEnvelope.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: FatCrabTakerNotifTradeRspStruct, into buf: inout [UInt8]) {
+        FfiConverterTypeFatCrabTakerState.write(value.state, into: &buf)
+        FfiConverterTypeFatCrabTradeRspEnvelope.write(value.tradeRspEnvelope, into: &buf)
+    }
+}
+
+public func FfiConverterTypeFatCrabTakerNotifTradeRspStruct_lift(_ buf: RustBuffer) throws -> FatCrabTakerNotifTradeRspStruct {
+    return try FfiConverterTypeFatCrabTakerNotifTradeRspStruct.lift(buf)
+}
+
+public func FfiConverterTypeFatCrabTakerNotifTradeRspStruct_lower(_ value: FatCrabTakerNotifTradeRspStruct) -> RustBuffer {
+    return FfiConverterTypeFatCrabTakerNotifTradeRspStruct.lower(value)
 }
 
 public struct RelayAddr {
@@ -2117,6 +2347,84 @@ extension FatCrabError: Error {}
 
 // Note that we don't yet support `indirect` for enums.
 // See https://github.com/mozilla/uniffi-rs/issues/396 for further discussion.
+public enum FatCrabMakerState {
+    case new
+    case waitingForOffers
+    case receivedOffer
+    case acceptedOffer
+    case inboundBtcNotified
+    case inboundFcNotified
+    case notifiedOutbound
+    case tradeCompleted
+}
+
+public struct FfiConverterTypeFatCrabMakerState: FfiConverterRustBuffer {
+    typealias SwiftType = FatCrabMakerState
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> FatCrabMakerState {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        case 1: return .new
+
+        case 2: return .waitingForOffers
+
+        case 3: return .receivedOffer
+
+        case 4: return .acceptedOffer
+
+        case 5: return .inboundBtcNotified
+
+        case 6: return .inboundFcNotified
+
+        case 7: return .notifiedOutbound
+
+        case 8: return .tradeCompleted
+
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: FatCrabMakerState, into buf: inout [UInt8]) {
+        switch value {
+        case .new:
+            writeInt(&buf, Int32(1))
+
+        case .waitingForOffers:
+            writeInt(&buf, Int32(2))
+
+        case .receivedOffer:
+            writeInt(&buf, Int32(3))
+
+        case .acceptedOffer:
+            writeInt(&buf, Int32(4))
+
+        case .inboundBtcNotified:
+            writeInt(&buf, Int32(5))
+
+        case .inboundFcNotified:
+            writeInt(&buf, Int32(6))
+
+        case .notifiedOutbound:
+            writeInt(&buf, Int32(7))
+
+        case .tradeCompleted:
+            writeInt(&buf, Int32(8))
+        }
+    }
+}
+
+public func FfiConverterTypeFatCrabMakerState_lift(_ buf: RustBuffer) throws -> FatCrabMakerState {
+    return try FfiConverterTypeFatCrabMakerState.lift(buf)
+}
+
+public func FfiConverterTypeFatCrabMakerState_lower(_ value: FatCrabMakerState) -> RustBuffer {
+    return FfiConverterTypeFatCrabMakerState.lower(value)
+}
+
+extension FatCrabMakerState: Equatable, Hashable {}
+
+// Note that we don't yet support `indirect` for enums.
+// See https://github.com/mozilla/uniffi-rs/issues/396 for further discussion.
 public enum FatCrabOrderType {
     case buy
     case sell
@@ -2156,6 +2464,84 @@ public func FfiConverterTypeFatCrabOrderType_lower(_ value: FatCrabOrderType) ->
 }
 
 extension FatCrabOrderType: Equatable, Hashable {}
+
+// Note that we don't yet support `indirect` for enums.
+// See https://github.com/mozilla/uniffi-rs/issues/396 for further discussion.
+public enum FatCrabTakerState {
+    case new
+    case submittedOffer
+    case offerAccepted
+    case offerRejected
+    case notifiedOutbound
+    case inboundBtcNotified
+    case inboundFcNotified
+    case tradeCompleted
+}
+
+public struct FfiConverterTypeFatCrabTakerState: FfiConverterRustBuffer {
+    typealias SwiftType = FatCrabTakerState
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> FatCrabTakerState {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        case 1: return .new
+
+        case 2: return .submittedOffer
+
+        case 3: return .offerAccepted
+
+        case 4: return .offerRejected
+
+        case 5: return .notifiedOutbound
+
+        case 6: return .inboundBtcNotified
+
+        case 7: return .inboundFcNotified
+
+        case 8: return .tradeCompleted
+
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: FatCrabTakerState, into buf: inout [UInt8]) {
+        switch value {
+        case .new:
+            writeInt(&buf, Int32(1))
+
+        case .submittedOffer:
+            writeInt(&buf, Int32(2))
+
+        case .offerAccepted:
+            writeInt(&buf, Int32(3))
+
+        case .offerRejected:
+            writeInt(&buf, Int32(4))
+
+        case .notifiedOutbound:
+            writeInt(&buf, Int32(5))
+
+        case .inboundBtcNotified:
+            writeInt(&buf, Int32(6))
+
+        case .inboundFcNotified:
+            writeInt(&buf, Int32(7))
+
+        case .tradeCompleted:
+            writeInt(&buf, Int32(8))
+        }
+    }
+}
+
+public func FfiConverterTypeFatCrabTakerState_lift(_ buf: RustBuffer) throws -> FatCrabTakerState {
+    return try FfiConverterTypeFatCrabTakerState.lift(buf)
+}
+
+public func FfiConverterTypeFatCrabTakerState_lower(_ value: FatCrabTakerState) -> RustBuffer {
+    return FfiConverterTypeFatCrabTakerState.lower(value)
+}
+
+extension FatCrabTakerState: Equatable, Hashable {}
 
 // Note that we don't yet support `indirect` for enums.
 // See https://github.com/mozilla/uniffi-rs/issues/396 for further discussion.
@@ -2391,6 +2777,48 @@ private struct FfiConverterOptionString: FfiConverterRustBuffer {
     }
 }
 
+private struct FfiConverterOptionTypeFatCrabPeerEnvelope: FfiConverterRustBuffer {
+    typealias SwiftType = FatCrabPeerEnvelope?
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        guard let value = value else {
+            writeInt(&buf, Int8(0))
+            return
+        }
+        writeInt(&buf, Int8(1))
+        FfiConverterTypeFatCrabPeerEnvelope.write(value, into: &buf)
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        switch try readInt(&buf) as Int8 {
+        case 0: return nil
+        case 1: return try FfiConverterTypeFatCrabPeerEnvelope.read(from: &buf)
+        default: throw UniffiInternalError.unexpectedOptionalTag
+        }
+    }
+}
+
+private struct FfiConverterOptionTypeFatCrabTradeRspEnvelope: FfiConverterRustBuffer {
+    typealias SwiftType = FatCrabTradeRspEnvelope?
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        guard let value = value else {
+            writeInt(&buf, Int8(0))
+            return
+        }
+        writeInt(&buf, Int8(1))
+        FfiConverterTypeFatCrabTradeRspEnvelope.write(value, into: &buf)
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        switch try readInt(&buf) as Int8 {
+        case 0: return nil
+        case 1: return try FfiConverterTypeFatCrabTradeRspEnvelope.read(from: &buf)
+        default: throw UniffiInternalError.unexpectedOptionalTag
+        }
+    }
+}
+
 private struct FfiConverterOptionTypeFatCrabOrderType: FfiConverterRustBuffer {
     typealias SwiftType = FatCrabOrderType?
 
@@ -2472,6 +2900,28 @@ private struct FfiConverterSequenceString: FfiConverterRustBuffer {
         seq.reserveCapacity(Int(len))
         for _ in 0 ..< len {
             try seq.append(FfiConverterString.read(from: &buf))
+        }
+        return seq
+    }
+}
+
+private struct FfiConverterSequenceTypeFatCrabOfferEnvelope: FfiConverterRustBuffer {
+    typealias SwiftType = [FatCrabOfferEnvelope]
+
+    public static func write(_ value: [FatCrabOfferEnvelope], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterTypeFatCrabOfferEnvelope.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [FatCrabOfferEnvelope] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [FatCrabOfferEnvelope]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            try seq.append(FfiConverterTypeFatCrabOfferEnvelope.read(from: &buf))
         }
         return seq
     }
@@ -2654,19 +3104,28 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_get_order_details() != 12671 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_post_new_order() != 25893 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_get_state() != 16451 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_post_new_order() != 12616 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_query_offers() != 25830 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_query_peer_msg() != 46968 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_register_notif_delegate() != 22313 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_release_notify_peer() != 30641 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_release_notify_peer() != 32999 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_trade_complete() != 36320 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_trade_complete() != 28869 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_trade_response() != 50252 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_trade_response() != 16714 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_unregister_notif_delegate() != 23020 {
@@ -2678,25 +3137,31 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_get_order_details() != 20662 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_notify_peer() != 19199 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_get_state() != 41759 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_notify_peer() != 1416 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_query_trade_rsp() != 13856 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_register_notif_delegate() != 491 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_take_order() != 60605 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_take_order() != 283 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_trade_complete() != 16073 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_trade_complete() != 51566 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_unregister_notif_delegate() != 56434 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabmakernotifdelegate_on_maker_offer_notif() != 60163 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabmakernotifdelegate_on_maker_offer_notif() != 5234 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabmakernotifdelegate_on_maker_peer_notif() != 54443 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabmakernotifdelegate_on_maker_peer_notif() != 61951 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcraborderenvelope_order() != 23867 {
@@ -2711,19 +3176,28 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_get_order_details() != 31864 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_notify_peer() != 15855 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_get_state() != 26535 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_post_new_order() != 58302 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_notify_peer() != 26013 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_post_new_order() != 60261 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_query_offers() != 29063 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_query_peer_msg() != 13311 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_register_notif_delegate() != 25742 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_trade_complete() != 5080 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_trade_complete() != 28735 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_trade_response() != 47548 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_trade_response() != 38629 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_unregister_notif_delegate() != 4314 {
@@ -2732,22 +3206,25 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_method_fatcrabselltaker_get_order_details() != 21692 {
         return InitializationResult.apiChecksumMismatch
     }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabselltaker_get_state() != 61174 {
+        return InitializationResult.apiChecksumMismatch
+    }
     if uniffi_fatcrab_trading_checksum_method_fatcrabselltaker_register_notif_delegate() != 5154 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabselltaker_take_order() != 39161 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabselltaker_take_order() != 22454 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabselltaker_trade_complete() != 26644 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabselltaker_trade_complete() != 59762 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabselltaker_unregister_notif_delegate() != 55316 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabtakernotifdelegate_on_taker_peer_notif() != 26070 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtakernotifdelegate_on_taker_peer_notif() != 43407 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabtakernotifdelegate_on_taker_trade_rsp_notif() != 3334 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtakernotifdelegate_on_taker_trade_rsp_notif() != 48403 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabtraderspenvelope_trade_rsp() != 57113 {
