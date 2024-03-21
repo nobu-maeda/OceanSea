@@ -12,6 +12,8 @@ import Foundation
     private(set) var state: FatCrabMakerState
     private(set) var orderAmount: Double
     private(set) var orderPrice: Double
+    private(set) var tradeUuid: UUID
+    private(set) var peerPubkey: String?
     private(set) var offers: [FatCrabOfferEnvelope]
     private(set) var peerEnvelope: FatCrabPeerEnvelope?
     
@@ -20,6 +22,7 @@ import Foundation
         self.state = FatCrabMakerState.new
         self.orderAmount = 0.0
         self.orderPrice = 0.0
+        self.tradeUuid = UUID()
         self.offers = []
         
         Task {
@@ -32,6 +35,7 @@ import Foundation
                 self.state = state
                 self.orderAmount = order.amount
                 self.orderPrice = order.price
+                self.tradeUuid = UUID(uuidString: order.tradeUuid) ?? UUID.init(uuidString: allZeroUUIDString)!
                 self.offers = offers
                 self.peerEnvelope = peerEnvelope
             }
@@ -44,6 +48,10 @@ import Foundation
     
     func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws {
         self.state = try self.maker.tradeResponse(tradeRspType: tradeRspType, offerEnvelope: offerEnvelope)
+        
+        if tradeRspType == .accept {
+            self.peerPubkey = offerEnvelope.pubkey()
+        }
     }
     
     func releaseNotifyPeer() throws {
@@ -60,6 +68,8 @@ import Foundation
     private(set) var state: FatCrabMakerState
     private(set) var orderAmount: Double
     private(set) var orderPrice: Double
+    private(set) var tradeUuid: UUID
+    private(set) var peerPubkey: String?
     private(set) var offers: [FatCrabOfferEnvelope]
     private(set) var peerEnvelope: FatCrabPeerEnvelope?
     
@@ -68,6 +78,7 @@ import Foundation
         self.state = FatCrabMakerState.new
         self.orderAmount = 0.0
         self.orderPrice = 0.0
+        self.tradeUuid = UUID()
         self.offers = []
         
         Task {
@@ -80,6 +91,7 @@ import Foundation
                 self.state = state
                 self.orderAmount = order.amount
                 self.orderPrice = order.price
+                self.tradeUuid = UUID(uuidString: order.tradeUuid) ?? UUID.init(uuidString: allZeroUUIDString)!
                 self.offers = offers
                 self.peerEnvelope = peerEnvelope
             }
@@ -92,6 +104,10 @@ import Foundation
     
     func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws {
         self.state = try self.maker.tradeResponse(tradeRspType: tradeRspType, offerEnvelope: offerEnvelope)
+        
+        if tradeRspType == .accept {
+            self.peerPubkey = offerEnvelope.pubkey()
+        }
     }
     
     func checkBtcTxConfirmation() throws -> UInt32 {

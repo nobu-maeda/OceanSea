@@ -12,6 +12,8 @@ import Foundation
     private(set) var state: FatCrabTakerState
     private(set) var orderAmount: Double
     private(set) var orderPrice: Double
+    private(set) var tradeUuid: UUID
+    private(set) var peerPubkey: String
     private(set) var tradeRspEnvelope: FatCrabTradeRspEnvelope?
     
     init(taker: FatCrabBuyTaker) {
@@ -19,16 +21,21 @@ import Foundation
         self.state = FatCrabTakerState.new
         self.orderAmount = 0.0
         self.orderPrice = 0.0
+        self.tradeUuid = UUID()
+        self.peerPubkey = ""
         
         Task {
             let state = try taker.getState()
             let orderEnvelope = try taker.getOrderDetails()
             let tradeRspEnvelope = try taker.queryTradeRsp()
+            let order = orderEnvelope.order()
             
             Task { @MainActor in
                 self.state = state
-                self.orderAmount = orderEnvelope.order().amount
-                self.orderPrice = orderEnvelope.order().price
+                self.orderAmount = order.amount
+                self.orderPrice = order.price
+                self.tradeUuid = UUID(uuidString: order.tradeUuid) ?? UUID.init(uuidString: allZeroUUIDString)!
+                self.peerPubkey = orderEnvelope.pubkey()
                 self.tradeRspEnvelope = tradeRspEnvelope
             }
         }
@@ -56,21 +63,28 @@ import Foundation
     private(set) var state: FatCrabTakerState
     private(set) var orderAmount: Double
     private(set) var orderPrice: Double
+    private(set) var tradeUuid: UUID
+    private(set) var peerPubkey: String
     
     init(taker: FatCrabSellTaker) {
         self.taker = taker
         self.state = FatCrabTakerState.new
         self.orderAmount = 0.0
         self.orderPrice = 0.0
+        self.tradeUuid = UUID()
+        self.peerPubkey = ""
         
         Task {
             let state = try taker.getState()
             let orderEnvelope = try taker.getOrderDetails()
+            let order = orderEnvelope.order()
             
             Task { @MainActor in
                 self.state = state
-                self.orderAmount = orderEnvelope.order().amount
-                self.orderPrice = orderEnvelope.order().price
+                self.orderAmount = order.amount
+                self.orderPrice = order.price
+                self.tradeUuid = UUID(uuidString: order.tradeUuid) ?? UUID.init(uuidString: allZeroUUIDString)!
+                self.peerPubkey = orderEnvelope.pubkey()
             }
         }
     }

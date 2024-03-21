@@ -18,7 +18,7 @@ struct TradesView: View {
                 let tradeUuids: [UUID] = model.trades.keys.map({ $0 })
                 ForEach(tradeUuids, id: \.self) { tradeUuid in
                     if let trade = model.trades[tradeUuid] {
-                        NavigationLink(destination: TradeDetailView(trade: trade)) {
+                        NavigationLink(destination: TradeDetailView(for: trade)) {
                             TradeRowView(trade: trade)
                         }
                     }

@@ -13,6 +13,11 @@
 		0825B64F2B73970300E7AC0E /* OrderRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0825B64E2B73970300E7AC0E /* OrderRowView.swift */; };
 		0832F13C2B95F1C500991AE0 /* TradeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0832F13B2B95F1C500991AE0 /* TradeDetailView.swift */; };
 		0832F13E2B95F1CF00991AE0 /* TradeRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0832F13D2B95F1CF00991AE0 /* TradeRowView.swift */; };
+		08529CC62BAC3E6A00D57E4C /* TradeDetailSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08529CC52BAC3E6A00D57E4C /* TradeDetailSummaryView.swift */; };
+		08529CC82BAC3E8000D57E4C /* TradeDetailExplainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08529CC72BAC3E8000D57E4C /* TradeDetailExplainView.swift */; };
+		08529CCA2BAC3E9700D57E4C /* TradeDetailStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08529CC92BAC3E9700D57E4C /* TradeDetailStatusView.swift */; };
+		08529CCC2BAC3EA300D57E4C /* TradeDetailActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08529CCB2BAC3EA300D57E4C /* TradeDetailActionView.swift */; };
+		08529CCE2BAC560400D57E4C /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08529CCD2BAC560400D57E4C /* Common.swift */; };
 		085FE4DA2B3EB77D0061DF95 /* SendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085FE4D92B3EB77D0061DF95 /* SendView.swift */; };
 		085FE4DC2B3EB78B0061DF95 /* ReceiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085FE4DB2B3EB78B0061DF95 /* ReceiveView.swift */; };
 		085FE4DE2B3EC6550061DF95 /* FatCrabProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085FE4DD2B3EC6550061DF95 /* FatCrabProtocol.swift */; };
@@ -65,6 +70,11 @@
 		0825B64E2B73970300E7AC0E /* OrderRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderRowView.swift; sourceTree = "<group>"; };
 		0832F13B2B95F1C500991AE0 /* TradeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeDetailView.swift; sourceTree = "<group>"; };
 		0832F13D2B95F1CF00991AE0 /* TradeRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeRowView.swift; sourceTree = "<group>"; };
+		08529CC52BAC3E6A00D57E4C /* TradeDetailSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeDetailSummaryView.swift; sourceTree = "<group>"; };
+		08529CC72BAC3E8000D57E4C /* TradeDetailExplainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeDetailExplainView.swift; sourceTree = "<group>"; };
+		08529CC92BAC3E9700D57E4C /* TradeDetailStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeDetailStatusView.swift; sourceTree = "<group>"; };
+		08529CCB2BAC3EA300D57E4C /* TradeDetailActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeDetailActionView.swift; sourceTree = "<group>"; };
+		08529CCD2BAC560400D57E4C /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		085FE4D92B3EB77D0061DF95 /* SendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendView.swift; sourceTree = "<group>"; };
 		085FE4DB2B3EB78B0061DF95 /* ReceiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveView.swift; sourceTree = "<group>"; };
 		085FE4DD2B3EC6550061DF95 /* FatCrabProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FatCrabProtocol.swift; sourceTree = "<group>"; };
@@ -109,6 +119,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		08529CC42BAC3E5700D57E4C /* ViewElements */ = {
+			isa = PBXGroup;
+			children = (
+				08529CC52BAC3E6A00D57E4C /* TradeDetailSummaryView.swift */,
+				08529CC72BAC3E8000D57E4C /* TradeDetailExplainView.swift */,
+				08529CC92BAC3E9700D57E4C /* TradeDetailStatusView.swift */,
+				08529CCB2BAC3EA300D57E4C /* TradeDetailActionView.swift */,
+			);
+			path = ViewElements;
+			sourceTree = "<group>";
+		};
 		085FE4E42B3EDBA90061DF95 /* ViewElements */ = {
 			isa = PBXGroup;
 			children = (
@@ -159,6 +180,7 @@
 		08C1EFD42B67A8EF000F4527 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				08529CCD2BAC560400D57E4C /* Common.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -243,6 +265,7 @@
 		08DC5B7C2B3DA67700B71A22 /* Trades */ = {
 			isa = PBXGroup;
 			children = (
+				08529CC42BAC3E5700D57E4C /* ViewElements */,
 				08DC5B682B3D771300B71A22 /* TradesView.swift */,
 				0832F13B2B95F1C500991AE0 /* TradeDetailView.swift */,
 				0832F13D2B95F1CF00991AE0 /* TradeRowView.swift */,
@@ -345,9 +368,13 @@
 				08C1EFC72B4426FD000F4527 /* FatCrabTakerModel.swift in Sources */,
 				085FE4DC2B3EB78B0061DF95 /* ReceiveView.swift in Sources */,
 				0825B6492B7271BC00E7AC0E /* AddRelayToolbarItem.swift in Sources */,
+				08529CC62BAC3E6A00D57E4C /* TradeDetailSummaryView.swift in Sources */,
+				08529CCE2BAC560400D57E4C /* Common.swift in Sources */,
 				08C1EFC32B4426D9000F4527 /* FatCrabMakerModel.swift in Sources */,
 				08C1EFCF2B442743000F4527 /* FatCrabMakerMock.swift in Sources */,
+				08529CCA2BAC3E9700D57E4C /* TradeDetailStatusView.swift in Sources */,
 				08DC5B6F2B3D7E0E00B71A22 /* FatCrabModel.swift in Sources */,
+				08529CCC2BAC3EA300D57E4C /* TradeDetailActionView.swift in Sources */,
 				0825B64F2B73970300E7AC0E /* OrderRowView.swift in Sources */,
 				08C1EFBC2B42D887000F4527 /* MakeNewOrderToolbarItem.swift in Sources */,
 				085FE4E02B3ECBF10061DF95 /* FatCrabMock.swift in Sources */,
@@ -364,6 +391,7 @@
 				08C1EFB72B3EFA68000F4527 /* KeychainWrapper.swift in Sources */,
 				08DC5B372B2C446900B71A22 /* OceanSeaApp.swift in Sources */,
 				08DC5B632B3D76F600B71A22 /* WalletView.swift in Sources */,
+				08529CC82BAC3E8000D57E4C /* TradeDetailExplainView.swift in Sources */,
 				08DC5B7A2B3DA56E00B71A22 /* EnterSeedsView.swift in Sources */,
 				08DC5B652B3D770000B71A22 /* BookView.swift in Sources */,
 				0825B64B2B7271CF00E7AC0E /* AddRelayView.swift in Sources */,

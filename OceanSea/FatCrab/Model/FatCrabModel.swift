@@ -57,50 +57,10 @@ import Foundation
         }
         
         relays = trader.getRelays()
-
-        restoreTrades()
         
         Task { @MainActor in
             // Should make sure all Maker & Taker notif is hooked up before reconnecting
             try trader.reconnect()
-        }
-    }
-    
-    private func restoreTrades() {
-        trader.getBuyMakers().forEach { trade in
-            guard let uuid = UUID(uuidString: trade.key) else {
-                assert(false, "Failed to create UUID from string \(trade.key)")
-                return
-            }
-            let buyMaker = FatCrabMakerBuyModel(maker: trade.value)
-            trades[uuid] = .maker(maker: .buy(maker: buyMaker))
-        }
-        
-        trader.getSellMakers().forEach { trade in
-            guard let uuid = UUID(uuidString: trade.key) else {
-                assert(false, "Failed to create UUID from string \(trade.key)")
-                return
-            }
-            let sellMaker = FatCrabMakerSellModel(maker: trade.value)
-            trades[uuid] = .maker(maker: .sell(maker: sellMaker))
-        }
-        
-        trader.getBuyTakers().forEach { trade in
-            guard let uuid = UUID(uuidString: trade.key) else {
-                assert(false, "Failed to create UUID from string \(trade.key)")
-                return
-            }
-            let buyTaker = FatCrabTakerBuyModel(taker: trade.value)
-            trades[uuid] = .taker(taker: .buy(taker: buyTaker))
-        }
-        
-        trader.getSellTakers().forEach { trade in
-            guard let uuid = UUID(uuidString: trade.key) else {
-                assert(false, "Failed to create UUID from string \(trade.key)")
-                return
-            }
-            let sellTaker = FatCrabTakerSellModel(taker: trade.value)
-            trades[uuid] = .taker(taker: .sell(taker: sellTaker))
         }
     }
     

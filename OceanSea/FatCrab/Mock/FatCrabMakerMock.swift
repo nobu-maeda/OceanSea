@@ -11,13 +11,17 @@ import Foundation
     var state: FatCrabMakerState
     var orderAmount: Double
     var orderPrice: Double
+    var tradeUuid: UUID
+    var peerPubkey: String?
     var offers: [FatCrabOfferEnvelope]
     var peerEnvelope: FatCrabPeerEnvelope?
     
-    init(amount: Double, price: Double, offers: [FatCrabOfferEnvelope] = [], peerEnvelope: FatCrabPeerEnvelope? = nil) {
+    init(amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String? = nil, offers: [FatCrabOfferEnvelope] = [], peerEnvelope: FatCrabPeerEnvelope? = nil) {
         self.state = FatCrabMakerState.new
         self.orderAmount = amount
         self.orderPrice = price
+        self.tradeUuid = tradeUuid
+        self.peerPubkey = peerPubkey
         self.offers = offers
         self.peerEnvelope = peerEnvelope
     }
@@ -48,13 +52,17 @@ import Foundation
     var state: FatCrabMakerState
     var orderAmount: Double
     var orderPrice: Double
+    var tradeUuid: UUID
+    var peerPubkey: String?
     var offers: [FatCrabOfferEnvelope]
     var peerEnvelope: FatCrabPeerEnvelope?
     
-    init(amount: Double, price: Double, offers: [FatCrabOfferEnvelope] = [], peerEnvelope: FatCrabPeerEnvelope? = nil) {
+    init(amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String? = nil, offers: [FatCrabOfferEnvelope] = [], peerEnvelope: FatCrabPeerEnvelope? = nil) {
         self.state = FatCrabMakerState.new
         self.orderAmount = amount
         self.orderPrice = price
+        self.tradeUuid = tradeUuid
+        self.peerPubkey = peerPubkey
         self.offers = offers
         self.peerEnvelope = peerEnvelope
     }

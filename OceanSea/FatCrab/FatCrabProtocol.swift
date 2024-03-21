@@ -10,19 +10,115 @@ import SwiftUI
 enum FatCrabMakerTrade {
     case buy(maker: any FatCrabMakerBuyProtocol)
     case sell(maker: any FatCrabMakerSellProtocol)
+    
+    var orderPrice: Double {
+        switch self {
+        case .buy(let maker):
+            return maker.orderPrice
+        case .sell(let maker):
+            return maker.orderPrice
+        }
+    }
+    
+    var orderAmount: Double {
+        switch self {
+        case .buy(let maker):
+            return maker.orderAmount
+        case .sell(let maker):
+            return maker.orderAmount
+        }
+    }
+    
+    var tradeUuid: UUID {
+        switch self {
+        case .buy(let maker):
+            return maker.tradeUuid
+        case .sell(let maker):
+            return maker.tradeUuid
+        }
+    }
+    
+    var peerPubkey: String? {
+        switch self {
+        case .buy(let maker):
+            return maker.peerPubkey
+        case .sell(let maker):
+            return maker.peerPubkey
+        }
+    }
 }
 
 enum FatCrabTakerTrade {
     case buy(taker: any FatCrabTakerBuyProtocol)
     case sell(taker: any FatCrabTakerSellProtocol)
+    
+    var orderPrice: Double {
+        switch self {
+        case .buy(let taker):
+            return taker.orderPrice
+        case .sell(let taker):
+            return taker.orderPrice
+        }
+    }
+    
+    var orderAmount: Double {
+        switch self {
+        case .buy(let taker):
+            return taker.orderAmount
+        case .sell(let taker):
+            return taker.orderAmount
+        }
+    }
+    
+    var tradeUuid: UUID {
+        switch self {
+        case .buy(let taker):
+            return taker.tradeUuid
+        case .sell(let taker):
+            return taker.tradeUuid
+        }
+    }
+    
+    var peerPubkey: String {
+        switch self {
+        case .buy(let taker):
+            return taker.peerPubkey
+        case .sell(let taker):
+            return taker.peerPubkey
+        }
+    }
 }
 
 enum FatCrabTrade {
     case maker(maker: FatCrabMakerTrade)
     case taker(taker: FatCrabTakerTrade)
     
-    // TODO: Function to get status to assist in sorting
-    // TODO: Function to get last updated to assit in sorting
+    var orderPrice: Double {
+        switch self {
+        case .maker(let maker):
+            return maker.orderPrice
+        case .taker(let taker):
+            return taker.orderPrice
+        }
+    }
+    
+    var orderAmount: Double {
+        switch self {
+        case .maker(let maker):
+            return maker.orderAmount
+        case .taker(let taker):
+            return taker.orderAmount
+        }
+    }
+    
+    var tradeUuid: UUID {
+        switch self {
+        case .maker(let maker):
+            return maker.tradeUuid
+        case .taker(let taker):
+            return taker.tradeUuid
+        }
+    }
 }
 
 struct FatCrabModelKey: EnvironmentKey {
@@ -64,6 +160,8 @@ protocol FatCrabMakerBuyProtocol: ObservableObject {
     var state: FatCrabMakerState { get }
     var orderAmount: Double { get }
     var orderPrice: Double { get }
+    var tradeUuid: UUID { get }
+    var peerPubkey: String? { get }
     var offers: [FatCrabOfferEnvelope] { get }
     var peerEnvelope: FatCrabPeerEnvelope? { get }
     
@@ -77,6 +175,8 @@ protocol FatCrabMakerSellProtocol: ObservableObject {
     var state: FatCrabMakerState { get }
     var orderAmount: Double { get }
     var orderPrice: Double { get }
+    var tradeUuid: UUID { get }
+    var peerPubkey: String? { get }
     var offers: [FatCrabOfferEnvelope] { get }
     var peerEnvelope: FatCrabPeerEnvelope? { get }
     
@@ -91,6 +191,8 @@ protocol FatCrabTakerBuyProtocol: ObservableObject {
     var state: FatCrabTakerState { get }
     var orderAmount: Double { get }
     var orderPrice: Double { get }
+    var tradeUuid: UUID { get }
+    var peerPubkey: String { get }
     var tradeRspEnvelope: FatCrabTradeRspEnvelope? { get }
     
     func takeOrder() throws
@@ -103,6 +205,8 @@ protocol FatCrabTakerSellProtocol: ObservableObject {
     var state: FatCrabTakerState { get }
     var orderAmount: Double { get }
     var orderPrice: Double { get }
+    var tradeUuid: UUID { get }
+    var peerPubkey: String { get }
     
     func takeOrder() throws
     func tradeComplete() throws

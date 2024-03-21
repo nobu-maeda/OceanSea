@@ -15,6 +15,7 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
     }
     
     func order() -> FatCrabOrder { innerOrder }
+    func pubkey() -> String { "" }
 }
 
 @Observable class FatCrabMock: FatCrabProtocol {
@@ -121,21 +122,21 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
     }
     
     func makeBuyOrder(price: Double, amount: Double, fatcrabRxAddr: String) throws -> any FatCrabMakerBuyProtocol {
-        FatCrabMakerBuyMock(amount: amount, price: price)
+        FatCrabMakerBuyMock(amount: amount, price: price, tradeUuid: UUID())
     }
     
     func makeSellOrder(price: Double, amount: Double) throws -> any FatCrabMakerSellProtocol {
-        FatCrabMakerSellMock(amount: amount, price: price)
+        FatCrabMakerSellMock(amount: amount, price: price, tradeUuid: UUID())
     }
     
     func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) throws -> any FatCrabTakerBuyProtocol {
         let order = orderEnvelope.order()
-        return FatCrabTakerBuyMock(amount: order.amount, price: order.price)
+        return FatCrabTakerBuyMock(amount: order.amount, price: order.price, tradeUuid: UUID(), peerPubkey: "SomePubKey-000-0026")
     }
     
     func takeSellOrder(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) throws -> any FatCrabTakerSellProtocol {
         let order = orderEnvelope.order()
-        return FatCrabTakerSellMock(amount: order.amount, price: order.price)
+        return FatCrabTakerSellMock(amount: order.amount, price: order.price, tradeUuid: UUID(), peerPubkey: "SomePubKey-004-0033")
     }
     
     func generateTrade() -> FatCrabTrade {
@@ -147,21 +148,21 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
         if isMaker {
             switch orderType {
             case .buy:
-                let maker = FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(amount: amount, price: price))
+                let maker = FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(amount: amount, price: price, tradeUuid: UUID()))
                 return FatCrabTrade.maker(maker: maker)
                 
             case .sell:
-                let maker =  FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(amount: amount, price: price))
+                let maker =  FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(amount: amount, price: price, tradeUuid: UUID()))
                 return FatCrabTrade.maker(maker: maker)
             }
         } else {
             switch orderType {
             case .buy:
-                let taker = FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(amount: amount, price: price))
+                let taker = FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(amount: amount, price: price, tradeUuid: UUID(), peerPubkey: "SomePubKey-002-3443"))
                 return FatCrabTrade.taker(taker: taker)
                 
             case .sell:
-                let taker = FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(amount: amount, price: price))
+                let taker = FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(amount: amount, price: price, tradeUuid: UUID(), peerPubkey: "SomePubKey-934-3850"))
                 return FatCrabTrade.taker(taker: taker)
             }
         }

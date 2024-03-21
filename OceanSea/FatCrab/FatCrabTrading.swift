@@ -746,7 +746,9 @@ public func FfiConverterTypeFatCrabMakerNotifDelegate_lower(_ value: FatCrabMake
     return FfiConverterTypeFatCrabMakerNotifDelegate.lower(value)
 }
 
-public protocol FatCrabOfferEnvelopeProtocol {}
+public protocol FatCrabOfferEnvelopeProtocol {
+    func pubkey() -> String
+}
 
 public class FatCrabOfferEnvelope: FatCrabOfferEnvelopeProtocol {
     fileprivate let pointer: UnsafeMutableRawPointer
@@ -760,6 +762,15 @@ public class FatCrabOfferEnvelope: FatCrabOfferEnvelopeProtocol {
 
     deinit {
         try! rustCall { uniffi_fatcrab_trading_fn_free_fatcrabofferenvelope(pointer, $0) }
+    }
+
+    public func pubkey() -> String {
+        return try! FfiConverterString.lift(
+            try!
+                rustCall {
+                    uniffi_fatcrab_trading_fn_method_fatcrabofferenvelope_pubkey(self.pointer, $0)
+                }
+        )
     }
 }
 
@@ -803,6 +814,7 @@ public func FfiConverterTypeFatCrabOfferEnvelope_lower(_ value: FatCrabOfferEnve
 
 public protocol FatCrabOrderEnvelopeProtocol {
     func order() -> FatCrabOrder
+    func pubkey() -> String
 }
 
 public class FatCrabOrderEnvelope: FatCrabOrderEnvelopeProtocol {
@@ -824,6 +836,15 @@ public class FatCrabOrderEnvelope: FatCrabOrderEnvelopeProtocol {
             try!
                 rustCall {
                     uniffi_fatcrab_trading_fn_method_fatcraborderenvelope_order(self.pointer, $0)
+                }
+        )
+    }
+
+    public func pubkey() -> String {
+        return try! FfiConverterString.lift(
+            try!
+                rustCall {
+                    uniffi_fatcrab_trading_fn_method_fatcraborderenvelope_pubkey(self.pointer, $0)
                 }
         )
     }
@@ -3164,7 +3185,13 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_method_fatcrabmakernotifdelegate_on_maker_peer_notif() != 61951 {
         return InitializationResult.apiChecksumMismatch
     }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabofferenvelope_pubkey() != 42915 {
+        return InitializationResult.apiChecksumMismatch
+    }
     if uniffi_fatcrab_trading_checksum_method_fatcraborderenvelope_order() != 23867 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcraborderenvelope_pubkey() != 57252 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabpeerenvelope_message() != 62166 {

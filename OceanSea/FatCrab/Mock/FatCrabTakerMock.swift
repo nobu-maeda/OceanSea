@@ -11,12 +11,16 @@ import Foundation
     var state: FatCrabTakerState
     var orderAmount: Double
     var orderPrice: Double
+    var tradeUuid: UUID
+    var peerPubkey: String
     var tradeRspEnvelope: FatCrabTradeRspEnvelope?
     
-    init(amount: Double, price: Double, tradeRspEnvelope: FatCrabTradeRspEnvelope? = nil) {
+    init(amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String, tradeRspEnvelope: FatCrabTradeRspEnvelope? = nil) {
         self.state = FatCrabTakerState.new
         self.orderAmount = amount
         self.orderPrice = price
+        self.tradeUuid = tradeUuid
+        self.peerPubkey = peerPubkey
         self.tradeRspEnvelope = tradeRspEnvelope
     }
     
@@ -41,11 +45,15 @@ import Foundation
     var state: FatCrabTakerState
     var orderAmount: Double
     var orderPrice: Double
+    var tradeUuid: UUID
+    var peerPubkey: String
     
-    init(amount: Double, price: Double) {
+    init(amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String) {
         self.state = FatCrabTakerState.new
         self.orderAmount = amount
         self.orderPrice = price
+        self.tradeUuid = tradeUuid
+        self.peerPubkey = peerPubkey
     }
     
     func takeOrder() throws {
