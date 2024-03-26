@@ -122,21 +122,21 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
     }
     
     func makeBuyOrder(price: Double, amount: Double, fatcrabRxAddr: String) throws -> any FatCrabMakerBuyProtocol {
-        FatCrabMakerBuyMock(amount: amount, price: price, tradeUuid: UUID())
+        FatCrabMakerBuyMock(state: .new, amount: amount, price: price, tradeUuid: UUID())
     }
     
     func makeSellOrder(price: Double, amount: Double) throws -> any FatCrabMakerSellProtocol {
-        FatCrabMakerSellMock(amount: amount, price: price, tradeUuid: UUID())
+        FatCrabMakerSellMock(state: .new, amount: amount, price: price, tradeUuid: UUID())
     }
     
     func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) throws -> any FatCrabTakerBuyProtocol {
         let order = orderEnvelope.order()
-        return FatCrabTakerBuyMock(amount: order.amount, price: order.price, tradeUuid: UUID(), peerPubkey: "SomePubKey-000-0026")
+        return FatCrabTakerBuyMock(state: .new, amount: order.amount, price: order.price, tradeUuid: UUID(), peerPubkey: "SomePubKey-000-0026")
     }
     
     func takeSellOrder(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) throws -> any FatCrabTakerSellProtocol {
         let order = orderEnvelope.order()
-        return FatCrabTakerSellMock(amount: order.amount, price: order.price, tradeUuid: UUID(), peerPubkey: "SomePubKey-004-0033")
+        return FatCrabTakerSellMock(state: .new, amount: order.amount, price: order.price, tradeUuid: UUID(), peerPubkey: "SomePubKey-004-0033")
     }
     
     func generateTrade() -> FatCrabTrade {
@@ -146,23 +146,25 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
         let isMaker = Bool.random()
         
         if isMaker {
+            let state = FatCrabMakerState.random(for: orderType)
             switch orderType {
             case .buy:
-                let maker = FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(amount: amount, price: price, tradeUuid: UUID()))
+                let maker = FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: state, amount: amount, price: price, tradeUuid: UUID()))
                 return FatCrabTrade.maker(maker: maker)
                 
             case .sell:
-                let maker =  FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(amount: amount, price: price, tradeUuid: UUID()))
+                let maker =  FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: state, amount: amount, price: price, tradeUuid: UUID()))
                 return FatCrabTrade.maker(maker: maker)
             }
         } else {
+            let state = FatCrabTakerState.random(for: orderType)
             switch orderType {
             case .buy:
-                let taker = FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(amount: amount, price: price, tradeUuid: UUID(), peerPubkey: "SomePubKey-002-3443"))
+                let taker = FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: state, amount: amount, price: price, tradeUuid: UUID(), peerPubkey: "SomePubKey-002-3443"))
                 return FatCrabTrade.taker(taker: taker)
                 
             case .sell:
-                let taker = FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(amount: amount, price: price, tradeUuid: UUID(), peerPubkey: "SomePubKey-934-3850"))
+                let taker = FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: state, amount: amount, price: price, tradeUuid: UUID(), peerPubkey: "SomePubKey-934-3850"))
                 return FatCrabTrade.taker(taker: taker)
             }
         }
@@ -181,5 +183,57 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
             let index = Int.random(in: 0..<trades.count)
             self.trades.removeValue(forKey: Array(trades.keys)[index])
         }
+    }
+}
+
+extension FatCrabMakerState: CaseIterable {
+    public static var allCases: [FatCrabMakerState] {
+        return [.new, .waitingForOffers, .receivedOffer, .acceptedOffer, .inboundBtcNotified, .inboundFcNotified, .notifiedOutbound, .tradeCompleted]
+    }
+}
+
+extension FatCrabMakerState {
+    static func random(for orderType: FatCrabOrderType) -> FatCrabMakerState {
+        switch orderType {
+        case .buy:
+            return Self.random(except: .inboundBtcNotified)
+        case .sell:
+            return Self.random(except: .inboundFcNotified)
+        }
+    }
+    
+    static func random(except: FatCrabMakerState) -> FatCrabMakerState {
+        var randomState: FatCrabMakerState
+        repeat {
+            let randomIndex = Int.random(in: 0..<FatCrabMakerState.allCases.count)
+            randomState = FatCrabMakerState.allCases[randomIndex]
+        } while randomState == except
+        return randomState
+    }
+}
+
+extension FatCrabTakerState: CaseIterable {
+    public static var allCases: [FatCrabTakerState] {
+        return [.new, .submittedOffer, .offerAccepted, .offerRejected, .notifiedOutbound, .inboundBtcNotified, .inboundFcNotified, .tradeCompleted]
+    }
+}
+
+extension FatCrabTakerState {
+    static func random(for orderType: FatCrabOrderType) -> FatCrabTakerState {
+        switch orderType {
+        case .buy:
+            return Self.random(except: .inboundFcNotified)
+        case .sell:
+            return Self.random(except: .inboundBtcNotified)
+        }
+    }
+    
+    static func random(except: FatCrabTakerState) -> FatCrabTakerState {
+        var randomState: FatCrabTakerState
+        repeat {
+            let randomIndex = Int.random(in: 0..<FatCrabTakerState.allCases.count)
+            randomState = FatCrabTakerState.allCases[randomIndex]
+        } while randomState == except
+        return randomState
     }
 }

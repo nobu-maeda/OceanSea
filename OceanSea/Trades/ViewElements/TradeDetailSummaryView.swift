@@ -11,21 +11,47 @@ struct TradeDetailSummaryView: View {
     let trade: FatCrabTrade
     let priceString: String
     let amountString: String
-    let pubkeyString: String
+    
+    let PUBKEY_STRING_PLACEHOLDER = "TBD"
     
     init(for trade: FatCrabTrade) {
         self.trade = trade
         self.priceString = trade.orderPrice.formatted()
         self.amountString = trade.orderAmount.formatted()
-        self.pubkeyString = "TBD"
     }
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        var pubkeyString: String
+        
+        switch trade {
+        case .maker(let maker):
+            pubkeyString = maker.peerPubkey ?? PUBKEY_STRING_PLACEHOLDER
+        case .taker(let taker):
+            pubkeyString = taker.peerPubkey
+        }
+        
+        return VStack(alignment: .leading, spacing: 8.0) {
+            HStack {
+                Text("Price")
+                Spacer()
+                Text (priceString)
+            }
+            HStack {
+                Text("Amount")
+                Spacer()
+                Text(amountString)
+            }
+            HStack {
+                Text("Pubkey")
+                Spacer()
+                Text(pubkeyString)
+            }
+        };
+        
     }
 }
 
 #Preview {
-    let trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(amount: 1234.56, price: 5678.9, tradeUuid: UUID())))
+    let trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.random(for: .sell), amount: 1234.56, price: 5678.9, tradeUuid: UUID())))
     return TradeDetailSummaryView(for: trade)
 }

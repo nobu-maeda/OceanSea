@@ -16,8 +16,8 @@ import Foundation
     var offers: [FatCrabOfferEnvelope]
     var peerEnvelope: FatCrabPeerEnvelope?
     
-    init(amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String? = nil, offers: [FatCrabOfferEnvelope] = [], peerEnvelope: FatCrabPeerEnvelope? = nil) {
-        self.state = FatCrabMakerState.new
+    init(state: FatCrabMakerState, amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String? = nil, offers: [FatCrabOfferEnvelope] = [], peerEnvelope: FatCrabPeerEnvelope? = nil) {
+        self.state = state
         self.orderAmount = amount
         self.orderPrice = price
         self.tradeUuid = tradeUuid
@@ -57,8 +57,8 @@ import Foundation
     var offers: [FatCrabOfferEnvelope]
     var peerEnvelope: FatCrabPeerEnvelope?
     
-    init(amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String? = nil, offers: [FatCrabOfferEnvelope] = [], peerEnvelope: FatCrabPeerEnvelope? = nil) {
-        self.state = FatCrabMakerState.new
+    init(state: FatCrabMakerState, amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String? = nil, offers: [FatCrabOfferEnvelope] = [], peerEnvelope: FatCrabPeerEnvelope? = nil) {
+        self.state = state
         self.orderAmount = amount
         self.orderPrice = price
         self.tradeUuid = tradeUuid
@@ -80,7 +80,7 @@ import Foundation
         }
     }
     
-    func checkBtcTxConfirmation() throws -> UInt32 {
+    func checkBtcTxConfirmation() async throws -> UInt32 {
         return 6
     }
     

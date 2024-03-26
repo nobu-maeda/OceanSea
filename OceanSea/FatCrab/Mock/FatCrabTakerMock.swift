@@ -15,8 +15,8 @@ import Foundation
     var peerPubkey: String
     var tradeRspEnvelope: FatCrabTradeRspEnvelope?
     
-    init(amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String, tradeRspEnvelope: FatCrabTradeRspEnvelope? = nil) {
-        self.state = FatCrabTakerState.new
+    init(state: FatCrabTakerState, amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String, tradeRspEnvelope: FatCrabTradeRspEnvelope? = nil) {
+        self.state = state
         self.orderAmount = amount
         self.orderPrice = price
         self.tradeUuid = tradeUuid
@@ -32,7 +32,7 @@ import Foundation
         self.state = FatCrabTakerState.notifiedOutbound
     }
     
-    func checkBtcTxConfirmation() throws -> UInt32 {
+    func checkBtcTxConfirmation() async throws -> UInt32 {
         return 6
     }
     
@@ -48,8 +48,8 @@ import Foundation
     var tradeUuid: UUID
     var peerPubkey: String
     
-    init(amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String) {
-        self.state = FatCrabTakerState.new
+    init(state: FatCrabTakerState, amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String) {
+        self.state = state
         self.orderAmount = amount
         self.orderPrice = price
         self.tradeUuid = tradeUuid

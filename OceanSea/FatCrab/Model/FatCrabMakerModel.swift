@@ -98,27 +98,53 @@ import Foundation
         }
     }
     
-    func postNewOrder() throws {
-        self.state = try self.maker.postNewOrder()
-    }
-    
-    func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws {
-        self.state = try self.maker.tradeResponse(tradeRspType: tradeRspType, offerEnvelope: offerEnvelope)
-        
-        if tradeRspType == .accept {
-            self.peerPubkey = offerEnvelope.pubkey()
+    func postNewOrder() {
+        Task {
+            let state = try self.maker.postNewOrder()
+            
+            Task { @MainActor in
+                self.state = state
+            }
         }
     }
     
-    func checkBtcTxConfirmation() throws -> UInt32 {
-        return try self.maker.checkBtcTxConfirmation()
+    func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws {
+        Task {
+            let state = try self.maker.tradeResponse(tradeRspType: tradeRspType, offerEnvelope: offerEnvelope)
+            
+            Task { @MainActor in
+                self.state = state
+                if tradeRspType == .accept {
+                    self.peerPubkey = offerEnvelope.pubkey()
+                }
+            }
+        }
+    }
+    
+    func checkBtcTxConfirmation() async throws -> UInt32 {
+        let btcTxConfs = try await Task {
+            try self.maker.checkBtcTxConfirmation()
+        }.value
+        return btcTxConfs
     }
     
     func notifyPeer(fatcrabTxid: String) throws {
-        self.state = try self.maker.notifyPeer(fatcrabTxid: fatcrabTxid)
+        Task {
+            let state = try self.maker.notifyPeer(fatcrabTxid: fatcrabTxid)
+            
+            Task { @MainActor in
+                self.state = state
+            }
+        }
     }
     
     func tradeComplete() throws {
-        self.state = try self.maker.tradeComplete()
+        Task {
+            let state = try self.maker.tradeComplete()
+            
+            Task { @MainActor in
+                self.state = state
+            }
+        }
     }
 }

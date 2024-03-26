@@ -11,6 +11,15 @@ enum FatCrabMakerTrade {
     case buy(maker: any FatCrabMakerBuyProtocol)
     case sell(maker: any FatCrabMakerSellProtocol)
     
+    var state: FatCrabMakerState {
+        switch self {
+        case .buy(let maker):
+            return maker.state
+        case .sell(let maker):
+            return maker.state
+        }
+    }
+    
     var orderPrice: Double {
         switch self {
         case .buy(let maker):
@@ -46,11 +55,38 @@ enum FatCrabMakerTrade {
             return maker.peerPubkey
         }
     }
+    
+    var offers: [FatCrabOfferEnvelope] {
+        switch self {
+        case .buy(let maker):
+            return maker.offers
+        case .sell(let maker):
+            return maker.offers
+        }
+    }
+    
+    func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws {
+        switch self {
+        case .buy(let maker):
+            try maker.tradeResponse(tradeRspType: tradeRspType, offerEnvelope: offerEnvelope)
+        case .sell(let maker):
+            try maker.tradeResponse(tradeRspType: tradeRspType, offerEnvelope: offerEnvelope)
+        }
+    }
 }
 
 enum FatCrabTakerTrade {
     case buy(taker: any FatCrabTakerBuyProtocol)
     case sell(taker: any FatCrabTakerSellProtocol)
+    
+    var state : FatCrabTakerState {
+        switch self {
+        case .buy(let taker):
+            return taker.state
+        case .sell(let taker):
+            return taker.state
+        }
+    }
     
     var orderPrice: Double {
         switch self {
@@ -85,6 +121,15 @@ enum FatCrabTakerTrade {
             return taker.peerPubkey
         case .sell(let taker):
             return taker.peerPubkey
+        }
+    }
+    
+    func tradeComplete() throws {
+        switch self {
+        case .buy(let taker):
+            try taker.tradeComplete()
+        case .sell(let taker):
+            try taker.tradeComplete()
         }
     }
 }
@@ -182,7 +227,7 @@ protocol FatCrabMakerSellProtocol: ObservableObject {
     
     func postNewOrder() throws
     func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws
-    func checkBtcTxConfirmation() throws -> UInt32
+    func checkBtcTxConfirmation() async throws -> UInt32
     func notifyPeer(fatcrabTxid: String) throws
     func tradeComplete() throws
 }
@@ -197,7 +242,7 @@ protocol FatCrabTakerBuyProtocol: ObservableObject {
     
     func takeOrder() throws
     func notifyPeer(fatcrabTxid: String) throws
-    func checkBtcTxConfirmation() throws -> UInt32
+    func checkBtcTxConfirmation() async throws -> UInt32
     func tradeComplete() throws
 }
 

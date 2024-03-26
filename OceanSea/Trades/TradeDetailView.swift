@@ -9,6 +9,8 @@ import SwiftUI
 
 struct TradeDetailView: View {
     @Environment(\.dismiss) private var dismiss
+    @State var shouldShowStatus = false
+    @State var shouldShowAction = false
     
     let trade: FatCrabTrade
     
@@ -21,19 +23,37 @@ struct TradeDetailView: View {
             List {
                 Section {
                     TradeDetailSummaryView(for: trade)
+                } header: {
+                    Text("Order Summary")
                 }
                 
                 Section {
                     TradeDetailExplainView(for: trade)
+                } header: {
+                    Text("Explaination")
                 }
                 
-                Section {
-                    TradeDetailStatusView(for: trade)
+                if shouldShowStatus {
+                    Section {
+                        TradeDetailStatusView(for: trade)
+                    } header: {
+                        Text("Status")
+                    }
                 }
                 
-                Section {
-                    TradeDetailActionView(for: trade)
+                if shouldShowAction {
+                    Section {
+                        TradeDetailActionView(for: trade)
+                    } header: {
+                        Text("Action")
+                    }
                 }
+            }
+            .refreshable {
+                updateViews()
+            }
+            .onAppear() {
+                updateViews()
             }
             .navigationTitle(self.navigationTitleString(for: trade))
             .navigationBarTitleDisplayMode(.inline)
@@ -67,9 +87,73 @@ struct TradeDetailView: View {
             }
         }
     }
+    
+    func updateViews() {
+        updateShouldShowStatus()
+    }
+    
+    func updateShouldShowStatus() {
+        switch trade {
+        case .maker(let maker):
+            if maker.state == .new {
+                shouldShowStatus = false
+            } else {
+                shouldShowStatus = true
+            }
+        case .taker(let taker):
+            if taker.state == .new {
+                shouldShowStatus = false
+            } else {
+                shouldShowStatus = true
+            }
+        }
+    }
+    
+    func updateShouldShowAction() {
+        switch trade {
+        case .maker(let maker):
+            switch maker.state {
+            case .new:
+                shouldShowAction = false
+            case .waitingForOffers:
+                shouldShowAction = false
+            case .receivedOffer:
+                shouldShowAction = true
+            case .acceptedOffer:
+                shouldShowAction = false
+            case .inboundBtcNotified:
+                shouldShowAction = true
+            case .inboundFcNotified:
+                shouldShowAction = true
+            case .notifiedOutbound:
+                shouldShowAction = false
+            case .tradeCompleted:
+                shouldShowAction = false
+            }
+        case .taker(let taker):
+            switch taker.state {
+            case .new:
+                shouldShowAction = false
+            case .submittedOffer:
+                shouldShowAction = false
+            case .offerAccepted:
+                shouldShowAction = true
+            case .offerRejected:
+                shouldShowAction = false
+            case .notifiedOutbound:
+                shouldShowAction = false
+            case .inboundBtcNotified:
+                shouldShowAction = false
+            case .inboundFcNotified:
+                shouldShowAction = true
+            case .tradeCompleted:
+                shouldShowAction = false
+            }
+        }
+    }
 }
 
 #Preview {
-    let trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey-000-0004")))
+    let trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey-000-0004")))
     return TradeDetailView(for: trade)
 }

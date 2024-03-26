@@ -34,7 +34,7 @@ struct TradeRowView: View {
                 orderAmountString = sellMaker.orderAmount.formatted()
                 orderPriceString = sellMaker.orderPrice.formatted()
             }
-                
+            
         case .taker(let taker):
             makerTakerString = "Taking"
             switch taker {
@@ -63,6 +63,6 @@ struct TradeRowView: View {
 }
 
 #Preview {
-    let trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(amount: 1234.56, price: 5678.9, tradeUuid: UUID())))
+    let trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID())))
     return TradeRowView(trade: trade)
 }
