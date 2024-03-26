@@ -9,33 +9,29 @@ import SwiftUI
 
 struct TradeDetailView: View {
     @Environment(\.dismiss) private var dismiss
+    @Binding var trade: FatCrabTrade?
+    
     @State var shouldShowStatus = false
     @State var shouldShowAction = false
-    
-    let trade: FatCrabTrade
-    
-    init(for trade: FatCrabTrade) {
-        self.trade = trade
-    }
     
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    TradeDetailSummaryView(for: trade)
+                    TradeDetailSummaryView(for: trade!)
                 } header: {
                     Text("Order Summary")
                 }
                 
                 Section {
-                    TradeDetailExplainView(for: trade)
+                    TradeDetailExplainView(for: trade!)
                 } header: {
                     Text("Explaination")
                 }
                 
                 if shouldShowStatus {
                     Section {
-                        TradeDetailStatusView(for: trade)
+                        TradeDetailStatusView(for: trade!)
                     } header: {
                         Text("Status")
                     }
@@ -43,7 +39,7 @@ struct TradeDetailView: View {
                 
                 if shouldShowAction {
                     Section {
-                        TradeDetailActionView(for: trade)
+                        TradeDetailActionView(for: trade!)
                     } header: {
                         Text("Action")
                     }
@@ -55,7 +51,7 @@ struct TradeDetailView: View {
             .onAppear() {
                 updateViews()
             }
-            .navigationTitle(self.navigationTitleString(for: trade))
+            .navigationTitle(self.navigationTitleString(for: trade!))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -93,7 +89,7 @@ struct TradeDetailView: View {
     }
     
     func updateShouldShowStatus() {
-        switch trade {
+        switch trade! {
         case .maker(let maker):
             if maker.state == .new {
                 shouldShowStatus = false
@@ -110,7 +106,7 @@ struct TradeDetailView: View {
     }
     
     func updateShouldShowAction() {
-        switch trade {
+        switch trade! {
         case .maker(let maker):
             switch maker.state {
             case .new:
@@ -154,6 +150,6 @@ struct TradeDetailView: View {
 }
 
 #Preview {
-    let trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey-000-0004")))
-    return TradeDetailView(for: trade)
+    @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey-000-0004")))
+    return TradeDetailView(trade: $trade)
 }
