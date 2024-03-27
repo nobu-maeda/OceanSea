@@ -15,23 +15,27 @@ struct TradeDetailView: View {
     @State var shouldShowAction = false
     
     var body: some View {
-        NavigationStack {
+        guard let trade = trade else {
+            fatalError("Trade should not be nil for TradeDetailView")
+        }
+        
+        return NavigationStack {
             List {
                 Section {
-                    TradeDetailSummaryView(for: trade!)
+                    OrderDetailSummaryView(orderAmount: trade.orderAmount, orderPrice: trade.orderPrice, pubkeyString: trade.peerPubkey)
                 } header: {
                     Text("Order Summary")
                 }
                 
                 Section {
-                    TradeDetailExplainView(for: trade!)
+                    TradeDetailExplainView(tradeType: trade.tradeType, orderType: trade.orderType, orderAmount: trade.orderAmount, orderPrice: trade.orderPrice)
                 } header: {
                     Text("Explaination")
                 }
                 
                 if shouldShowStatus {
                     Section {
-                        TradeDetailStatusView(for: trade!)
+                        TradeDetailStatusView(for: trade)
                     } header: {
                         Text("Status")
                     }
@@ -39,7 +43,7 @@ struct TradeDetailView: View {
                 
                 if shouldShowAction {
                     Section {
-                        TradeDetailActionView(for: trade!)
+                        TradeDetailActionView(for: trade)
                     } header: {
                         Text("Action")
                     }
@@ -51,7 +55,7 @@ struct TradeDetailView: View {
             .onAppear() {
                 updateViews()
             }
-            .navigationTitle(self.navigationTitleString(for: trade!))
+            .navigationTitle(navigationTitleString(for: trade))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -86,6 +90,7 @@ struct TradeDetailView: View {
     
     func updateViews() {
         updateShouldShowStatus()
+        updateShouldShowAction()
     }
     
     func updateShouldShowStatus() {
@@ -149,7 +154,52 @@ struct TradeDetailView: View {
     }
 }
 
-#Preview {
-    @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey-000-0004")))
+#Preview("Maker Buy - Random") {
+    @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    return TradeDetailView(trade: $trade)
+}
+
+#Preview("Maker Sell - Random") {
+    @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.random(for: .sell), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    return TradeDetailView(trade: $trade)
+}
+
+#Preview("Taker Buy - Random") {
+    @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    return TradeDetailView(trade: $trade)
+}
+
+#Preview("Taker Sell - Random") {
+    @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.random(for: .sell), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    return TradeDetailView(trade: $trade)
+}
+
+#Preview("Maker - Received Offer") {
+    @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.receivedOffer, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    return TradeDetailView(trade: $trade)
+}
+
+#Preview("Maker - Inbound Btc Notified") {
+    @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.inboundBtcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    return TradeDetailView(trade: $trade)
+}
+
+#Preview("Maker - Inbound Fatcrab Notified") {
+    @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.inboundFcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    return TradeDetailView(trade: $trade)
+}
+
+#Preview("Taker Buy - Offer Accepted") {
+    @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.offerAccepted, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    return TradeDetailView(trade: $trade)
+}
+
+#Preview("Taker Sell - Offer Accepted") {
+    @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.offerAccepted, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    return TradeDetailView(trade: $trade)
+}
+
+#Preview("Taker - Inbound Fatcrab Notified") {
+    @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.inboundFcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailView(trade: $trade)
 }

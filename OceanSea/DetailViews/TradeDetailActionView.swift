@@ -41,7 +41,7 @@ struct TradeDetailActionView: View {
                 case .inboundBtcNotified:
                     Text("Remit Fatcrab to Taker, before clicking to notify")
                     TextField(text: $fatcrabTxId) {
-                        Text("Fatcrab Tx ID")
+                        Text("Fatcrab Transaction ID")
                     }
                     .padding(.leading)
                     .padding(.trailing)
@@ -78,7 +78,7 @@ struct TradeDetailActionView: View {
                         case .buy:
                         Text("Remit Fatcrab to Maker, before clicking to notify")
                         TextField(text: $fatcrabTxId) {
-                            Text("Fatcrab Tx ID")
+                            Text("Fatcrab Transaction ID")
                         }
                         .padding(.leading)
                         .padding(.trailing)

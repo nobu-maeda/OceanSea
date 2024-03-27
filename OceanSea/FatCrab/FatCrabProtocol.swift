@@ -20,6 +20,15 @@ enum FatCrabMakerTrade {
         }
     }
     
+    var orderType: FatCrabOrderType {
+        switch self {
+        case .buy:
+            return .buy
+        case .sell:
+            return .sell
+        }
+    }
+    
     var orderPrice: Double {
         switch self {
         case .buy(let maker):
@@ -59,9 +68,9 @@ enum FatCrabMakerTrade {
     var offers: [FatCrabOfferEnvelope] {
         switch self {
         case .buy(let maker):
-            return maker.offers
+            return maker.offerEnvelopes
         case .sell(let maker):
-            return maker.offers
+            return maker.offerEnvelopes
         }
     }
     
@@ -85,6 +94,15 @@ enum FatCrabTakerTrade {
             return taker.state
         case .sell(let taker):
             return taker.state
+        }
+    }
+    
+    var orderType: FatCrabOrderType {
+        switch self {
+        case .buy:
+            return .buy
+        case .sell:
+            return .sell
         }
     }
     
@@ -138,6 +156,24 @@ enum FatCrabTrade {
     case maker(maker: FatCrabMakerTrade)
     case taker(taker: FatCrabTakerTrade)
     
+    var tradeType: FatCrabTradeType {
+        switch self {
+        case .maker:
+            return .maker
+        case .taker:
+            return .taker
+        }
+    }
+    
+    var orderType: FatCrabOrderType {
+        switch self {
+        case .maker(let maker):
+            return maker.orderType
+        case .taker(let taker):
+            return taker.orderType
+        }
+    }
+    
     var orderPrice: Double {
         switch self {
         case .maker(let maker):
@@ -162,6 +198,15 @@ enum FatCrabTrade {
             return maker.tradeUuid
         case .taker(let taker):
             return taker.tradeUuid
+        }
+    }
+    
+    var peerPubkey: String? {
+        switch self {
+        case .maker(let maker):
+            maker.peerPubkey
+        case .taker(let taker):
+            taker.peerPubkey
         }
     }
 }
@@ -207,7 +252,7 @@ protocol FatCrabMakerBuyProtocol: ObservableObject {
     var orderPrice: Double { get }
     var tradeUuid: UUID { get }
     var peerPubkey: String? { get }
-    var offers: [FatCrabOfferEnvelope] { get }
+    var offerEnvelopes: [FatCrabOfferEnvelope] { get }
     var peerEnvelope: FatCrabPeerEnvelope? { get }
     
     func postNewOrder() throws
@@ -222,7 +267,7 @@ protocol FatCrabMakerSellProtocol: ObservableObject {
     var orderPrice: Double { get }
     var tradeUuid: UUID { get }
     var peerPubkey: String? { get }
-    var offers: [FatCrabOfferEnvelope] { get }
+    var offerEnvelopes: [FatCrabOfferEnvelope] { get }
     var peerEnvelope: FatCrabPeerEnvelope? { get }
     
     func postNewOrder() throws

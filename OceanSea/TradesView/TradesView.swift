@@ -20,13 +20,12 @@ struct TradesView: View {
                 let tradeUuids: [UUID] = model.trades.keys.map({ $0 })
                 ForEach(tradeUuids, id: \.self) { tradeUuid in
                     if let trade = model.trades[tradeUuid] {
-                        NavigationLink(destination: Text("")) {
-                            TradeRowView(trade: trade)
-                        }.onTapGesture {
+                        TradeRowView(trade: trade)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
                             showTradeDetailViewForTrade = trade
                             showTradeDetailView = true
                         }
-                        
                     }
                 }
             }
@@ -36,9 +35,9 @@ struct TradesView: View {
             .onAppear() {
                 model.updateTrades()
             }
-            .toolbar(content: {
+            .toolbar() {
                 MakeNewOrderToolbarItem(showMakeNewOrderView: $showMakeNewOrderView)
-            })
+            }
             .navigationTitle("Trade Status")
         }
         .sheet(isPresented: $showMakeNewOrderView) {

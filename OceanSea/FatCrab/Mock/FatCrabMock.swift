@@ -15,7 +15,7 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
     }
     
     func order() -> FatCrabOrder { innerOrder }
-    func pubkey() -> String { "" }
+    func pubkey() -> String { "SomeMockPubkey" }
 }
 
 @Observable class FatCrabMock: FatCrabProtocol {

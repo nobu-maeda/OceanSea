@@ -11,15 +11,20 @@ struct BookView: View {
     @Environment(\.fatCrabModel) var model
     
     @State var showMakeNewOrderView = false
+    @State var showOrderDetailView = false
+    @State var showOrderDetailViewForOrder: FatCrabOrderEnvelopeProtocol? = nil
     
     var body: some View {
         NavigationStack {
             List {
                 let orderUuids: [UUID] = model.queriedOrders.keys.map({ $0 })
                 ForEach(orderUuids, id: \.self) { orderUuid in
-                    if let order = model.queriedOrders[orderUuid]?.order() {
-                        NavigationLink(destination: OrderDetailView(order: order)) {
-                            OrderRowView(order: order)
+                    if let orderEnvelope = model.queriedOrders[orderUuid] {
+                        OrderRowView(order: orderEnvelope.order())
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            showOrderDetailViewForOrder = orderEnvelope
+                            showOrderDetailView = true
                         }
                     }
                 }
@@ -37,6 +42,9 @@ struct BookView: View {
         }
         .sheet(isPresented: $showMakeNewOrderView) {
             MakeNewOrderView()
+        }
+        .sheet(isPresented: $showOrderDetailView) {
+            OrderDetailView(orderEnvelope: $showOrderDetailViewForOrder)
         }
     }
 }

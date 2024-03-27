@@ -10,48 +10,54 @@ import SwiftUI
 struct TradeDetailExplainView: View {
     @State var numOffers = 0
     
-    let trade: FatCrabTrade
+    let tradeType: FatCrabTradeType
+    let orderType: FatCrabOrderType
+    let orderAmount: Double
+    let orderPrice: Double
     
-    init(for trade: FatCrabTrade) {
-        self.trade = trade
+    init(tradeType: FatCrabTradeType, orderType: FatCrabOrderType, orderAmount: Double, orderPrice: Double) {
+        self.tradeType = tradeType
+        self.orderType = orderType
+        self.orderAmount = orderAmount
+        self.orderPrice = orderPrice
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12.0) {
-            let orderBtc = trade.orderAmount/trade.orderPrice
+            let orderBtc = orderAmount/orderPrice
             
-            switch trade {
-            case .maker(let maker):
-                switch maker {
-                case .buy(let buyMaker):
+            switch tradeType {
+            case .maker:
+                switch orderType {
+                case .buy:
                     Text("As a Maker of a buy order, you are buying Fatcrab with BTC. If this order completes...")
                     HStack {
-                        Text("FC + \(buyMaker.orderAmount)")
+                        Text("FC + \(orderAmount)")
                         Spacer()
                         Text("BTC - \(orderBtc)")
                     }
-                case .sell(let sellMaker):
+                case .sell:
                     Text("As a Maker of a sell order, you are selling Fatcrab for BTC. If this order completes...")
                     HStack {
-                        Text("FC - \(sellMaker.orderAmount)")
+                        Text("FC - \(orderAmount)")
                         Spacer()
                         Text("BTC + \(orderBtc)")
                     }
                 }
                 
-            case .taker(let taker):
-                switch taker {
-                case .buy(let buyTaker):
+            case .taker:
+                switch orderType {
+                case .buy:
                     Text("As a Taker of a buy order, you are selling Fatcrab for BTC. If this order completes...")
                     HStack {
-                        Text("FC - \(buyTaker.orderAmount)")
+                        Text("FC - \(orderAmount)")
                         Spacer()
                         Text("BTC + \(orderBtc)")
                     }
-                case .sell(let sellTaker):
+                case .sell:
                     Text("As a Taker of a sell order, you are buying Fatcrab with BTC. If this order completes...")
                     HStack {
-                        Text("FC + \(sellTaker.orderAmount)")
+                        Text("FC + \(orderAmount)")
                         Spacer()
                         Text("BTC - \(orderBtc)")
                     }
@@ -62,6 +68,5 @@ struct TradeDetailExplainView: View {
 }
 
 #Preview {
-    let trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.random(for: .sell), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey-000-0011")))
-    return TradeDetailExplainView(for: trade)
+    TradeDetailExplainView(tradeType: .taker, orderType: .sell, orderAmount: 1234.56, orderPrice: 5678.9)
 }

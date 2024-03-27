@@ -108,12 +108,8 @@ import Foundation
         let makerModel = FatCrabMakerBuyModel(maker: maker)
         let makerTrade = FatCrabMakerTrade.buy(maker: makerModel)
         trades.updateValue(.maker(maker: makerTrade), forKey: uuid)
-        
-        // TODO: How to hook-up Maker events?
-        
-        // TODO: Do we just go-ahead and post the order here?
-        try maker.postNewOrder()
-        
+ 
+        _ = try maker.postNewOrder()
         return makerModel
     }
     
@@ -125,11 +121,7 @@ import Foundation
         let makerTrade = FatCrabMakerTrade.sell(maker: makerModel)
         trades.updateValue(.maker(maker: makerTrade), forKey: uuid)
         
-        // TODO: How to hook-up Maker events?
-        
-        // TODO: Do we just go-ahead and post the order here?
-        try maker.postNewOrder()
-        
+        _ = try maker.postNewOrder()
         return makerModel
     }
     
@@ -140,10 +132,7 @@ import Foundation
         let takerTrade = FatCrabTakerTrade.buy(taker: takerModel)
         trades.updateValue(.taker(taker: takerTrade), forKey: uuid)
         
-        // TODO: How to hook-up Taker events?
-        
-        // TODO: Do we just go-ahead and take the order here?
-        
+        _ = try taker.takeOrder()
         return takerModel
     }
     
@@ -154,10 +143,7 @@ import Foundation
         let takerTrade = FatCrabTakerTrade.sell(taker: takerModel)
         trades.updateValue(.taker(taker: takerTrade), forKey: uuid)
         
-        // TODO: How to hook-up Taker events?
-        
-        // TODO: Do we just go-ahead and take the order here?
-        
+        _ = try taker.takeOrder()
         return takerModel
     }
     
