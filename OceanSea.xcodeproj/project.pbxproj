@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		0825B6492B7271BC00E7AC0E /* AddRelayToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0825B6482B7271BC00E7AC0E /* AddRelayToolbarItem.swift */; };
 		0825B64B2B7271CF00E7AC0E /* AddRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0825B64A2B7271CF00E7AC0E /* AddRelayView.swift */; };
-		0825B64D2B7396F500E7AC0E /* OrderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0825B64C2B7396F500E7AC0E /* OrderDetailView.swift */; };
-		0825B64F2B73970300E7AC0E /* OrderRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0825B64E2B73970300E7AC0E /* OrderRowView.swift */; };
 		0832F13C2B95F1C500991AE0 /* TradeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0832F13B2B95F1C500991AE0 /* TradeDetailView.swift */; };
 		0832F13E2B95F1CF00991AE0 /* TradeRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0832F13D2B95F1CF00991AE0 /* TradeRowView.swift */; };
 		08529CC62BAC3E6A00D57E4C /* OrderDetailSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08529CC52BAC3E6A00D57E4C /* OrderDetailSummaryView.swift */; };
@@ -71,8 +69,6 @@
 /* Begin PBXFileReference section */
 		0825B6482B7271BC00E7AC0E /* AddRelayToolbarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRelayToolbarItem.swift; sourceTree = "<group>"; };
 		0825B64A2B7271CF00E7AC0E /* AddRelayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRelayView.swift; sourceTree = "<group>"; };
-		0825B64C2B7396F500E7AC0E /* OrderDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailView.swift; sourceTree = "<group>"; };
-		0825B64E2B73970300E7AC0E /* OrderRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderRowView.swift; sourceTree = "<group>"; };
 		0832F13B2B95F1C500991AE0 /* TradeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeDetailView.swift; sourceTree = "<group>"; };
 		0832F13D2B95F1CF00991AE0 /* TradeRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeRowView.swift; sourceTree = "<group>"; };
 		08529CC52BAC3E6A00D57E4C /* OrderDetailSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailSummaryView.swift; sourceTree = "<group>"; };
@@ -129,15 +125,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		08529CDF2BB4098B00D57E4C /* DetailViews */ = {
+		08529CDF2BB4098B00D57E4C /* TradeDetailView */ = {
 			isa = PBXGroup;
 			children = (
+				0832F13B2B95F1C500991AE0 /* TradeDetailView.swift */,
 				08529CC52BAC3E6A00D57E4C /* OrderDetailSummaryView.swift */,
 				08529CC72BAC3E8000D57E4C /* TradeDetailExplainView.swift */,
 				08529CC92BAC3E9700D57E4C /* TradeDetailStatusView.swift */,
 				08529CCB2BAC3EA300D57E4C /* TradeDetailActionView.swift */,
+				08529CE02BB4149F00D57E4C /* TakeOrderActionView.swift */,
+				0832F13D2B95F1CF00991AE0 /* TradeRowView.swift */,
 			);
-			path = DetailViews;
+			path = TradeDetailView;
 			sourceTree = "<group>";
 		};
 		085FE4E42B3EDBA90061DF95 /* ViewElements */ = {
@@ -226,9 +225,9 @@
 				08DC5B382B2C446900B71A22 /* ContentView.swift */,
 				08DC5B6C2B3D7B0800B71A22 /* HomeView.swift */,
 				08C1EFBA2B42D863000F4527 /* MakeNewOrder */,
+				08529CDF2BB4098B00D57E4C /* TradeDetailView */,
 				08DC5B702B3DA41300B71A22 /* WalletView */,
 				08DC5B7B2B3DA66000B71A22 /* BookView */,
-				08529CDF2BB4098B00D57E4C /* DetailViews */,
 				08DC5B7C2B3DA67700B71A22 /* TradesView */,
 				08DC5B7D2B3DA68700B71A22 /* RelaysView */,
 				08DC5B3A2B2C446A00B71A22 /* Assets.xcassets */,
@@ -271,9 +270,6 @@
 			isa = PBXGroup;
 			children = (
 				08DC5B642B3D770000B71A22 /* BookView.swift */,
-				0825B64E2B73970300E7AC0E /* OrderRowView.swift */,
-				0825B64C2B7396F500E7AC0E /* OrderDetailView.swift */,
-				08529CE02BB4149F00D57E4C /* TakeOrderActionView.swift */,
 			);
 			path = BookView;
 			sourceTree = "<group>";
@@ -282,8 +278,6 @@
 			isa = PBXGroup;
 			children = (
 				08DC5B682B3D771300B71A22 /* TradesView.swift */,
-				0832F13D2B95F1CF00991AE0 /* TradeRowView.swift */,
-				0832F13B2B95F1C500991AE0 /* TradeDetailView.swift */,
 			);
 			path = TradesView;
 			sourceTree = "<group>";
@@ -387,7 +381,6 @@
 				08529CCA2BAC3E9700D57E4C /* TradeDetailStatusView.swift in Sources */,
 				08DC5B6F2B3D7E0E00B71A22 /* FatCrabModel.swift in Sources */,
 				08529CCC2BAC3EA300D57E4C /* TradeDetailActionView.swift in Sources */,
-				0825B64F2B73970300E7AC0E /* OrderRowView.swift in Sources */,
 				08C1EFBC2B42D887000F4527 /* MakeNewOrderToolbarItem.swift in Sources */,
 				08529CDA2BB301EA00D57E4C /* FatCrabMakerSellMock.swift in Sources */,
 				085FE4E02B3ECBF10061DF95 /* FatCrabMock.swift in Sources */,
@@ -419,7 +412,6 @@
 				08C1EFB42B3EF8C3000F4527 /* AppSecureStorage.swift in Sources */,
 				085FE4E62B3EDBCA0061DF95 /* TitleValueHStack.swift in Sources */,
 				08529CDE2BB3020100D57E4C /* FatCrabTakerSellMock.swift in Sources */,
-				0825B64D2B7396F500E7AC0E /* OrderDetailView.swift in Sources */,
 				08DC5B782B3DA55500B71A22 /* ShowSeedsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

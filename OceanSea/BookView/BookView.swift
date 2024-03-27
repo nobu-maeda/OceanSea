@@ -12,6 +12,7 @@ struct BookView: View {
     
     @State var showMakeNewOrderView = false
     @State var showOrderDetailView = false
+    @State var showOrderDetailViewForTrade: FatCrabTrade? = nil
     @State var showOrderDetailViewForOrder: FatCrabOrderEnvelopeProtocol? = nil
     
     var body: some View {
@@ -20,19 +21,22 @@ struct BookView: View {
                 let orderUuids: [UUID] = model.queriedOrders.keys.map({ $0 })
                 ForEach(orderUuids, id: \.self) { orderUuid in
                     if let orderEnvelope = model.queriedOrders[orderUuid] {
-                        OrderRowView(order: orderEnvelope.order())
+                        TradeRowView(orderEnvelope: orderEnvelope, trade: model.trades[orderUuid])
                         .contentShape(Rectangle())
                         .onTapGesture {
                             showOrderDetailViewForOrder = orderEnvelope
+                            showOrderDetailViewForTrade = model.trades[orderUuid]
                             showOrderDetailView = true
                         }
                     }
                 }
             }
             .refreshable {
+                model.updateTrades()
                 model.updateOrderBook()
             }
             .onAppear() {
+                model.updateTrades()
                 model.updateOrderBook()
             }
             .toolbar(content: {
@@ -44,7 +48,7 @@ struct BookView: View {
             MakeNewOrderView()
         }
         .sheet(isPresented: $showOrderDetailView) {
-            OrderDetailView(orderEnvelope: $showOrderDetailViewForOrder)
+            TradeDetailView(orderEnvelope: $showOrderDetailViewForOrder, trade: $showOrderDetailViewForTrade)
         }
     }
 }

@@ -10,6 +10,7 @@ import SwiftUI
 struct TradesView: View {
     @Environment(\.fatCrabModel) var model
     
+    @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = nil
     @State var showMakeNewOrderView = false
     @State var showTradeDetailView = false
     @State var showTradeDetailViewForTrade: FatCrabTrade? = nil
@@ -20,7 +21,7 @@ struct TradesView: View {
                 let tradeUuids: [UUID] = model.trades.keys.map({ $0 })
                 ForEach(tradeUuids, id: \.self) { tradeUuid in
                     if let trade = model.trades[tradeUuid] {
-                        TradeRowView(trade: trade)
+                        TradeRowView(orderEnvelope: orderEnvelope, trade: trade)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             showTradeDetailViewForTrade = trade
@@ -44,7 +45,7 @@ struct TradesView: View {
             MakeNewOrderView()
         }
         .sheet(isPresented: $showTradeDetailView) {
-            TradeDetailView(trade: $showTradeDetailViewForTrade)
+            TradeDetailView(orderEnvelope: $orderEnvelope, trade: $showTradeDetailViewForTrade)
         }
     }
 }

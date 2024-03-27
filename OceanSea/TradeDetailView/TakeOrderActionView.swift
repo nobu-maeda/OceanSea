@@ -9,30 +9,27 @@ import SwiftUI
 
 struct TakeOrderActionView: View {
     @Environment(\.fatCrabModel) var model
+    @Binding var orderEnvelope: FatCrabOrderEnvelopeProtocol?
+    @Binding var trade: FatCrabTrade?
+    
     @State private var fatcrabRxAddr = ""
     @State private var showAlert = false
     @State private var alertTitleString = ""
     @State private var alertBodyString = ""
     
-    let orderEnvelope: FatCrabOrderEnvelopeProtocol
-    
-    init(for orderEnvelope: FatCrabOrderEnvelopeProtocol) {
-        self.orderEnvelope = orderEnvelope
-    }
-    
     var body: some View {
         VStack {
-            switch orderEnvelope.order().orderType {
+            switch orderEnvelope!.order().orderType {
             case .buy:
                 Button() {
                     takeBuyOrder()
                 } label: {
-                    Text("Take Buy Order to Sell Fatcrab")
+                    Text("Take Buy Order to Sell FatCrab")
                 }.buttonStyle(.borderedProminent)
                     .controlSize(.regular)
             case .sell:
                 TextField(text: $fatcrabRxAddr) {
-                    Text("Fatcrab Receive Address")
+                    Text("FatCrab Receive Address")
                 }
                 .padding(.leading)
                 .padding(.trailing)
@@ -42,7 +39,7 @@ struct TakeOrderActionView: View {
                 Button() {
                     takeSellOrder()
                 } label: {
-                    Text("Take Sell Order to Buy Fatcrab")
+                    Text("Take Sell Order to Buy FatCrab")
                 }.buttonStyle(.borderedProminent)
                     .controlSize(.regular)
             }
@@ -52,7 +49,8 @@ struct TakeOrderActionView: View {
     
     func takeBuyOrder() {
         do {
-            _ = try model.takeBuyOrder(orderEnvelope: orderEnvelope as! FatCrabOrderEnvelope)
+            let buyTaker = try model.takeBuyOrder(orderEnvelope: orderEnvelope as! FatCrabOrderEnvelope)
+            trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: buyTaker))
         } catch let fatCrabError as FatCrabError {
             alertTitleString = "Error"
             alertBodyString = fatCrabError.description()
@@ -66,8 +64,16 @@ struct TakeOrderActionView: View {
     }
     
     func takeSellOrder() {
+        guard !fatcrabRxAddr.isEmpty else {
+            alertTitleString = "Error"
+            alertBodyString = "FatCrab Receive Address is empty"
+            showAlert = true
+            return
+        }
+        
         do {
-            _ = try model.takeSellOrder(orderEnvelope: orderEnvelope as! FatCrabOrderEnvelope, fatcrabRxAddr: fatcrabRxAddr)
+            let sellTaker = try model.takeSellOrder(orderEnvelope: orderEnvelope as! FatCrabOrderEnvelope, fatcrabRxAddr: fatcrabRxAddr)
+            trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: sellTaker))
         } catch let fatCrabError as FatCrabError {
             alertTitleString = "Error"
             alertBodyString = fatCrabError.description()
@@ -83,12 +89,14 @@ struct TakeOrderActionView: View {
 
 #Preview("Buy") {
     let order = FatCrabOrder(orderType: .buy, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9)
-    let orderEnvelope = FatCrabOrderEnvelopeMock(order: order)
-    return TakeOrderActionView(for: orderEnvelope)
+    @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
+    @State var trade: FatCrabTrade? = nil
+    return TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade)
 }
 
 #Preview("Sell") {
     let order = FatCrabOrder(orderType: .sell, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9)
-    let orderEnvelope = FatCrabOrderEnvelopeMock(order: order)
-    return TakeOrderActionView(for: orderEnvelope)
+    @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
+    @State var trade: FatCrabTrade? = nil
+    return TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade)
 }

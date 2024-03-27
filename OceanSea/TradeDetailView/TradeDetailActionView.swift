@@ -39,9 +39,9 @@ struct TradeDetailActionView: View {
                 case .acceptedOffer:
                     Text("No Actions Available")
                 case .inboundBtcNotified:
-                    Text("Remit Fatcrab to Taker, before clicking to notify")
+                    Text("Remit FatCrab to Taker, before clicking to notify")
                     TextField(text: $fatcrabTxId) {
-                        Text("Fatcrab Transaction ID")
+                        Text("FatCrab Transaction ID")
                     }
                     .padding(.leading)
                     .padding(.trailing)
@@ -51,11 +51,11 @@ struct TradeDetailActionView: View {
                     Button() {
                         notifyTaker(of: fatcrabTxId, by: maker)
                     } label: {
-                        Text("Notify Taker of Fatcrab remitted")
+                        Text("Notify Taker of FatCrab remitted")
                     }.buttonStyle(.borderedProminent)
                         .controlSize(.regular)
                 case .inboundFcNotified:
-                    Text("Confirm Fatcrab received before releasing BTC and notifying Taker")
+                    Text("Confirm FatCrab received before releasing BTC and notifying Taker")
                     Button() {
                         releaseBtcNotifyTaker(by: maker)
                     } label: {
@@ -76,9 +76,9 @@ struct TradeDetailActionView: View {
                 case .offerAccepted:
                     switch taker {
                         case .buy:
-                        Text("Remit Fatcrab to Maker, before clicking to notify")
+                        Text("Remit FatCrab to Maker, before clicking to notify")
                         TextField(text: $fatcrabTxId) {
-                            Text("Fatcrab Transaction ID")
+                            Text("FatCrab Transaction ID")
                         }
                         .padding(.leading)
                         .padding(.trailing)
@@ -88,7 +88,7 @@ struct TradeDetailActionView: View {
                         Button() {
                             notifyMaker(of: fatcrabTxId, by: taker)
                         } label: {
-                            Text("Notify Maker of Fatcrab remitted")
+                            Text("Notify Maker of FatCrab remitted")
                         }.buttonStyle(.borderedProminent)
                     case .sell:
                         Text("No Actions Available")
@@ -100,11 +100,11 @@ struct TradeDetailActionView: View {
                 case .inboundBtcNotified:
                     Text("No Actions Available")
                 case .inboundFcNotified:
-                    Text("Confirm Fatcrab received before marking Trade completed")
+                    Text("Confirm FatCrab received before marking Trade completed")
                     Button() {
                         tradeComplete(for: taker)
                     } label: {
-                        Text("Fatcrab receive confirmed")
+                        Text("FatCrab receive confirmed")
                     }.buttonStyle(.borderedProminent)
                 case .tradeCompleted:
                     Text("No Actions Available")
@@ -131,10 +131,17 @@ struct TradeDetailActionView: View {
     }
     
     func notifyTaker(of fatcrabTxId: String, by maker: FatCrabMakerTrade) {
+        guard !fatcrabTxId.isEmpty else {
+            alertTitleString = "Error"
+            alertBodyString = "FatCrab Transaction ID is empty"
+            showAlert = true
+            return
+        }
+        
         do {
             switch maker {
             case .buy:
-                throw OceanSeaError.invalidState("Can only notify Taker of Fatcrab remit for Sell Makers")
+                throw OceanSeaError.invalidState("Can only notify Taker of FatCrab remit for Sell Makers")
             case .sell(let sellMaker):
                 try sellMaker.notifyPeer(fatcrabTxid: fatcrabTxId)
             }
@@ -171,12 +178,19 @@ struct TradeDetailActionView: View {
     }
     
     func notifyMaker(of fatcrabTxId: String, by taker: FatCrabTakerTrade) {
+        guard !fatcrabTxId.isEmpty else {
+            alertTitleString = "Error"
+            alertBodyString = "FatCrab Transaction ID is empty"
+            showAlert = true
+            return
+        }
+        
         do {
             switch taker {
             case .buy(let buyTaker):
                 try buyTaker.notifyPeer(fatcrabTxid: fatcrabTxId)
             case .sell:
-                throw OceanSeaError.invalidState("Can only notify Maker of Fatcrab remit for Buy Takers")
+                throw OceanSeaError.invalidState("Can only notify Maker of FatCrab remit for Buy Takers")
                 
             }
         } catch let fatCrabError as FatCrabError {
@@ -237,7 +251,7 @@ struct TradeDetailActionView: View {
     return TradeDetailActionView(for: trade)
 }
 
-#Preview("Maker - Inbound Fatcrab Notified") {
+#Preview("Maker - Inbound FatCrab Notified") {
     let trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.inboundFcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailActionView(for: trade)
 }
@@ -252,7 +266,7 @@ struct TradeDetailActionView: View {
     return TradeDetailActionView(for: trade)
 }
 
-#Preview("Taker - Inbound Fatcrab Notified") {
+#Preview("Taker - Inbound FatCrab Notified") {
     let trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.inboundFcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailActionView(for: trade)
 }

@@ -36,7 +36,7 @@ struct MakeNewOrderView: View {
                     Text("Sell").tag(FatCrabOrderType.sell)
                 }.pickerStyle(SegmentedPickerStyle())
                 
-                TextField("Price (Sats / Fatcrab)", text: $priceInputString)
+                TextField("Price (Sats / FatCrab)", text: $priceInputString)
                     .focused($focusedField, equals: .price)
                     .onSubmit { 
                         if validatePriceField() != nil {
@@ -48,7 +48,7 @@ struct MakeNewOrderView: View {
                     .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
                 
-                TextField("Amount (# of Fatcrabs)", text: $amountInputString)
+                TextField("Amount (# of FatCrabs)", text: $amountInputString)
                     .focused($focusedField, equals: .amount)
                     .onSubmit {
                         if validateAmountField() != nil {
@@ -65,7 +65,7 @@ struct MakeNewOrderView: View {
                     .disableAutocorrection(true)
                 
                 if orderType == .buy {
-                    TextField("Fatcrab Receive Address", text: $fatcrabRxAddrInputString)
+                    TextField("FatCrab Receive Address", text: $fatcrabRxAddrInputString)
                         .focused($focusedField, equals: .fatcrabAddr)
                         .onSubmit {
                             if validateFatCrabAddrField() != nil {
@@ -99,7 +99,7 @@ struct MakeNewOrderView: View {
         guard let price = validatePriceField() else { return }
         guard let amount = validateAmountField() else { return }
         
-        // Is there a way to validate the input string against valid Fatcrab address?
+        // Is there a way to validate the input string against valid FatCrab address?
         do {
             switch orderType {
             case .buy:

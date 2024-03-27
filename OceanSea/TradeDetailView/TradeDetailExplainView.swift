@@ -30,14 +30,14 @@ struct TradeDetailExplainView: View {
             case .maker:
                 switch orderType {
                 case .buy:
-                    Text("As a Maker of a buy order, you are buying Fatcrab with BTC. If this order completes...")
+                    Text("As a Maker of a buy order, you are buying FatCrab with BTC. If this order completes...")
                     HStack {
                         Text("FC + \(orderAmount)")
                         Spacer()
                         Text("BTC - \(orderBtc)")
                     }
                 case .sell:
-                    Text("As a Maker of a sell order, you are selling Fatcrab for BTC. If this order completes...")
+                    Text("As a Maker of a sell order, you are selling FatCrab for BTC. If this order completes...")
                     HStack {
                         Text("FC - \(orderAmount)")
                         Spacer()
@@ -48,14 +48,14 @@ struct TradeDetailExplainView: View {
             case .taker:
                 switch orderType {
                 case .buy:
-                    Text("As a Taker of a buy order, you are selling Fatcrab for BTC. If this order completes...")
+                    Text("As a Taker of a buy order, you are selling FatCrab for BTC. If this order completes...")
                     HStack {
                         Text("FC - \(orderAmount)")
                         Spacer()
                         Text("BTC + \(orderBtc)")
                     }
                 case .sell:
-                    Text("As a Taker of a sell order, you are buying Fatcrab with BTC. If this order completes...")
+                    Text("As a Taker of a sell order, you are buying FatCrab with BTC. If this order completes...")
                     HStack {
                         Text("FC + \(orderAmount)")
                         Spacer()

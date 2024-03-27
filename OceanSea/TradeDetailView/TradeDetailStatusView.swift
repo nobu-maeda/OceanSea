@@ -33,7 +33,7 @@ struct TradeDetailStatusView: View {
             case .acceptedOffer:
                 switch maker {
                 case .buy:
-                    Text("Accepted Offer. Waiting for FC from Taker")
+                    Text("Accepted Offer. Waiting for FatCrab from Taker")
                 case .sell:
                     Text("Accepted Offer. Waiting for BTC from Taker")
                 }
@@ -47,13 +47,13 @@ struct TradeDetailStatusView: View {
                     }
                     .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
             case .inboundFcNotified:
-                Text("Taker claims Fatcrab sent. Confirm receipt before BTC release")
+                Text("Taker claims FatCrab sent. Confirm receipt before BTC release")
             case .notifiedOutbound:
                 switch maker {
                 case .buy:
                     Text("Notified Taker of BTC release")
                 case .sell:
-                    Text("Notified Taker of Fatcrab release")
+                    Text("Notified Taker of FatCrab release")
                 }
             case .tradeCompleted:
                 Text("Trade Completed")
@@ -72,9 +72,9 @@ struct TradeDetailStatusView: View {
             case .notifiedOutbound:
                 switch taker {
                 case .buy:
-                    Text("Maker notified of Fatcrab sent. Awaiting for BTC payment")
+                    Text("Maker notified of FatCrab sent. Awaiting for BTC payment")
                 case .sell:
-                    Text("Maker notified of BTC sent. Awaiting notification of Fatcrab")
+                    Text("Maker notified of BTC sent. Awaiting notification of FatCrab")
                 }
             case .inboundBtcNotified:
                 Text("Maker claims BTC sent. \(btcConfs) confirmations detected")
@@ -86,7 +86,7 @@ struct TradeDetailStatusView: View {
                     }
                     .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
             case .inboundFcNotified:
-                Text("Maker claims Fatcrab sent. Confirm receipt to complete trade")
+                Text("Maker claims FatCrab sent. Confirm receipt to complete trade")
             case .tradeCompleted:
                 Text("Trade Completed")
             }
