@@ -68,7 +68,8 @@ import Foundation
         Task {
             try trader.walletBlockchainSync()
             let walletAllocatedAmount = Int(try trader.walletAllocatedAmount())
-            let walletSpendableBalance = Int(try trader.walletSpendableBalance())
+            let walletBalance = try trader.walletSpendableBalance()
+            let walletSpendableBalance = Int(walletBalance)
             
             Task { @MainActor in
                 allocatedAmount = walletAllocatedAmount

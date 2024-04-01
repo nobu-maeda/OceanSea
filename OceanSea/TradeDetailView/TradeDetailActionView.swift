@@ -63,7 +63,12 @@ struct TradeDetailActionView: View {
                     }.buttonStyle(.borderedProminent)
                         .controlSize(.regular)
                 case .notifiedOutbound:
-                    Text("No Actions Available")
+                    Text("Mark Trade Completed")
+                    Button() {
+                        tradeComplete(maker: maker)
+                    } label: {
+                        Text("Trade complete")
+                    }.buttonStyle(.borderedProminent)
                 case .tradeCompleted:
                     Text("No Actions Available")
                 }
@@ -102,7 +107,7 @@ struct TradeDetailActionView: View {
                 case .inboundFcNotified:
                     Text("Confirm FatCrab received before marking Trade completed")
                     Button() {
-                        tradeComplete(for: taker)
+                        tradeComplete(taker: taker)
                     } label: {
                         Text("FatCrab receive confirmed")
                     }.buttonStyle(.borderedProminent)
@@ -177,6 +182,21 @@ struct TradeDetailActionView: View {
         }
     }
     
+    func tradeComplete(maker: FatCrabMakerTrade) {
+        do {
+            try maker.tradeComplete()
+        } catch let fatCrabError as FatCrabError {
+            alertTitleString = "Error"
+            alertBodyString = fatCrabError.description()
+            showAlert = true
+        }
+        catch {
+            alertTitleString = "Error"
+            alertBodyString = error.localizedDescription
+            showAlert = true
+        }
+    }
+    
     func notifyMaker(of fatcrabTxId: String, by taker: FatCrabTakerTrade) {
         guard !fatcrabTxId.isEmpty else {
             alertTitleString = "Error"
@@ -205,7 +225,7 @@ struct TradeDetailActionView: View {
         }
     }
     
-    func tradeComplete(for taker: FatCrabTakerTrade) {
+    func tradeComplete(taker: FatCrabTakerTrade) {
         do {
             try taker.tradeComplete()
         } catch let fatCrabError as FatCrabError {

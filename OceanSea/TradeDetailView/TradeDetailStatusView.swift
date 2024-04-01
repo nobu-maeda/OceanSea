@@ -22,7 +22,14 @@ struct TradeDetailStatusView: View {
     
     var body: some View {
         switch trade {
-        case .maker(let maker):
+        case .maker(let maker):                                          
+            let txID = switch maker {
+            case .buy(let buyMaker):
+                buyMaker.peerFcTxid
+            case .sell(let sellMaker):
+                sellMaker.peerBtcTxid
+            }
+            
             switch maker.state {
             case .new:
                 Text("New")
@@ -38,7 +45,7 @@ struct TradeDetailStatusView: View {
                     Text("Accepted Offer. Waiting for BTC from Taker")
                 }
             case .inboundBtcNotified:
-                Text("Taker claims BTC sent. \(btcConfs) confirmations detected")
+                Text("Taker claims BTC sent. \(btcConfs) confirmations detected for TxID: \(txID ?? "")")
                     .refreshable {
                         await updateBtcConfs()
                     }
@@ -47,7 +54,7 @@ struct TradeDetailStatusView: View {
                     }
                     .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
             case .inboundFcNotified:
-                Text("Taker claims FatCrab sent. Confirm receipt before BTC release")
+                Text("Taker claims FatCrab sent with TxID \(txID ?? "")")
             case .notifiedOutbound:
                 switch maker {
                 case .buy:
@@ -60,6 +67,13 @@ struct TradeDetailStatusView: View {
             }
             
         case .taker(let taker):
+            let txID = switch taker {
+            case .buy(let buyTaker):
+                buyTaker.peerBtcTxid
+            case .sell(let sellTaker):
+                sellTaker.peerFcTxid
+            }
+            
             switch taker.state {
             case .new:
                 Text("New")
@@ -72,12 +86,12 @@ struct TradeDetailStatusView: View {
             case .notifiedOutbound:
                 switch taker {
                 case .buy:
-                    Text("Maker notified of FatCrab sent. Awaiting for BTC payment")
+                    Text("Maker notified of FatCrab sent. Waiting for BTC from Maker")
                 case .sell:
-                    Text("Maker notified of BTC sent. Awaiting notification of FatCrab")
+                    Text("Maker notified of BTC sent. Waiting for FatCrab from Maker")
                 }
             case .inboundBtcNotified:
-                Text("Maker claims BTC sent. \(btcConfs) confirmations detected")
+                Text("Maker claims BTC sent. \(btcConfs) confirmations detected for TxID: \(txID ?? "")")
                     .refreshable {
                         await updateBtcConfs()
                     }
@@ -86,7 +100,7 @@ struct TradeDetailStatusView: View {
                     }
                     .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
             case .inboundFcNotified:
-                Text("Maker claims FatCrab sent. Confirm receipt to complete trade")
+                Text("Maker claims FatCrab sent with TxID \(txID ?? "")")
             case .tradeCompleted:
                 Text("Trade Completed")
             }
@@ -126,7 +140,17 @@ struct TradeDetailStatusView: View {
     }
 }
 
-#Preview {
+#Preview("BuyMaker") {
     let trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID())))
+    return TradeDetailStatusView(for: trade)
+}
+
+#Preview("SellMaker") {
+    let trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.inboundBtcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerBtcTxid: "SomeTxID000-0057")))
+    return TradeDetailStatusView(for: trade)
+}
+
+#Preview("BuyTaker") {
+    let trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.inboundBtcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0057", peerBtcTxid: "SomeTxID000-0057")))
     return TradeDetailStatusView(for: trade)
 }

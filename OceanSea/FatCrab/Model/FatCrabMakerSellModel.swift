@@ -32,6 +32,7 @@ import Foundation
             let order = try maker.getOrderDetails()
             let offerEnvelopes = try maker.queryOffers()
             let peerEnvelope = try maker.queryPeerMsg()
+            let peerBtcTxid = try maker.getPeerBtcTxid()
             
             Task { @MainActor in
                 self.state = state
@@ -41,6 +42,12 @@ import Foundation
                 self.offerEnvelopes = offerEnvelopes
                 self.peerEnvelope = peerEnvelope
             }
+        }
+    }
+    
+    var peerBtcTxid: String? {
+        get {
+            peerEnvelope?.message().txid
         }
     }
     

@@ -44,6 +44,12 @@ import Foundation
         }
     }
     
+    var peerFcTxid: String? {
+        get {
+            peerEnvelope?.message().txid
+        }
+    }
+    
     func postNewOrder() throws {
         Task {
             let state = try self.maker.postNewOrder()

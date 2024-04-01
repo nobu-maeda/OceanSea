@@ -13,15 +13,17 @@ import Foundation
     var orderPrice: Double
     var tradeUuid: UUID
     var peerPubkey: String?
+    var peerBtcTxid: String?
     var offerEnvelopes: [FatCrabOfferEnvelope]
     var peerEnvelope: FatCrabPeerEnvelope?
     
-    init(state: FatCrabMakerState, amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String? = nil, offerEnvelopes: [FatCrabOfferEnvelope] = [], peerEnvelope: FatCrabPeerEnvelope? = nil) {
+    init(state: FatCrabMakerState, amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String? = nil, peerBtcTxid: String? = nil, offerEnvelopes: [FatCrabOfferEnvelope] = [], peerEnvelope: FatCrabPeerEnvelope? = nil) {
         self.state = state
         self.orderAmount = amount
         self.orderPrice = price
         self.tradeUuid = tradeUuid
         self.peerPubkey = peerPubkey
+        self.peerBtcTxid = peerBtcTxid
         self.offerEnvelopes = offerEnvelopes
         self.peerEnvelope = peerEnvelope
     }

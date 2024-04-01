@@ -51,6 +51,8 @@ struct TakeOrderActionView: View {
         do {
             let buyTaker = try model.takeBuyOrder(orderEnvelope: orderEnvelope as! FatCrabOrderEnvelope)
             trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: buyTaker))
+            
+            model.updateTrades()
         } catch let fatCrabError as FatCrabError {
             alertTitleString = "Error"
             alertBodyString = fatCrabError.description()
@@ -74,6 +76,8 @@ struct TakeOrderActionView: View {
         do {
             let sellTaker = try model.takeSellOrder(orderEnvelope: orderEnvelope as! FatCrabOrderEnvelope, fatcrabRxAddr: fatcrabRxAddr)
             trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: sellTaker))
+            
+            model.updateTrades()
         } catch let fatCrabError as FatCrabError {
             alertTitleString = "Error"
             alertBodyString = fatCrabError.description()

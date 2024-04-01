@@ -15,6 +15,7 @@ struct TradeDetailView: View {
     var body: some View {
         let tradeType = tradeType()
         let orderType = orderType()
+        let tradeUuidString = tradeUuidString()
         let orderAmount = orderAmount()
         let orderPrice = orderPrice()
         let pubkeyString = peerPubkey()
@@ -22,7 +23,7 @@ struct TradeDetailView: View {
         return NavigationStack {
             List {
                 Section {
-                    OrderDetailSummaryView(orderAmount: orderAmount, orderPrice: orderPrice, pubkeyString: pubkeyString)
+                    OrderDetailSummaryView(tradeUuidString: tradeUuidString, orderAmount: orderAmount, orderPrice: orderPrice, pubkeyString: pubkeyString)
                 } header: {
                     Text("Order Summary")
                 }
@@ -90,6 +91,16 @@ struct TradeDetailView: View {
             return orderEnvelope.order().orderType
         } else {
             fatalError("TradeDetailView does not have either Trade nor Order to determine Order Type")
+        }
+    }
+    
+    func tradeUuidString() -> String {
+        if let trade = trade {
+            return trade.tradeUuid.uuidString
+        } else if let orderEnvelope = orderEnvelope {
+            return orderEnvelope.order().tradeUuid
+        } else {
+            fatalError("TradeDetailView does not have either Trade nor Order to determine Trade UUID")
         }
     }
     
@@ -164,7 +175,7 @@ struct TradeDetailView: View {
             case .inboundFcNotified:
                 return true
             case .notifiedOutbound:
-                return false
+                return true
             case .tradeCompleted:
                 return false
             }

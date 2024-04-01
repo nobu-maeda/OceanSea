@@ -555,6 +555,8 @@ public protocol FatCrabBuyTakerProtocol: AnyObject {
 
     func getOrderDetails() throws -> FatCrabOrderEnvelope
 
+    func getPeerBtcTxid() throws -> String?
+
     func getState() throws -> FatCrabTakerState
 
     func notifyPeer(fatcrabTxid: String) throws -> FatCrabTakerState
@@ -602,6 +604,14 @@ public class FatCrabBuyTaker:
         return try FfiConverterTypeFatCrabOrderEnvelope.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabbuytaker_get_order_details(self.uniffiClonePointer(), $0)
+            }
+        )
+    }
+
+    public func getPeerBtcTxid() throws -> String? {
+        return try FfiConverterOptionString.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabbuytaker_get_peer_btc_txid(self.uniffiClonePointer(), $0)
             }
         )
     }
@@ -1153,6 +1163,8 @@ public protocol FatCrabSellMakerProtocol: AnyObject {
 
     func getOrderDetails() throws -> FatCrabOrder
 
+    func getPeerBtcTxid() throws -> String?
+
     func getState() throws -> FatCrabMakerState
 
     func notifyPeer(fatcrabTxid: String) throws -> FatCrabMakerState
@@ -1204,6 +1216,14 @@ public class FatCrabSellMaker:
         return try FfiConverterTypeFatCrabOrder.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabsellmaker_get_order_details(self.uniffiClonePointer(), $0)
+            }
+        )
+    }
+
+    public func getPeerBtcTxid() throws -> String? {
+        return try FfiConverterOptionString.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabsellmaker_get_peer_btc_txid(self.uniffiClonePointer(), $0)
             }
         )
     }
@@ -3576,6 +3596,9 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_get_order_details() != 47237 {
         return InitializationResult.apiChecksumMismatch
     }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_get_peer_btc_txid() != 46072 {
+        return InitializationResult.apiChecksumMismatch
+    }
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_get_state() != 46577 {
         return InitializationResult.apiChecksumMismatch
     }
@@ -3619,6 +3642,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_get_order_details() != 25127 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_get_peer_btc_txid() != 60443 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_get_state() != 58280 {

@@ -13,13 +13,15 @@ import Foundation
     var orderPrice: Double
     var tradeUuid: UUID
     var peerPubkey: String
+    var peerFcTxid: String?
     
-    init(state: FatCrabTakerState, amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String) {
+    init(state: FatCrabTakerState, amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String, peerFcTxid: String? = nil) {
         self.state = state
         self.orderAmount = amount
         self.orderPrice = price
         self.tradeUuid = tradeUuid
         self.peerPubkey = peerPubkey
+        self.peerFcTxid = peerFcTxid
     }
     
     func takeOrder() throws {

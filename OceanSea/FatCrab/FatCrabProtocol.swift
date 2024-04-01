@@ -82,6 +82,15 @@ enum FatCrabMakerTrade {
             try maker.tradeResponse(tradeRspType: tradeRspType, offerEnvelope: offerEnvelope)
         }
     }
+    
+    func tradeComplete() throws {
+        switch self {
+        case .buy(let maker):
+            try maker.tradeComplete()
+        case .sell(let maker):
+            try maker.tradeComplete()
+        }
+    }
 }
 
 enum FatCrabTakerTrade {
@@ -252,6 +261,7 @@ protocol FatCrabMakerBuyProtocol: ObservableObject {
     var orderPrice: Double { get }
     var tradeUuid: UUID { get }
     var peerPubkey: String? { get }
+    var peerFcTxid: String? { get }
     var offerEnvelopes: [FatCrabOfferEnvelope] { get }
     var peerEnvelope: FatCrabPeerEnvelope? { get }
     
@@ -267,6 +277,7 @@ protocol FatCrabMakerSellProtocol: ObservableObject {
     var orderPrice: Double { get }
     var tradeUuid: UUID { get }
     var peerPubkey: String? { get }
+    var peerBtcTxid: String? { get }
     var offerEnvelopes: [FatCrabOfferEnvelope] { get }
     var peerEnvelope: FatCrabPeerEnvelope? { get }
     
@@ -283,6 +294,7 @@ protocol FatCrabTakerBuyProtocol: ObservableObject {
     var orderPrice: Double { get }
     var tradeUuid: UUID { get }
     var peerPubkey: String { get }
+    var peerBtcTxid: String? { get }
     var tradeRspEnvelope: FatCrabTradeRspEnvelope? { get }
     
     func takeOrder() throws
@@ -297,6 +309,7 @@ protocol FatCrabTakerSellProtocol: ObservableObject {
     var orderPrice: Double { get }
     var tradeUuid: UUID { get }
     var peerPubkey: String { get }
+    var peerFcTxid: String? { get }
     
     func takeOrder() throws
     func tradeComplete() throws

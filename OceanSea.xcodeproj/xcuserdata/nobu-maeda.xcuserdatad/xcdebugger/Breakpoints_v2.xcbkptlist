@@ -3,4 +3,84 @@
    uuid = "D81724DF-C04F-4070-8090-27A0920F1641"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AE84626B-6B08-40DC-99B0-A6CD027E4BA8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OceanSea/FatCrab/Model/FatCrabModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
+            landmarkName = "updateBalances()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "AE84626B-6B08-40DC-99B0-A6CD027E4BA8 - 50a170d0645d184a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async throws -&gt; () in OceanSea.FatCrabModel.updateBalances() -&gt; ()"
+                  moduleName = "OceanSea"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nobu-maeda/Projects/Repos/OceanSea/OceanSea/FatCrab/Model/FatCrabModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "73"
+                  endingLineNumber = "73"
+                  offsetFromSymbolStart = "516">
+               </Location>
+               <Location
+                  uuid = "AE84626B-6B08-40DC-99B0-A6CD027E4BA8 - 213ab49d9a2388d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor @Sendable () async -&gt; () in closure #1 @Sendable () async throws -&gt; () in OceanSea.FatCrabModel.updateBalances() -&gt; ()"
+                  moduleName = "OceanSea"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nobu-maeda/Projects/Repos/OceanSea/OceanSea/FatCrab/Model/FatCrabModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "73"
+                  endingLineNumber = "73"
+                  offsetFromSymbolStart = "104">
+               </Location>
+               <Location
+                  uuid = "AE84626B-6B08-40DC-99B0-A6CD027E4BA8 - d8ae7c3e4821d484"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 @Swift.MainActor @Sendable () async -&gt; () in closure #1 @Sendable () async throws -&gt; () in OceanSea.FatCrabModel.updateBalances() -&gt; ()"
+                  moduleName = "OceanSea"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nobu-maeda/Projects/Repos/OceanSea/OceanSea/FatCrab/Model/FatCrabModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "73"
+                  endingLineNumber = "73"
+                  offsetFromSymbolStart = "48">
+               </Location>
+               <Location
+                  uuid = "AE84626B-6B08-40DC-99B0-A6CD027E4BA8 - 50a170d0645d182b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async throws -&gt; () in OceanSea.FatCrabModel.updateBalances() -&gt; ()"
+                  moduleName = "OceanSea"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nobu-maeda/Projects/Repos/OceanSea/OceanSea/FatCrab/Model/FatCrabModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "72"
+                  endingLineNumber = "72"
+                  offsetFromSymbolStart = "488">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

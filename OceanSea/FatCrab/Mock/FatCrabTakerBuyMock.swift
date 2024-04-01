@@ -13,14 +13,16 @@ import Foundation
     var orderPrice: Double
     var tradeUuid: UUID
     var peerPubkey: String
+    var peerBtcTxid: String?
     var tradeRspEnvelope: FatCrabTradeRspEnvelope?
     
-    init(state: FatCrabTakerState, amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String, tradeRspEnvelope: FatCrabTradeRspEnvelope? = nil) {
+    init(state: FatCrabTakerState, amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String, peerBtcTxid: String? = nil, tradeRspEnvelope: FatCrabTradeRspEnvelope? = nil) {
         self.state = state
         self.orderAmount = amount
         self.orderPrice = price
         self.tradeUuid = tradeUuid
         self.peerPubkey = peerPubkey
+        self.peerBtcTxid = peerBtcTxid
         self.tradeRspEnvelope = tradeRspEnvelope
     }
     

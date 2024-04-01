@@ -8,13 +8,16 @@
 import SwiftUI
 
 struct OrderDetailSummaryView: View {
+    let tradeUuidString: String
     let amountString: String
     let priceString: String
     let pubkeyString: String
     
+    
     let PUBKEY_STRING_PLACEHOLDER = "TBD"
     
-    init(orderAmount: Double, orderPrice: Double, pubkeyString: String?) {
+    init(tradeUuidString: String, orderAmount: Double, orderPrice: Double, pubkeyString: String?) {
+        self.tradeUuidString = tradeUuidString
         self.amountString = orderAmount.formatted()
         self.priceString = orderPrice.formatted()
         self.pubkeyString = pubkeyString ?? PUBKEY_STRING_PLACEHOLDER
@@ -23,9 +26,14 @@ struct OrderDetailSummaryView: View {
     var body: some View {
         return VStack(alignment: .leading, spacing: 8.0) {
             HStack {
+                Text("Trade-UUID")
+                Spacer()
+                Text(tradeUuidString)
+            }
+            HStack {
                 Text("Price")
                 Spacer()
-                Text (priceString)
+                Text(priceString)
             }
             HStack {
                 Text("Amount")
@@ -33,7 +41,7 @@ struct OrderDetailSummaryView: View {
                 Text(amountString)
             }
             HStack {
-                Text("Pubkey")
+                Text("Peer Pubkey")
                 Spacer()
                 Text(pubkeyString)
             }
@@ -43,5 +51,5 @@ struct OrderDetailSummaryView: View {
 }
 
 #Preview {
-    OrderDetailSummaryView(orderAmount: 1234.56, orderPrice: 5678.9, pubkeyString: UUID().uuidString)
+    OrderDetailSummaryView(tradeUuidString: UUID().uuidString, orderAmount: 1234.56, orderPrice: 5678.9, pubkeyString: UUID().uuidString)
 }
