@@ -220,6 +220,52 @@ enum FatCrabTrade {
     }
 }
 
+extension FatCrabMakerState {
+    var string: String {
+        switch self {
+        case .new:
+            return "New"
+        case .waitingForOffers:
+            return "Waiting For Offers"
+        case .receivedOffer:
+            return "Received Offer"
+        case .acceptedOffer:
+            return "Accepted Offer"
+        case .inboundBtcNotified:
+            return "Inbound BTC Notified"
+        case .inboundFcNotified:
+            return "Inbound FC Notified"
+        case .notifiedOutbound:
+            return "Notified Outbound"
+        case .tradeCompleted:
+            return "Trade Completed"
+        }
+    }
+}
+
+extension FatCrabTakerState {
+    var string: String {
+        switch self {
+        case .new:
+            return "New"
+        case .submittedOffer:
+            return "Submitted Offers"
+        case .offerAccepted:
+            return "Offer Accepted"
+        case .offerRejected:
+            return "Offer Rejected"
+        case .notifiedOutbound:
+            return "Notified Outbound"
+        case .inboundBtcNotified:
+            return "Inbound BTC Notified"
+        case .inboundFcNotified:
+            return "Inbound FC Notified"
+        case .tradeCompleted:
+            return "Trade Completed"
+        }
+    }
+}
+
 struct FatCrabModelKey: EnvironmentKey {
     static let defaultValue: any FatCrabProtocol = FatCrabMock()
 }
