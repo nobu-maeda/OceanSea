@@ -56,10 +56,13 @@ import Foundation
             }
         }
         
+        // Restore relays
         relays = trader.getRelays()
         
-        Task { @MainActor in
-            // Should make sure all Maker & Taker notif is hooked up before reconnecting
+        // Restore trades
+        updateTrades()
+        
+        Task {
             try trader.reconnect()
         }
     }
@@ -153,32 +156,40 @@ import Foundation
             var newTrades = [UUID: FatCrabTrade]()
             
             trader.getBuyMakers().forEach { (uuid: String, buyMaker: FatCrabBuyMaker) in
-                let buyMakerModel = FatCrabMakerBuyModel(maker: buyMaker)
-                let makerTrade = FatCrabMakerTrade.buy(maker: buyMakerModel)
-                newTrades.updateValue(FatCrabTrade.maker(maker: makerTrade), forKey: UUID(uuidString: uuid)!)
+                if !trades.contains(where: { $0.key == UUID(uuidString: uuid) }) {
+                    let buyMakerModel = FatCrabMakerBuyModel(maker: buyMaker)
+                    let makerTrade = FatCrabMakerTrade.buy(maker: buyMakerModel)
+                    newTrades.updateValue(FatCrabTrade.maker(maker: makerTrade), forKey: UUID(uuidString: uuid)!)
+                }
             }
             
             trader.getSellMakers().forEach { (uuid: String, sellMaker: FatCrabSellMaker) in
-                let sellMakerModel = FatCrabMakerSellModel(maker: sellMaker)
-                let makerTrade = FatCrabMakerTrade.sell(maker: sellMakerModel)
-                newTrades.updateValue(FatCrabTrade.maker(maker: makerTrade), forKey: UUID(uuidString: uuid)!)
+                if !trades.contains(where: { $0.key == UUID(uuidString: uuid) }) {
+                    let sellMakerModel = FatCrabMakerSellModel(maker: sellMaker)
+                    let makerTrade = FatCrabMakerTrade.sell(maker: sellMakerModel)
+                    newTrades.updateValue(FatCrabTrade.maker(maker: makerTrade), forKey: UUID(uuidString: uuid)!)
+                }
             }
             
             
             trader.getBuyTakers().forEach { (uuid: String, buyTaker: FatCrabBuyTaker) in
-                let buyTakerModel = FatCrabTakerBuyModel(taker: buyTaker)
-                let takerTrade = FatCrabTakerTrade.buy(taker: buyTakerModel)
-                newTrades.updateValue(FatCrabTrade.taker(taker: takerTrade), forKey: UUID(uuidString: uuid)!)
+                if !trades.contains(where: { $0.key == UUID(uuidString: uuid) }) {
+                    let buyTakerModel = FatCrabTakerBuyModel(taker: buyTaker)
+                    let takerTrade = FatCrabTakerTrade.buy(taker: buyTakerModel)
+                    newTrades.updateValue(FatCrabTrade.taker(taker: takerTrade), forKey: UUID(uuidString: uuid)!)
+                }
             }
             
             trader.getSellTakers().forEach { (uuid: String, sellTaker: FatCrabSellTaker) in
-                let sellTakerModel = FatCrabTakerSellModel(taker: sellTaker)
-                let takerTrade = FatCrabTakerTrade.sell(taker: sellTakerModel)
-                newTrades.updateValue(FatCrabTrade.taker(taker: takerTrade), forKey: UUID(uuidString: uuid)!)
+                if !trades.contains(where: { $0.key == UUID(uuidString: uuid) }) {
+                    let sellTakerModel = FatCrabTakerSellModel(taker: sellTaker)
+                    let takerTrade = FatCrabTakerTrade.sell(taker: sellTakerModel)
+                    newTrades.updateValue(FatCrabTrade.taker(taker: takerTrade), forKey: UUID(uuidString: uuid)!)
+                }
             }
 
             Task { @MainActor [newTrades] in
-                trades = newTrades
+                trades.merge(newTrades) { (current, _) in current }
             }
         }
     }
