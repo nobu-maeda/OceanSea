@@ -72,12 +72,11 @@ import Foundation
             try trader.walletBlockchainSync()
             let walletBalances = try self.trader.walletBalances()
             NSLog("walletBalances: \(walletBalances)")
-            let walletSpendableBalance = walletBalances.confirmed - walletBalances.allocated
             
             Task { @MainActor in
                 allocatedAmount = Int(walletBalances.allocated)
-                spendableBalance = Int(walletSpendableBalance)
-                totalBalance = allocatedAmount + spendableBalance
+                spendableBalance = Int(walletBalances.confirmed) - Int(walletBalances.allocated)
+                totalBalance = allocatedAmount + spendableBalance + Int(walletBalances.trustedPending)
             }
         }
     }
