@@ -3163,6 +3163,66 @@ extension FatCrabTradeRspType: Equatable, Hashable {}
 
 // Note that we don't yet support `indirect` for enums.
 // See https://github.com/mozilla/uniffi-rs/issues/396 for further discussion.
+public enum FilterLevel {
+    case trace
+    case debug
+    case info
+    case warn
+    case error
+}
+
+public struct FfiConverterTypeFilterLevel: FfiConverterRustBuffer {
+    typealias SwiftType = FilterLevel
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> FilterLevel {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        case 1: return .trace
+
+        case 2: return .debug
+
+        case 3: return .info
+
+        case 4: return .warn
+
+        case 5: return .error
+
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: FilterLevel, into buf: inout [UInt8]) {
+        switch value {
+        case .trace:
+            writeInt(&buf, Int32(1))
+
+        case .debug:
+            writeInt(&buf, Int32(2))
+
+        case .info:
+            writeInt(&buf, Int32(3))
+
+        case .warn:
+            writeInt(&buf, Int32(4))
+
+        case .error:
+            writeInt(&buf, Int32(5))
+        }
+    }
+}
+
+public func FfiConverterTypeFilterLevel_lift(_ buf: RustBuffer) throws -> FilterLevel {
+    return try FfiConverterTypeFilterLevel.lift(buf)
+}
+
+public func FfiConverterTypeFilterLevel_lower(_ value: FilterLevel) -> RustBuffer {
+    return FfiConverterTypeFilterLevel.lower(value)
+}
+
+extension FilterLevel: Equatable, Hashable {}
+
+// Note that we don't yet support `indirect` for enums.
+// See https://github.com/mozilla/uniffi-rs/issues/396 for further discussion.
 public enum Network {
     case bitcoin
     case testnet
@@ -3616,9 +3676,11 @@ private struct FfiConverterDictionaryStringTypeFatCrabSellTaker: FfiConverterRus
     }
 }
 
-public func initTracingForOslog() {
+public func initTracingForOslog(level: FilterLevel) {
     try! rustCall {
-        uniffi_fatcrab_trading_fn_func_init_tracing_for_oslog($0)
+        uniffi_fatcrab_trading_fn_func_init_tracing_for_oslog(
+            FfiConverterTypeFilterLevel.lower(level), $0
+        )
     }
 }
 
@@ -3638,7 +3700,7 @@ private var initializationResult: InitializationResult {
     if bindings_contract_version != scaffolding_contract_version {
         return InitializationResult.contractVersionMismatch
     }
-    if uniffi_fatcrab_trading_checksum_func_init_tracing_for_oslog() != 6412 {
+    if uniffi_fatcrab_trading_checksum_func_init_tracing_for_oslog() != 43594 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_get_order_details() != 19480 {

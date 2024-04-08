@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct OceanSeaApp: App {
     init() {
-        initTracingForOslog()
+        initTracingForOslog(level: .trace)
     }
     
     var body: some Scene {
