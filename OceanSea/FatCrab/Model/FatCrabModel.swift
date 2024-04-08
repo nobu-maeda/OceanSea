@@ -67,14 +67,14 @@ import Foundation
     func updateBalances() {
         Task {
             try trader.walletBlockchainSync()
-            let walletAllocatedAmount = Int(try trader.walletAllocatedAmount())
-            let walletBalance = try trader.walletSpendableBalance()
-            let walletSpendableBalance = Int(walletBalance)
+            let walletBalances = try self.trader.walletBalances()
+            NSLog("walletBalances: \(walletBalances)")
+            let walletSpendableBalance = walletBalances.confirmed - walletBalances.allocated
             
             Task { @MainActor in
-                allocatedAmount = walletAllocatedAmount
-                spendableBalance = walletSpendableBalance
-                totalBalance = walletAllocatedAmount + walletSpendableBalance
+                allocatedAmount = Int(walletBalances.allocated)
+                spendableBalance = Int(walletSpendableBalance)
+                totalBalance = allocatedAmount + spendableBalance
             }
         }
     }

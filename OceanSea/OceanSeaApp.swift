@@ -9,6 +9,10 @@ import SwiftUI
 
 @main
 struct OceanSeaApp: App {
+    init() {
+        initTracingForOslog()
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

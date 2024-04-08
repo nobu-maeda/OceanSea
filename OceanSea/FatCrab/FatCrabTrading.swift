@@ -1719,7 +1719,7 @@ public protocol FatCrabTraderProtocol: AnyObject {
 
     func shutdown() throws
 
-    func walletAllocatedAmount() throws -> UInt64
+    func walletBalances() throws -> Balances
 
     func walletBip39Mnemonic() throws -> String
 
@@ -1728,8 +1728,6 @@ public protocol FatCrabTraderProtocol: AnyObject {
     func walletGenerateReceiveAddress() throws -> String
 
     func walletSendToAddress(address: String, amount: UInt64) throws -> String
-
-    func walletSpendableBalance() throws -> UInt64
 }
 
 public class FatCrabTrader:
@@ -1902,10 +1900,10 @@ public class FatCrabTrader:
             }
     }
 
-    public func walletAllocatedAmount() throws -> UInt64 {
-        return try FfiConverterUInt64.lift(
+    public func walletBalances() throws -> Balances {
+        return try FfiConverterTypeBalances.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
-                uniffi_fatcrab_trading_fn_method_fatcrabtrader_wallet_allocated_amount(self.uniffiClonePointer(), $0)
+                uniffi_fatcrab_trading_fn_method_fatcrabtrader_wallet_balances(self.uniffiClonePointer(), $0)
             }
         )
     }
@@ -1939,14 +1937,6 @@ public class FatCrabTrader:
                 uniffi_fatcrab_trading_fn_method_fatcrabtrader_wallet_send_to_address(self.uniffiClonePointer(),
                                                                                       FfiConverterString.lower(address),
                                                                                       FfiConverterUInt64.lower(amount), $0)
-            }
-        )
-    }
-
-    public func walletSpendableBalance() throws -> UInt64 {
-        return try FfiConverterUInt64.lift(
-            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
-                uniffi_fatcrab_trading_fn_method_fatcrabtrader_wallet_spendable_balance(self.uniffiClonePointer(), $0)
             }
         )
     }
@@ -1988,6 +1978,88 @@ public func FfiConverterTypeFatCrabTrader_lift(_ pointer: UnsafeMutableRawPointe
 
 public func FfiConverterTypeFatCrabTrader_lower(_ value: FatCrabTrader) -> UnsafeMutableRawPointer {
     return FfiConverterTypeFatCrabTrader.lower(value)
+}
+
+public struct Balances {
+    public var immature: UInt64
+    public var trustedPending: UInt64
+    public var untrustedPending: UInt64
+    public var confirmed: UInt64
+    public var allocated: UInt64
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(
+        immature: UInt64,
+        trustedPending: UInt64,
+        untrustedPending: UInt64,
+        confirmed: UInt64,
+        allocated: UInt64
+    ) {
+        self.immature = immature
+        self.trustedPending = trustedPending
+        self.untrustedPending = untrustedPending
+        self.confirmed = confirmed
+        self.allocated = allocated
+    }
+}
+
+extension Balances: Equatable, Hashable {
+    public static func == (lhs: Balances, rhs: Balances) -> Bool {
+        if lhs.immature != rhs.immature {
+            return false
+        }
+        if lhs.trustedPending != rhs.trustedPending {
+            return false
+        }
+        if lhs.untrustedPending != rhs.untrustedPending {
+            return false
+        }
+        if lhs.confirmed != rhs.confirmed {
+            return false
+        }
+        if lhs.allocated != rhs.allocated {
+            return false
+        }
+        return true
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(immature)
+        hasher.combine(trustedPending)
+        hasher.combine(untrustedPending)
+        hasher.combine(confirmed)
+        hasher.combine(allocated)
+    }
+}
+
+public struct FfiConverterTypeBalances: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Balances {
+        return
+            try Balances(
+                immature: FfiConverterUInt64.read(from: &buf),
+                trustedPending: FfiConverterUInt64.read(from: &buf),
+                untrustedPending: FfiConverterUInt64.read(from: &buf),
+                confirmed: FfiConverterUInt64.read(from: &buf),
+                allocated: FfiConverterUInt64.read(from: &buf)
+            )
+    }
+
+    public static func write(_ value: Balances, into buf: inout [UInt8]) {
+        FfiConverterUInt64.write(value.immature, into: &buf)
+        FfiConverterUInt64.write(value.trustedPending, into: &buf)
+        FfiConverterUInt64.write(value.untrustedPending, into: &buf)
+        FfiConverterUInt64.write(value.confirmed, into: &buf)
+        FfiConverterUInt64.write(value.allocated, into: &buf)
+    }
+}
+
+public func FfiConverterTypeBalances_lift(_ buf: RustBuffer) throws -> Balances {
+    return try FfiConverterTypeBalances.lift(buf)
+}
+
+public func FfiConverterTypeBalances_lower(_ value: Balances) -> RustBuffer {
+    return FfiConverterTypeBalances.lower(value)
 }
 
 public struct FatCrabMakerNotifOfferStruct {
@@ -3544,6 +3616,12 @@ private struct FfiConverterDictionaryStringTypeFatCrabSellTaker: FfiConverterRus
     }
 }
 
+public func initTracingForOslog() {
+    try! rustCall {
+        uniffi_fatcrab_trading_fn_func_init_tracing_for_oslog($0)
+    }
+}
+
 private enum InitializationResult {
     case ok
     case contractVersionMismatch
@@ -3559,6 +3637,9 @@ private var initializationResult: InitializationResult {
     let scaffolding_contract_version = ffi_fatcrab_trading_uniffi_contract_version()
     if bindings_contract_version != scaffolding_contract_version {
         return InitializationResult.contractVersionMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_func_init_tracing_for_oslog() != 6412 {
+        return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_get_order_details() != 19480 {
         return InitializationResult.apiChecksumMismatch
@@ -3746,7 +3827,7 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_shutdown() != 41940 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_wallet_allocated_amount() != 28680 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_wallet_balances() != 12565 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_wallet_bip39_mnemonic() != 57026 {
@@ -3759,9 +3840,6 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_wallet_send_to_address() != 63105 {
-        return InitializationResult.apiChecksumMismatch
-    }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_wallet_spendable_balance() != 20780 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_constructor_fatcrabtrader_new() != 46569 {
