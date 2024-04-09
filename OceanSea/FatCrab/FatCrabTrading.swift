@@ -350,6 +350,27 @@ private struct FfiConverterDouble: FfiConverterPrimitive {
     }
 }
 
+private struct FfiConverterBool: FfiConverter {
+    typealias FfiType = Int8
+    typealias SwiftType = Bool
+
+    public static func lift(_ value: Int8) throws -> Bool {
+        return value != 0
+    }
+
+    public static func lower(_ value: Bool) -> Int8 {
+        return value ? 1 : 0
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Bool {
+        return try lift(readInt(&buf))
+    }
+
+    public static func write(_ value: Bool, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(value))
+    }
+}
+
 private struct FfiConverterString: FfiConverter {
     typealias SwiftType = String
     typealias FfiType = RustBuffer
@@ -3676,10 +3697,12 @@ private struct FfiConverterDictionaryStringTypeFatCrabSellTaker: FfiConverterRus
     }
 }
 
-public func initTracingForOslog(level: FilterLevel) {
+public func initTracingForOslog(level: FilterLevel, logTimestamp: Bool, logLevel: Bool) {
     try! rustCall {
         uniffi_fatcrab_trading_fn_func_init_tracing_for_oslog(
-            FfiConverterTypeFilterLevel.lower(level), $0
+            FfiConverterTypeFilterLevel.lower(level),
+            FfiConverterBool.lower(logTimestamp),
+            FfiConverterBool.lower(logLevel), $0
         )
     }
 }
@@ -3700,7 +3723,7 @@ private var initializationResult: InitializationResult {
     if bindings_contract_version != scaffolding_contract_version {
         return InitializationResult.contractVersionMismatch
     }
-    if uniffi_fatcrab_trading_checksum_func_init_tracing_for_oslog() != 43594 {
+    if uniffi_fatcrab_trading_checksum_func_init_tracing_for_oslog() != 16348 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_get_order_details() != 19480 {
