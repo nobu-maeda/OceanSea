@@ -192,7 +192,7 @@ struct TradeDetailView: View {
             case .notifiedOutbound:
                 return false
             case .inboundBtcNotified:
-                return false
+                return true
             case .inboundFcNotified:
                 return true
             case .tradeCompleted:

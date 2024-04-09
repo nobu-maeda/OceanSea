@@ -103,7 +103,12 @@ struct TradeDetailActionView: View {
                 case .notifiedOutbound:
                     Text("No Actions Available")
                 case .inboundBtcNotified:
-                    Text("No Actions Available")
+                    Text("Confirm BTC received before marking Trade completed")
+                    Button() {
+                        tradeComplete(taker: taker)
+                    } label: {
+                        Text("BTC receive confirmed")
+                    }.buttonStyle(.borderedProminent)
                 case .inboundFcNotified:
                     Text("Confirm FatCrab received before marking Trade completed")
                     Button() {
