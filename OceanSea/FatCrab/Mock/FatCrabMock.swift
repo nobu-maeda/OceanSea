@@ -139,6 +139,11 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
         return FatCrabTakerSellMock(state: .new, amount: order.amount, price: order.price, tradeUuid: UUID(), peerPubkey: "SomePubKey-004-0033")
     }
     
+    func getRandomOrderUuid() -> UUID {
+        let index = Int.random(in: 0..<queriedOrders.count)
+        return Array(queriedOrders.keys)[index]
+    }
+    
     func generateTrade() -> FatCrabTrade {
         let orderType: FatCrabOrderType = Bool.random() ? .buy : .sell
         let amount = Double.random(in: 1...1000000)
@@ -183,6 +188,11 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
             let index = Int.random(in: 0..<trades.count)
             self.trades.removeValue(forKey: Array(trades.keys)[index])
         }
+    }
+    
+    func getRandomTradeUuid() -> UUID {
+        let index = Int.random(in: 0..<trades.count)
+        return Array(trades.keys)[index]
     }
 }
 

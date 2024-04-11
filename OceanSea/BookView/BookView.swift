@@ -21,7 +21,7 @@ struct BookView: View {
                 let orderUuids: [UUID] = model.queriedOrders.keys.map({ $0 })
                 ForEach(orderUuids, id: \.self) { orderUuid in
                     if let orderEnvelope = model.queriedOrders[orderUuid] {
-                        TradeRowView(orderEnvelope: orderEnvelope, trade: model.trades[orderUuid])
+                        TradeRowView(orderUuid: orderUuid)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             showOrderDetailViewForOrder = orderEnvelope

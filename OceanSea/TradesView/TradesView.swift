@@ -21,7 +21,7 @@ struct TradesView: View {
                 let tradeUuids: [UUID] = model.trades.keys.map({ $0 })
                 ForEach(tradeUuids, id: \.self) { tradeUuid in
                     if let trade = model.trades[tradeUuid] {
-                        TradeRowView(orderEnvelope: orderEnvelope, trade: trade)
+                        TradeRowView(orderUuid: tradeUuid)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             showTradeDetailViewForTrade = trade

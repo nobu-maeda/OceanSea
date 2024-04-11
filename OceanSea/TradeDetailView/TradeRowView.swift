@@ -8,15 +8,14 @@
 import SwiftUI
 
 struct TradeRowView: View {
-    let orderEnvelope: FatCrabOrderEnvelopeProtocol?
-    let trade: FatCrabTrade?
+    @Environment(\.fatCrabModel) var model
     
-    init(orderEnvelope: FatCrabOrderEnvelopeProtocol?, trade: FatCrabTrade?) {
-        self.orderEnvelope = orderEnvelope
-        self.trade = trade
-    }
+    let orderUuid: UUID
     
     var body: some View {
+        let trade = model.trades[orderUuid]
+        let orderEnvelope = model.queriedOrders[orderUuid]
+        
         if let trade = trade {
             let orderTypeString = trade.orderType == .buy ? "Buy" : "Sell"
             let orderAmountString = trade.orderAmount.formatted()
@@ -66,19 +65,13 @@ struct TradeRowView: View {
 }
 
 #Preview("Trade") {
-    let trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.offerAccepted, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0022")))
-    return TradeRowView(orderEnvelope: nil, trade: trade)
+    let model = FatCrabMock()
+    let tradeUuid = model.getRandomTradeUuid()
+    return TradeRowView(orderUuid: tradeUuid).environment(\.fatCrabModel, model)
 }
 
 #Preview("Order") {
-    let order = FatCrabOrder(orderType: .buy, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9)
-    let orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
-    return TradeRowView(orderEnvelope: orderEnvelope, trade: nil)
-}
-
-#Preview("Trade & Order") {
-    let order = FatCrabOrder(orderType: .buy, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9)
-    let orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
-    let trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.offerAccepted, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0044")))
-    return TradeRowView(orderEnvelope: orderEnvelope, trade: trade)
+    let model = FatCrabMock()
+    let orderUuid = model.getRandomOrderUuid()
+    return TradeRowView(orderUuid: orderUuid).environment(\.fatCrabModel, model)
 }
