@@ -30,15 +30,16 @@ import Foundation
             
             let state = try maker.getState()
             let order = try maker.getOrderDetails()
+            let peerPubkey = try maker.getPeerPubkey()
             let offerEnvelopes = try maker.queryOffers()
             let peerEnvelope = try maker.queryPeerMsg()
-            let peerBtcTxid = try maker.getPeerBtcTxid()
             
             Task { @MainActor in
                 self.state = state
                 self.orderAmount = order.amount
                 self.orderPrice = order.price
                 self.tradeUuid = UUID(uuidString: order.tradeUuid) ?? UUID.init(uuidString: allZeroUUIDString)!
+                self.peerPubkey = peerPubkey
                 self.offerEnvelopes = offerEnvelopes
                 self.peerEnvelope = peerEnvelope
             }
