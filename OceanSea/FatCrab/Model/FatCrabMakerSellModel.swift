@@ -52,54 +52,54 @@ import Foundation
         }
     }
     
-    func postNewOrder() {
-        Task {
+    func postNewOrder() async throws {
+        try await Task {
             let state = try self.maker.postNewOrder()
             
             Task { @MainActor in
                 self.state = state
             }
-        }
+        }.value
     }
     
-    func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws {
-        Task {
+    func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) async throws {
+        try await Task {
             let state = try self.maker.tradeResponse(tradeRspType: tradeRspType, offerEnvelope: offerEnvelope)
             
             Task { @MainActor in
                 self.state = state
+                
                 if tradeRspType == .accept {
                     self.peerPubkey = offerEnvelope.pubkey()
                 }
             }
-        }
+        }.value
     }
     
     func checkBtcTxConfirmation() async throws -> UInt32 {
-        let btcTxConfs = try await Task {
+        try await Task {
             try self.maker.checkBtcTxConfirmation()
         }.value
-        return btcTxConfs
     }
     
-    func notifyPeer(fatcrabTxid: String) throws {
-        Task {
+    func notifyPeer(fatcrabTxid: String) async throws {
+        try await Task {
             let state = try self.maker.notifyPeer(fatcrabTxid: fatcrabTxid)
             
             Task { @MainActor in
                 self.state = state
             }
-        }
+        }.value
     }
     
-    func tradeComplete() throws {
-        Task {
+    func tradeComplete() async throws {
+        try await Task {
             let state = try self.maker.tradeComplete()
             
             Task { @MainActor in
                 self.state = state
             }
-        }
+        }.value
     }
 }
 

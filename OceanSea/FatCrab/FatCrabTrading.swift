@@ -1764,6 +1764,8 @@ public protocol FatCrabTraderProtocol: AnyObject {
 
     func walletBip39Mnemonic() throws -> String
 
+    func walletBlockchainHeight() throws -> UInt32
+
     func walletBlockchainSync() throws
 
     func walletGenerateReceiveAddress() throws -> String
@@ -1953,6 +1955,14 @@ public class FatCrabTrader:
         return try FfiConverterString.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabtrader_wallet_bip39_mnemonic(self.uniffiClonePointer(), $0)
+            }
+        )
+    }
+
+    public func walletBlockchainHeight() throws -> UInt32 {
+        return try FfiConverterUInt32.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabtrader_wallet_blockchain_height(self.uniffiClonePointer(), $0)
             }
         )
     }
@@ -3942,6 +3952,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_wallet_bip39_mnemonic() != 57026 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_wallet_blockchain_height() != 38778 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_wallet_blockchain_sync() != 42503 {

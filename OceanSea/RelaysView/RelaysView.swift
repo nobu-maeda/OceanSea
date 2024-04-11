@@ -11,6 +11,9 @@ struct RelaysView: View {
     @Environment(\.fatCrabModel) var model
     
     @State var showAddRelayToolbarView = false
+    @State private var showAlert = false
+    @State private var alertTitleString = ""
+    @State private var alertBodyString = ""
     
     var body: some View {
         NavigationStack {
@@ -31,6 +34,7 @@ struct RelaysView: View {
                 AddRelayToolbarItem(showAddRelayToolbarView: $showAddRelayToolbarView)
             })
             .navigationTitle("Nostr Relays")
+            .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
         }
         .sheet(isPresented: $showAddRelayToolbarView) {
             AddRelayView()
@@ -38,10 +42,23 @@ struct RelaysView: View {
     }
     
     func removeRelay(url: String) {
-        do {
-            try model.removeRelay(url: url)
-        } catch {
-            print("Error removing relay: \(error)")
+        Task {
+            do {
+                try await model.removeRelay(url: url)
+            } catch let fatCrabError as FatCrabError {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = fatCrabError.description()
+                    showAlert = true
+                }
+            }
+            catch {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = error.localizedDescription
+                    showAlert = true
+                }
+            }
         }
     }
 }

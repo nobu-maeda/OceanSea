@@ -100,26 +100,32 @@ struct MakeNewOrderView: View {
         guard let amount = validateAmountField() else { return }
         
         // Is there a way to validate the input string against valid FatCrab address?
-        do {
-            switch orderType {
-            case .buy:
-                _ = try model.makeBuyOrder(price: price, amount: amount, fatcrabRxAddr: fatcrabRxAddrInputString)
+        Task {
+            do {
+                switch orderType {
+                case .buy:
+                    _ = try await model.makeBuyOrder(price: price, amount: amount, fatcrabRxAddr: fatcrabRxAddrInputString)
+                    
+                    
+                case .sell:
+                    _ = try await model.makeSellOrder(price: price, amount: amount)
+                }
                 
-                
-            case .sell:
-                _ = try model.makeSellOrder(price: price, amount: amount)
+                dismiss.callAsFunction()
+            } catch let fatCrabError as FatCrabError {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = fatCrabError.description()
+                    showAlert = true
+                }
             }
-            
-            dismiss.callAsFunction()
-        } catch let fatCrabError as FatCrabError {
-            alertTitleString = "Error"
-            alertBodyString = fatCrabError.description()
-            showAlert = true
-        }
-        catch {
-            alertTitleString = "Error"
-            alertBodyString = error.localizedDescription
-            showAlert = true
+            catch {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = error.localizedDescription
+                    showAlert = true
+                }
+            }
         }
     }
     

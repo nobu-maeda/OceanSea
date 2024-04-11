@@ -48,20 +48,27 @@ struct TakeOrderActionView: View {
     }
     
     func takeBuyOrder() {
-        do {
-            let buyTaker = try model.takeBuyOrder(orderEnvelope: orderEnvelope as! FatCrabOrderEnvelope)
-            trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: buyTaker))
-            
-            model.updateTrades()
-        } catch let fatCrabError as FatCrabError {
-            alertTitleString = "Error"
-            alertBodyString = fatCrabError.description()
-            showAlert = true
-        }
-        catch {
-            alertTitleString = "Error"
-            alertBodyString = error.localizedDescription
-            showAlert = true
+        Task {
+            do {
+                let buyTaker = try await model.takeBuyOrder(orderEnvelope: orderEnvelope as! FatCrabOrderEnvelope)
+                
+                Task { @MainActor in
+                    trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: buyTaker))
+                }
+            } catch let fatCrabError as FatCrabError {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = fatCrabError.description()
+                    showAlert = true
+                }
+            }
+            catch {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = error.localizedDescription
+                    showAlert = true
+                }
+            }
         }
     }
     
@@ -73,20 +80,27 @@ struct TakeOrderActionView: View {
             return
         }
         
-        do {
-            let sellTaker = try model.takeSellOrder(orderEnvelope: orderEnvelope as! FatCrabOrderEnvelope, fatcrabRxAddr: fatcrabRxAddr)
-            trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: sellTaker))
-            
-            model.updateTrades()
-        } catch let fatCrabError as FatCrabError {
-            alertTitleString = "Error"
-            alertBodyString = fatCrabError.description()
-            showAlert = true
-        }
-        catch {
-            alertTitleString = "Error"
-            alertBodyString = error.localizedDescription
-            showAlert = true
+        Task {
+            do {
+                let sellTaker = try await model.takeSellOrder(orderEnvelope: orderEnvelope as! FatCrabOrderEnvelope, fatcrabRxAddr: fatcrabRxAddr)
+                
+                Task { @MainActor in
+                    trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: sellTaker))
+                }
+            } catch let fatCrabError as FatCrabError {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = fatCrabError.description()
+                    showAlert = true
+                }
+            }
+            catch {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = error.localizedDescription
+                    showAlert = true
+                }
+            }
         }
     }
 }

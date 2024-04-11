@@ -124,23 +124,29 @@ struct TradeDetailActionView: View {
         .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
     }
     
-    func acceptOffer(for maker: FatCrabMakerTrade) {
-        do {
-            let offer = maker.offers.first!
-            try maker.tradeResponse(tradeRspType: .accept, offerEnvelope: offer)
-        } catch let fatCrabError as FatCrabError {
-            alertTitleString = "Error"
-            alertBodyString = fatCrabError.description()
-            showAlert = true
-        }
-        catch {
-            alertTitleString = "Error"
-            alertBodyString = error.localizedDescription
-            showAlert = true
+    private func acceptOffer(for maker: FatCrabMakerTrade) {
+        Task {
+            do {
+                let offer = maker.offers.first!
+                try await maker.tradeResponse(tradeRspType: .accept, offerEnvelope: offer)
+            } catch let fatCrabError as FatCrabError {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = fatCrabError.description()
+                    showAlert = true
+                }
+            }
+            catch {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = error.localizedDescription
+                    showAlert = true
+                }
+            }
         }
     }
     
-    func notifyTaker(of fatcrabTxId: String, by maker: FatCrabMakerTrade) {
+    private func notifyTaker(of fatcrabTxId: String, by maker: FatCrabMakerTrade) {
         guard !fatcrabTxId.isEmpty else {
             alertTitleString = "Error"
             alertBodyString = "FatCrab Transaction ID is empty"
@@ -148,61 +154,75 @@ struct TradeDetailActionView: View {
             return
         }
         
-        do {
-            switch maker {
-            case .buy:
-                throw OceanSeaError.invalidState("Can only notify Taker of FatCrab remit for Sell Makers")
-            case .sell(let sellMaker):
-                try sellMaker.notifyPeer(fatcrabTxid: fatcrabTxId)
+        Task {
+            do {
+                switch maker {
+                case .buy:
+                    throw OceanSeaError.invalidState("Can only notify Taker of FatCrab remit for Sell Makers")
+                case .sell(let sellMaker):
+                    try await sellMaker.notifyPeer(fatcrabTxid: fatcrabTxId)
+                }
+            } catch let fatCrabError as FatCrabError {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = fatCrabError.description()
+                    showAlert = true
+                }
             }
-        } catch let fatCrabError as FatCrabError {
-            alertTitleString = "Error"
-            alertBodyString = fatCrabError.description()
-            showAlert = true
-        }
-        catch {
-            alertTitleString = "Error"
-            alertBodyString = error.localizedDescription
-            showAlert = true
-        }
-    }
-    
-    func releaseBtcNotifyTaker(by maker: FatCrabMakerTrade) {
-        do {
-            switch maker {
-            case .buy(let buyMaker):
-                try buyMaker.releaseNotifyPeer()
-            case .sell:
-                throw OceanSeaError.invalidState("Can only release Btc & notify Taker for Buy Makers")
+            catch {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = error.localizedDescription
+                    showAlert = true
+                }
             }
-        } catch let fatCrabError as FatCrabError {
-            alertTitleString = "Error"
-            alertBodyString = fatCrabError.description()
-            showAlert = true
-        }
-        catch {
-            alertTitleString = "Error"
-            alertBodyString = error.localizedDescription
-            showAlert = true
         }
     }
     
-    func tradeComplete(maker: FatCrabMakerTrade) {
-        do {
-            try maker.tradeComplete()
-        } catch let fatCrabError as FatCrabError {
-            alertTitleString = "Error"
-            alertBodyString = fatCrabError.description()
-            showAlert = true
-        }
-        catch {
-            alertTitleString = "Error"
-            alertBodyString = error.localizedDescription
-            showAlert = true
+    private func releaseBtcNotifyTaker(by maker: FatCrabMakerTrade) {
+        Task {
+            do {
+                switch maker {
+                case .buy(let buyMaker):
+                    try await buyMaker.releaseNotifyPeer()
+                case .sell:
+                    throw OceanSeaError.invalidState("Can only release Btc & notify Taker for Buy Makers")
+                }
+            } catch let fatCrabError as FatCrabError {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = fatCrabError.description()
+                    showAlert = true
+                }
+            }
+            catch {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = error.localizedDescription
+                    showAlert = true
+                }
+            }
         }
     }
     
-    func notifyMaker(of fatcrabTxId: String, by taker: FatCrabTakerTrade) {
+    private func tradeComplete(maker: FatCrabMakerTrade) {
+        Task {
+            do {
+                try await maker.tradeComplete()
+            } catch let fatCrabError as FatCrabError {
+                alertTitleString = "Error"
+                alertBodyString = fatCrabError.description()
+                showAlert = true
+            }
+            catch {
+                alertTitleString = "Error"
+                alertBodyString = error.localizedDescription
+                showAlert = true
+            }
+        }
+    }
+    
+    private func notifyMaker(of fatcrabTxId: String, by taker: FatCrabTakerTrade) {
         guard !fatcrabTxId.isEmpty else {
             alertTitleString = "Error"
             alertBodyString = "FatCrab Transaction ID is empty"
@@ -210,38 +230,50 @@ struct TradeDetailActionView: View {
             return
         }
         
-        do {
-            switch taker {
-            case .buy(let buyTaker):
-                try buyTaker.notifyPeer(fatcrabTxid: fatcrabTxId)
-            case .sell:
-                throw OceanSeaError.invalidState("Can only notify Maker of FatCrab remit for Buy Takers")
-                
+        Task {
+            do {
+                switch taker {
+                case .buy(let buyTaker):
+                    try await buyTaker.notifyPeer(fatcrabTxid: fatcrabTxId)
+                case .sell:
+                    throw OceanSeaError.invalidState("Can only notify Maker of FatCrab remit for Buy Takers")
+                    
+                }
+            } catch let fatCrabError as FatCrabError {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = fatCrabError.description()
+                    showAlert = true
+                }
             }
-        } catch let fatCrabError as FatCrabError {
-            alertTitleString = "Error"
-            alertBodyString = fatCrabError.description()
-            showAlert = true
-        }
-        catch {
-            alertTitleString = "Error"
-            alertBodyString = error.localizedDescription
-            showAlert = true
+            catch {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = error.localizedDescription
+                    showAlert = true
+                }
+            }
         }
     }
     
-    func tradeComplete(taker: FatCrabTakerTrade) {
-        do {
-            try taker.tradeComplete()
-        } catch let fatCrabError as FatCrabError {
-            alertTitleString = "Error"
-            alertBodyString = fatCrabError.description()
-            showAlert = true
-        }
-        catch {
-            alertTitleString = "Error"
-            alertBodyString = error.localizedDescription
-            showAlert = true
+    private func tradeComplete(taker: FatCrabTakerTrade) {
+        Task {
+            do {
+                try await taker.tradeComplete()
+            } catch let fatCrabError as FatCrabError {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = fatCrabError.description()
+                    showAlert = true
+                }
+            }
+            catch {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = error.localizedDescription
+                    showAlert = true
+                }
+            }
         }
     }
 }

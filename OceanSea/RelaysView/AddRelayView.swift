@@ -60,13 +60,20 @@ struct AddRelayView: View {
         guard let relayUrl = validateRelayUrl() else { return }
         let relayAddr = RelayAddr(url: relayUrl.absoluteString, socketAddr: nil)
         
-        do {
-            try model.addRelays(relayAddrs: [relayAddr])
-            dismiss()
-        } catch {
-            alertTitleString = "Error"
-            alertBodyString = error.localizedDescription
-            showAlert = true
+        Task {
+            do {
+                try await model.addRelays(relayAddrs: [relayAddr])
+                
+                Task { @MainActor in
+                    dismiss()
+                }
+            } catch {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = error.localizedDescription
+                    showAlert = true
+                }
+            }
         }
     }
     

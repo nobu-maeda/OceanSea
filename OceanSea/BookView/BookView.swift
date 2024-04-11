@@ -10,6 +10,10 @@ import SwiftUI
 struct BookView: View {
     @Environment(\.fatCrabModel) var model
     
+    @State private var showAlert = false
+    @State private var alertTitleString = ""
+    @State private var alertBodyString = ""
+    
     @State var showMakeNewOrderView = false
     @State var showOrderDetailView = false
     @State var showOrderDetailViewForTrade: FatCrabTrade? = nil
@@ -32,23 +36,44 @@ struct BookView: View {
                 }
             }
             .refreshable {
-                model.updateTrades()
-                model.updateOrderBook()
+                await updateBookView()
             }
             .onAppear() {
-                model.updateTrades()
-                model.updateOrderBook()
+                Task {
+                    await updateBookView()
+                }
             }
             .toolbar(content: {
                 MakeNewOrderToolbarItem(showMakeNewOrderView: $showMakeNewOrderView)
             })
             .navigationTitle("Order Book")
+            .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
         }
         .sheet(isPresented: $showMakeNewOrderView) {
             MakeNewOrderView()
         }
         .sheet(isPresented: $showOrderDetailView) {
             TradeDetailView(orderEnvelope: $showOrderDetailViewForOrder, trade: $showOrderDetailViewForTrade)
+        }
+    }
+    
+    func updateBookView() async {
+        do {
+            await model.updateTrades()
+            try await model.updateOrderBook()
+        } catch let fatCrabError as FatCrabError {
+            Task { @MainActor in
+                alertTitleString = "Error"
+                alertBodyString = fatCrabError.description()
+                showAlert = true
+            }
+        }
+        catch {
+            Task { @MainActor in
+                alertTitleString = "Error"
+                alertBodyString = error.localizedDescription
+                showAlert = true
+            }
         }
     }
 }

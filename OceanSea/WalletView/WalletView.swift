@@ -17,6 +17,10 @@ struct WalletView: View {
     
     @Environment(\.fatCrabModel) var model
     
+    @State private var showAlert = false
+    @State private var alertTitleString = ""
+    @State private var alertBodyString = ""
+    
     var body: some View {
         NavigationStack {
             List {
@@ -24,6 +28,9 @@ struct WalletView: View {
                     TitleValueHStack(title: "Total Funds in Wallet", value: "\(model.totalBalance)")
                     TitleValueHStack(title: "Allocated Amount", value: "\(model.allocatedAmount)")
                     TitleValueHStack(title: "Spendable Balance", value: "\(model.spendableBalance)")
+                }
+                Section {
+                    TitleValueHStack(title: "Current Block Height", value: "\(model.blockHeight)")
                 }
                 Section {
                     NavigationLink("Send Funds", value: WalletNavigationDestination.send)
@@ -38,7 +45,7 @@ struct WalletView: View {
             .toolbar(content: {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Refresh Wallet", systemImage: "arrow.clockwise.circle") {
-                        model.updateBalances()
+                        updateBalances()
                     }
                 }
             })
@@ -56,7 +63,25 @@ struct WalletView: View {
                 }
             }
             .onAppear() {
-                model.updateBalances()
+                updateBalances()
+            }
+            .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
+        }
+    }
+    
+    private func updateBalances() {
+        Task {
+            do {
+                try await model.updateBalances()
+            } catch let fatCrabError as FatCrabError {
+                alertTitleString = "Error"
+                alertBodyString = fatCrabError.description()
+                showAlert = true
+            }
+            catch {
+                alertTitleString = "Error"
+                alertBodyString = error.localizedDescription
+                showAlert = true
             }
         }
     }

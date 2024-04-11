@@ -50,41 +50,40 @@ import Foundation
         }
     }
     
-    func takeOrder() throws {
-        Task {
+    func takeOrder() async throws {
+        try await Task {
             let state = try taker.takeOrder()
             
             Task { @MainActor in
                 self.state = state
             }
-        }
+        }.value
     }
     
-    func notifyPeer(fatcrabTxid: String) throws {
-        Task {
+    func notifyPeer(fatcrabTxid: String) async throws {
+        try await Task {
             let state = try taker.notifyPeer(fatcrabTxid: fatcrabTxid)
             
             Task { @MainActor in
                 self.state = state
             }
-        }
+        }.value
     }
     
     func checkBtcTxConfirmation() async throws -> UInt32 {
-        let btcTxConfs = try await Task {
+        try await Task {
             try self.taker.checkBtcTxConfirmation()
         }.value
-        return btcTxConfs
     }
     
-    func tradeComplete() throws {
-        Task {
+    func tradeComplete() async throws {
+        try await Task {
             let state = try taker.tradeComplete()
             
             Task { @MainActor in
                 self.state = state
             }
-        }
+        }.value
     }
 }
 

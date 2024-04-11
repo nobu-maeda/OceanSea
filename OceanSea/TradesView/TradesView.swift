@@ -31,10 +31,12 @@ struct TradesView: View {
                 }
             }
             .refreshable {
-                model.updateTrades()
+                await model.updateTrades()
             }
             .onAppear() {
-                model.updateTrades()
+                Task {
+                    await model.updateTrades()
+                }
             }
             .toolbar() {
                 MakeNewOrderToolbarItem(showMakeNewOrderView: $showMakeNewOrderView)

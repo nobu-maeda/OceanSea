@@ -52,47 +52,48 @@ import Foundation
         }
     }
     
-    func postNewOrder() throws {
-        Task {
+    func postNewOrder() async throws {
+        try await Task {
             let state = try self.maker.postNewOrder()
             
             Task { @MainActor in
                 self.state = state
             }
-        }
+        }.value
     }
     
-    func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws {
-        Task {
+    func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) async throws {
+        try await Task {
             let state = try self.maker.tradeResponse(tradeRspType: tradeRspType, offerEnvelope: offerEnvelope)
             
             Task { @MainActor in
                 self.state = state
+                
                 if tradeRspType == .accept {
                     self.peerPubkey = offerEnvelope.pubkey()
                 }
             }
-        }
+        }.value
     }
     
-    func releaseNotifyPeer() throws {
-        Task {
+    func releaseNotifyPeer() async throws {
+        try await Task {
             let state = try self.maker.releaseNotifyPeer()
             
             Task { @MainActor in
                 self.state = state
             }
-        }
+        }.value
     }
     
-    func tradeComplete() throws {
-        Task {
+    func tradeComplete() async throws {
+        try await Task {
             let state = try self.maker.tradeComplete()
             
             Task { @MainActor in
                 self.state = state
             }
-        }
+        }.value
     }
 }
 

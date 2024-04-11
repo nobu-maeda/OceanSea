@@ -23,6 +23,7 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
     var spendableBalance: Int
     var allocatedAmount: Int
     var mnemonic: [String]
+    var blockHeight: UInt
     var relays: [RelayInfo]
     
     var queriedOrders: [UUID: FatCrabOrderEnvelopeProtocol]
@@ -32,6 +33,7 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
         totalBalance = 0
         spendableBalance = 0
         allocatedAmount = 0
+        blockHeight = 0
         mnemonic = ["Word1", "Word2", "Word3", "Word4", "Word5", "Word6", "Word7", "Word8", "Word9", "Word10", "Word11", "Word12", "Word13", "Word14", "Word15", "Word16", "Word17", "Word18", "Word19", "Word20", "Word21", "Word22", "Word23", "Word24"]
         
         let relayAddr1 = RelayAddr(url: "https://relay1.fatcrab.nostr", socketAddr: nil)
@@ -56,6 +58,13 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
         updateTrades()
         updateTrades()
         updateTrades()
+    }
+    
+    func walletGetHeight() async throws -> UInt32 {
+        // Generate random UInt32 between 738755 to 93438755
+        let height = UInt32.random(in: 738755...93438755)
+        blockHeight = UInt(height)
+        return height
     }
     
     func walletGenerateReceiveAddress() async throws -> String {

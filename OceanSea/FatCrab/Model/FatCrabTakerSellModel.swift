@@ -48,24 +48,24 @@ import Foundation
         }
     }
     
-    func takeOrder() throws {
-        Task {
+    func takeOrder() async throws {
+        try await Task {
             let state = try taker.takeOrder()
             
             Task { @MainActor in
                 self.state = state
             }
-        }
+        }.value
     }
     
-    func tradeComplete() throws {
-        Task {
+    func tradeComplete() async throws {
+        try await Task {
             let state = try taker.tradeComplete()
             
             Task { @MainActor in
                 self.state = state
             }
-        }
+        }.value
     }
 }
 
