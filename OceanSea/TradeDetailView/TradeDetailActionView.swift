@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TradeDetailActionView: View {
-    @Binding var trade: FatCrabTrade
+    @Binding var trade: FatCrabTrade?
     
     @State private var fatcrabTxId = ""
     @State private var showAlert = false
@@ -17,67 +17,26 @@ struct TradeDetailActionView: View {
     
     var body: some View {
         VStack {
-            switch trade {
-            case .maker(let maker):
-                switch maker.state {
-                case .new:
-                    Text("No Actions Available")
-                case .waitingForOffers:
-                    Text("No Actions Available")
-                case .receivedOffer:
-                    Text("Click to accept the first valid offer received")
-                    Button() {
-                        acceptOffer(for: maker)
-                    } label: {
-                        Text("Accept Offer")
-                    }.buttonStyle(.borderedProminent)
-                        .controlSize(.regular)
-                case .acceptedOffer:
-                    Text("No Actions Available")
-                case .inboundBtcNotified:
-                    Text("Remit FatCrab to Taker, before clicking to notify")
-                    TextField(text: $fatcrabTxId) {
-                        Text("FatCrab Transaction ID")
-                    }
-                    .padding(.leading)
-                    .padding(.trailing)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-                    .textFieldStyle(.roundedBorder)
-                    Button() {
-                        notifyTaker(of: fatcrabTxId, by: maker)
-                    } label: {
-                        Text("Notify Taker of FatCrab remitted")
-                    }.buttonStyle(.borderedProminent)
-                        .controlSize(.regular)
-                case .inboundFcNotified:
-                    Text("Confirm FatCrab received before releasing BTC and notifying Taker")
-                    Button() {
-                        releaseBtcNotifyTaker(by: maker)
-                    } label: {
-                        Text("Release BTC & notify Taker")
-                    }.buttonStyle(.borderedProminent)
-                        .controlSize(.regular)
-                case .notifiedOutbound:
-                    Text("Mark Trade Completed")
-                    Button() {
-                        tradeComplete(maker: maker)
-                    } label: {
-                        Text("Trade complete")
-                    }.buttonStyle(.borderedProminent)
-                case .tradeCompleted:
-                    Text("No Actions Available")
-                }
-            case .taker(let taker):
-                switch taker.state {
-                case .new:
-                    Text("No Actions Available")
-                case .submittedOffer:
-                    Text("No Actions Available")
-                case .offerAccepted:
-                    switch taker {
-                        case .buy:
-                        Text("Remit FatCrab to Maker, before clicking to notify")
+            if let trade = trade {
+                switch trade {
+                case .maker(let maker):
+                    switch maker.state {
+                    case .new:
+                        Text("No Actions Available")
+                    case .waitingForOffers:
+                        Text("No Actions Available")
+                    case .receivedOffer:
+                        Text("Click to accept the first valid offer received")
+                        Button() {
+                            acceptOffer(for: maker)
+                        } label: {
+                            Text("Accept Offer")
+                        }.buttonStyle(.borderedProminent)
+                            .controlSize(.regular)
+                    case .acceptedOffer:
+                        Text("No Actions Available")
+                    case .inboundBtcNotified:
+                        Text("Remit FatCrab to Taker, before clicking to notify")
                         TextField(text: $fatcrabTxId) {
                             Text("FatCrab Transaction ID")
                         }
@@ -87,33 +46,76 @@ struct TradeDetailActionView: View {
                         .autocorrectionDisabled()
                         .textFieldStyle(.roundedBorder)
                         Button() {
-                            notifyMaker(of: fatcrabTxId, by: taker)
+                            notifyTaker(of: fatcrabTxId, by: maker)
                         } label: {
-                            Text("Notify Maker of FatCrab remitted")
+                            Text("Notify Taker of FatCrab remitted")
                         }.buttonStyle(.borderedProminent)
-                    case .sell:
+                            .controlSize(.regular)
+                    case .inboundFcNotified:
+                        Text("Confirm FatCrab received before releasing BTC and notifying Taker")
+                        Button() {
+                            releaseBtcNotifyTaker(by: maker)
+                        } label: {
+                            Text("Release BTC & notify Taker")
+                        }.buttonStyle(.borderedProminent)
+                            .controlSize(.regular)
+                    case .notifiedOutbound:
+                        Text("Mark Trade Completed")
+                        Button() {
+                            tradeComplete(maker: maker)
+                        } label: {
+                            Text("Trade complete")
+                        }.buttonStyle(.borderedProminent)
+                    case .tradeCompleted:
                         Text("No Actions Available")
                     }
-                case .offerRejected:
-                    Text("No Actions Available")
-                case .notifiedOutbound:
-                    Text("No Actions Available")
-                case .inboundBtcNotified:
-                    Text("Confirm BTC received before marking Trade completed")
-                    Button() {
-                        tradeComplete(taker: taker)
-                    } label: {
-                        Text("BTC receive confirmed")
-                    }.buttonStyle(.borderedProminent)
-                case .inboundFcNotified:
-                    Text("Confirm FatCrab received before marking Trade completed")
-                    Button() {
-                        tradeComplete(taker: taker)
-                    } label: {
-                        Text("FatCrab receive confirmed")
-                    }.buttonStyle(.borderedProminent)
-                case .tradeCompleted:
-                    Text("No Actions Available")
+                case .taker(let taker):
+                    switch taker.state {
+                    case .new:
+                        Text("No Actions Available")
+                    case .submittedOffer:
+                        Text("No Actions Available")
+                    case .offerAccepted:
+                        switch taker {
+                        case .buy:
+                            Text("Remit FatCrab to Maker, before clicking to notify")
+                            TextField(text: $fatcrabTxId) {
+                                Text("FatCrab Transaction ID")
+                            }
+                            .padding(.leading)
+                            .padding(.trailing)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .textFieldStyle(.roundedBorder)
+                            Button() {
+                                notifyMaker(of: fatcrabTxId, by: taker)
+                            } label: {
+                                Text("Notify Maker of FatCrab remitted")
+                            }.buttonStyle(.borderedProminent)
+                        case .sell:
+                            Text("No Actions Available")
+                        }
+                    case .offerRejected:
+                        Text("No Actions Available")
+                    case .notifiedOutbound:
+                        Text("No Actions Available")
+                    case .inboundBtcNotified:
+                        Text("Confirm BTC received before marking Trade completed")
+                        Button() {
+                            tradeComplete(taker: taker)
+                        } label: {
+                            Text("BTC receive confirmed")
+                        }.buttonStyle(.borderedProminent)
+                    case .inboundFcNotified:
+                        Text("Confirm FatCrab received before marking Trade completed")
+                        Button() {
+                            tradeComplete(taker: taker)
+                        } label: {
+                            Text("FatCrab receive confirmed")
+                        }.buttonStyle(.borderedProminent)
+                    case .tradeCompleted:
+                        Text("No Actions Available")
+                    }
                 }
             }
         }
@@ -275,51 +277,51 @@ struct TradeDetailActionView: View {
 }
 
 #Preview("Maker Buy - Random") {
-    @State var trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailActionView(trade: $trade)
 }
 
 #Preview("Maker Sell - Random") {
-    @State var trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.random(for: .sell), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.random(for: .sell), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailActionView(trade: $trade)
 }
 
 #Preview("Taker Buy - Random") {
-    @State var trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailActionView(trade: $trade)
 }
 
 #Preview("Taker Sell - Random") {
-    @State var trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.random(for: .sell), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.random(for: .sell), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailActionView(trade: $trade)
 }
 
 #Preview("Maker - Received Offer") {
-    @State var trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.receivedOffer, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.receivedOffer, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailActionView(trade: $trade)
 }
 
 #Preview("Maker - Inbound Btc Notified") {
-    @State var trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.inboundBtcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.inboundBtcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailActionView(trade: $trade)
 }
 
 #Preview("Maker - Inbound FatCrab Notified") {
-    @State var trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.inboundFcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.inboundFcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailActionView(trade: $trade)
 }
 
 #Preview("Taker Buy - Offer Accepted") {
-    @State var trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.offerAccepted, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.offerAccepted, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailActionView(trade: $trade)
 }
 
 #Preview("Taker Sell - Offer Accepted") {
-    @State var trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.offerAccepted, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.offerAccepted, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailActionView(trade: $trade)
 }
 
 #Preview("Taker - Inbound FatCrab Notified") {
-    @State var trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.inboundFcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
+    @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.inboundFcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailActionView(trade: $trade)
 }

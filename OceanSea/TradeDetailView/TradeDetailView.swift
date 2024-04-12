@@ -38,7 +38,7 @@ struct TradeDetailView: View {
                 
                 if trade != nil, shouldShowStatus() {
                     Section {
-                        TradeDetailStatusView(trade: Binding($trade)!)
+                        TradeDetailStatusView(trade: $trade)
                     } header: {
                         Text("Status")
                     }
@@ -47,7 +47,7 @@ struct TradeDetailView: View {
                 if trade != nil {
                     if shouldShowAction() {
                         Section {
-                            TradeDetailActionView(trade: Binding($trade)!)
+                            TradeDetailActionView(trade: $trade)
                         } header: {
                             Text("Action")
                         }
