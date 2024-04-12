@@ -6,19 +6,16 @@
 //
 
 import SwiftUI
+import OSLog
 
 struct TradeDetailStatusView: View {
-    @State var btcConfs = 0
+    @Environment(\.fatCrabModel) var model
+    @Binding var trade: FatCrabTrade
     
     @State private var showAlert = false
     @State private var alertTitleString = ""
     @State private var alertBodyString = ""
-    
-    let trade: FatCrabTrade
-    
-    init(for trade: FatCrabTrade) {
-        self.trade = trade
-    }
+    @State private var btcConfs = 0
     
     var body: some View {
         switch trade {
@@ -46,10 +43,7 @@ struct TradeDetailStatusView: View {
                 }
             case .inboundBtcNotified:
                 Text("Taker claims BTC sent. \(btcConfs) confirmations detected for TxID: \(txID ?? "")")
-                    .refreshable {
-                        await updateBtcConfs()
-                    }
-                    .task {
+                    .task(id: model.blockHeight) {
                         await updateBtcConfs()
                     }
                     .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
@@ -92,10 +86,7 @@ struct TradeDetailStatusView: View {
                 }
             case .inboundBtcNotified:
                 Text("Maker claims BTC sent. \(btcConfs) confirmations detected for TxID: \(txID ?? "")")
-                    .refreshable {
-                        await updateBtcConfs()
-                    }
-                    .task {
+                    .task(id: model.blockHeight) {
                         await updateBtcConfs()
                     }
                     .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
@@ -109,48 +100,53 @@ struct TradeDetailStatusView: View {
     
     private func updateBtcConfs() async {
         do {
+            let uIntBtcConfs: UInt32
+            
             switch trade {
             case .maker(let maker):
                 switch maker {
                 case .buy:
                     return
                 case .sell(let sellMaker):
-                    let uIntBtcConfs = try await sellMaker.checkBtcTxConfirmation()
-                    btcConfs = Int(uIntBtcConfs)
+                    uIntBtcConfs = try await sellMaker.checkBtcTxConfirmation()
+                    
                 }
             case .taker(let taker):
                 switch taker {
                 case .buy(let buyTaker):
-                    let uIntBtcConfs = try await buyTaker.checkBtcTxConfirmation()
-                    btcConfs = Int(uIntBtcConfs)
+                    uIntBtcConfs = try await buyTaker.checkBtcTxConfirmation()
                 case .sell:
                     return
                 }
             }
+            
+            Task { @MainActor in
+                btcConfs = Int(uIntBtcConfs)
+            }
         } catch let fatCrabError as FatCrabError {
-            alertTitleString = "Error"
-            alertBodyString = fatCrabError.description()
-            showAlert = true
+            Logger.appInterface.warning("Warning: \(fatCrabError.localizedDescription)")
         }
         catch {
-            alertTitleString = "Error"
-            alertBodyString = error.localizedDescription
-            showAlert = true
+            Task { @MainActor in
+                alertTitleString = "Error"
+                alertBodyString = error.localizedDescription
+                showAlert = true
+            }
         }
     }
 }
 
 #Preview("BuyMaker") {
-    let trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID())))
-    return TradeDetailStatusView(for: trade)
+    @State var trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID())))
+    return TradeDetailStatusView(trade: $trade)
 }
 
 #Preview("SellMaker") {
-    let trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.inboundBtcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerBtcTxid: "SomeTxID000-0057")))
-    return TradeDetailStatusView(for: trade)
+    @State var trade = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.inboundBtcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerBtcTxid: "SomeTxID000-0057")))
+    return TradeDetailStatusView(trade: $trade)
 }
 
 #Preview("BuyTaker") {
-    let trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.inboundBtcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0057", peerBtcTxid: "SomeTxID000-0057")))
-    return TradeDetailStatusView(for: trade)
+    @State var trade = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.inboundBtcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0057", peerBtcTxid: "SomeTxID000-0057")))
+    return TradeDetailStatusView(trade: $trade)
 }

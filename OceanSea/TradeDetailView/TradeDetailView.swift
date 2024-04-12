@@ -9,6 +9,8 @@ import SwiftUI
 
 struct TradeDetailView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.fatCrabModel) var model
+    
     @Binding var orderEnvelope: FatCrabOrderEnvelopeProtocol?
     @Binding var trade: FatCrabTrade?
     
@@ -27,25 +29,25 @@ struct TradeDetailView: View {
                 } header: {
                     Text("Order Summary")
                 }
-                
+
                 Section {
                     TradeDetailExplainView(tradeType: tradeType, orderType: orderType, orderAmount: orderAmount, orderPrice: orderPrice)
                 } header: {
                     Text("Explaination")
                 }
                 
-                if let trade = trade, shouldShowStatus() {
+                if trade != nil, shouldShowStatus() {
                     Section {
-                        TradeDetailStatusView(for: trade)
+                        TradeDetailStatusView(trade: Binding($trade)!)
                     } header: {
                         Text("Status")
                     }
                 }
                 
-                if let trade = trade {
+                if trade != nil {
                     if shouldShowAction() {
                         Section {
-                            TradeDetailActionView(for: trade)
+                            TradeDetailActionView(trade: Binding($trade)!)
                         } header: {
                             Text("Action")
                         }

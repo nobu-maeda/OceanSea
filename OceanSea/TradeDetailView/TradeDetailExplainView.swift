@@ -10,17 +10,10 @@ import SwiftUI
 struct TradeDetailExplainView: View {
     @State var numOffers = 0
     
-    let tradeType: FatCrabTradeType
-    let orderType: FatCrabOrderType
-    let orderAmount: Double
-    let orderPrice: Double
-    
-    init(tradeType: FatCrabTradeType, orderType: FatCrabOrderType, orderAmount: Double, orderPrice: Double) {
-        self.tradeType = tradeType
-        self.orderType = orderType
-        self.orderAmount = orderAmount
-        self.orderPrice = orderPrice
-    }
+    @State var tradeType: FatCrabTradeType
+    @State var orderType: FatCrabOrderType
+    @State var orderAmount: Double
+    @State var orderPrice: Double
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12.0) {
