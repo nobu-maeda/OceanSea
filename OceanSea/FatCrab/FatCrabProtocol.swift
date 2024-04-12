@@ -278,10 +278,11 @@ extension EnvironmentValues {
 }
 
 protocol FatCrabProtocol: ObservableObject {
-    var totalBalance: Int { get }
-    var spendableBalance: Int { get }
-    var allocatedAmount: Int { get }
     var mnemonic: [String] { get }
+    var trustedPendingAmount: Int { get }
+    var untrustedPendingAmount: Int { get }
+    var confirmedAmount: Int { get }
+    var allocatedAmount: Int { get }
     var blockHeight: UInt { get }
     
     func updateBalances() async throws

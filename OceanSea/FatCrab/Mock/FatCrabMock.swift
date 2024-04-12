@@ -19,10 +19,11 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
 }
 
 @Observable class FatCrabMock: FatCrabProtocol {
-    var totalBalance: Int
-    var spendableBalance: Int
-    var allocatedAmount: Int
     var mnemonic: [String]
+    var trustedPendingAmount: Int
+    var untrustedPendingAmount: Int
+    var confirmedAmount: Int
+    var allocatedAmount: Int
     var blockHeight: UInt
     var relays: [RelayInfo]
     
@@ -30,8 +31,9 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
     var trades: [UUID : FatCrabTrade]
     
     init() {
-        totalBalance = 0
-        spendableBalance = 0
+        trustedPendingAmount = 0
+        untrustedPendingAmount = 0
+        confirmedAmount = 0
         allocatedAmount = 0
         blockHeight = 0
         mnemonic = ["Word1", "Word2", "Word3", "Word4", "Word5", "Word6", "Word7", "Word8", "Word9", "Word10", "Word11", "Word12", "Word13", "Word14", "Word15", "Word16", "Word17", "Word18", "Word19", "Word20", "Word21", "Word22", "Word23", "Word24"]
@@ -77,8 +79,9 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
             try await Task.sleep(nanoseconds: 1_000_000_000)
             
             Task { @MainActor in
-                totalBalance = 123456
-                spendableBalance = 234567
+                trustedPendingAmount = 123456
+                untrustedPendingAmount = 234567
+                confirmedAmount = 2309465
                 allocatedAmount = 345678
             }
         }

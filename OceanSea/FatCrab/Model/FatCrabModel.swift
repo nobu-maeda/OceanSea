@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import OSLog
 
 @Observable class FatCrabModel: FatCrabProtocol {
     private let trader: FatCrabTrader  // Should we inject this? Or is this good?
@@ -13,8 +14,9 @@ import Foundation
     let MNEMONIC_KEYCHAIN_WRAPPER_KEY: String = "mnemonic"
     
     var mnemonic: [String]
-    var totalBalance: Int
-    var spendableBalance: Int
+    var trustedPendingAmount: Int
+    var untrustedPendingAmount: Int
+    var confirmedAmount: Int
     var allocatedAmount: Int
     var blockHeight: UInt
     var relays: [RelayInfo]
@@ -29,8 +31,9 @@ import Foundation
         let appDir = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)
         
         mnemonic = []
-        totalBalance = 0
-        spendableBalance = 0
+        trustedPendingAmount = 0
+        untrustedPendingAmount = 0
+        confirmedAmount = 0
         allocatedAmount = 0
         blockHeight = 0
         relays = []
@@ -67,7 +70,7 @@ import Foundation
                     }
                 }
             } catch {
-                NSLog("Error getting block height: \(error)")
+                Logger.appInterface.error("Error getting block height: \(error)")
             }
         }
         
@@ -93,9 +96,10 @@ import Foundation
             let walletBalances = try self.trader.walletBalances()
             
             Task { @MainActor in
+                trustedPendingAmount = Int(walletBalances.trustedPending)
+                untrustedPendingAmount = Int(walletBalances.untrustedPending)
+                confirmedAmount = Int(walletBalances.confirmed)
                 allocatedAmount = Int(walletBalances.allocated)
-                spendableBalance = Int(walletBalances.confirmed) - Int(walletBalances.allocated)
-                totalBalance = allocatedAmount + spendableBalance + Int(walletBalances.trustedPending)
             }
         }.value
     }
