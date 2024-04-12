@@ -57,9 +57,9 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
         updateOrderBook()
         
         // This will randomly generate up to 3 trades
-        updateTrades()
-        updateTrades()
-        updateTrades()
+        restoreTrades()
+        restoreTrades()
+        restoreTrades()
     }
     
     func walletGetHeight() async throws -> UInt32 {
@@ -193,7 +193,7 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
         trades.updateValue(trade, forKey: uuid)
     }
     
-    func updateTrades() {
+    func restoreTrades() {
         if Bool.random() {
             addToCurrentTrades()
         } else if trades.count > 0 {

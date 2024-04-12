@@ -79,7 +79,7 @@ import OSLog
             let restoredRelays = trader.getRelays()
             
             // Restore trades
-            await updateTrades()
+            await restoreTrades()
         
             // Everything restored - Reconnect relays
             try trader.reconnect()
@@ -203,7 +203,7 @@ import OSLog
         }.value
     }
     
-    func updateTrades() async {
+    func restoreTrades() async {
         await Task {
             let buyMakers = trader.getBuyMakers();
             let sellMakers = trader.getSellMakers();

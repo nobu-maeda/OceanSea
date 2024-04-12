@@ -30,14 +30,6 @@ struct TradesView: View {
                     }
                 }
             }
-            .refreshable {
-                await model.updateTrades()
-            }
-            .onAppear() {
-                Task {
-                    await model.updateTrades()
-                }
-            }
             .toolbar() {
                 MakeNewOrderToolbarItem(showMakeNewOrderView: $showMakeNewOrderView)
             }

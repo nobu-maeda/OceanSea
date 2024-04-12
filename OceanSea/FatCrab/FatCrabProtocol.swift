@@ -301,7 +301,7 @@ protocol FatCrabProtocol: ObservableObject {
     func makeSellOrder(price: Double, amount: Double) async throws -> any FatCrabMakerSellProtocol
     func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) async throws -> any FatCrabTakerBuyProtocol
     func takeSellOrder(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) async throws -> any FatCrabTakerSellProtocol
-    func updateTrades() async
+    func restoreTrades() async
 }
 
 protocol FatCrabMakerBuyProtocol: ObservableObject {
