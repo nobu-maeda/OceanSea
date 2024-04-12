@@ -13,6 +13,7 @@ import Foundation
     var orderPrice: Double
     var tradeUuid: UUID
     var peerPubkey: String?
+    var peerFcAddr: String?
     var peerBtcTxid: String?
     var offerEnvelopes: [FatCrabOfferEnvelope]
     var peerEnvelope: FatCrabPeerEnvelope?

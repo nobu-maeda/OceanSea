@@ -326,6 +326,7 @@ protocol FatCrabMakerSellProtocol: ObservableObject {
     var orderPrice: Double { get }
     var tradeUuid: UUID { get }
     var peerPubkey: String? { get }
+    var peerFcAddr: String? { get }
     var peerBtcTxid: String? { get }
     var offerEnvelopes: [FatCrabOfferEnvelope] { get }
     var peerEnvelope: FatCrabPeerEnvelope? { get }
@@ -343,6 +344,7 @@ protocol FatCrabTakerBuyProtocol: ObservableObject {
     var orderPrice: Double { get }
     var tradeUuid: UUID { get }
     var peerPubkey: String { get }
+    var peerFcAddr: String? { get }
     var peerBtcTxid: String? { get }
     var tradeRspEnvelope: FatCrabTradeRspEnvelope? { get }
     

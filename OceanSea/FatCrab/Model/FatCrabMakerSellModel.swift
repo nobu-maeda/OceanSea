@@ -46,6 +46,12 @@ import Foundation
         }
     }
     
+    var peerFcAddr: String? {
+        get {
+            peerEnvelope?.message().receiveAddress
+        }
+    }
+    
     var peerBtcTxid: String? {
         get {
             peerEnvelope?.message().txid

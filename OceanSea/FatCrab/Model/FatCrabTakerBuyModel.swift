@@ -40,6 +40,23 @@ import Foundation
                 self.tradeUuid = UUID(uuidString: order.tradeUuid) ?? UUID.init(uuidString: allZeroUUIDString)!
                 self.peerPubkey = orderEnvelope.pubkey()
                 self.tradeRspEnvelope = tradeRspEnvelope
+                
+                
+            }
+        }
+    }
+    
+    var peerFcAddr: String? {
+        get {
+            if let tradeRsp = tradeRspEnvelope?.tradeRsp() {
+                switch tradeRsp {
+                case .accept(let receiveAddress):
+                    return receiveAddress
+                case .reject:
+                    return nil
+                }
+            } else {
+                return nil
             }
         }
     }

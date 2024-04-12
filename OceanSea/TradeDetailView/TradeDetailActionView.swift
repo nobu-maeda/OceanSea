@@ -36,21 +36,26 @@ struct TradeDetailActionView: View {
                     case .acceptedOffer:
                         Text("No Actions Available")
                     case .inboundBtcNotified:
-                        Text("Remit FatCrab to Taker, before clicking to notify")
-                        TextField(text: $fatcrabTxId) {
-                            Text("FatCrab Transaction ID")
+                        switch maker {
+                        case .buy:
+                            Text("No Actions Available")
+                        case .sell(let sellMaker):
+                            Text("Remit FatCrab to \(sellMaker.peerFcAddr ?? "??") for Taker, before clicking to notify")
+                            TextField(text: $fatcrabTxId) {
+                                Text("FatCrab Transaction ID")
+                            }
+                            .padding(.leading)
+                            .padding(.trailing)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .textFieldStyle(.roundedBorder)
+                            Button() {
+                                notifyTaker(of: fatcrabTxId, by: maker)
+                            } label: {
+                                Text("Notify Taker of FatCrab remitted")
+                            }.buttonStyle(.borderedProminent)
+                                .controlSize(.regular)
                         }
-                        .padding(.leading)
-                        .padding(.trailing)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                        .textFieldStyle(.roundedBorder)
-                        Button() {
-                            notifyTaker(of: fatcrabTxId, by: maker)
-                        } label: {
-                            Text("Notify Taker of FatCrab remitted")
-                        }.buttonStyle(.borderedProminent)
-                            .controlSize(.regular)
                     case .inboundFcNotified:
                         Text("Confirm FatCrab received before releasing BTC and notifying Taker")
                         Button() {
@@ -77,8 +82,8 @@ struct TradeDetailActionView: View {
                         Text("No Actions Available")
                     case .offerAccepted:
                         switch taker {
-                        case .buy:
-                            Text("Remit FatCrab to Maker, before clicking to notify")
+                        case .buy(let buyTaker):
+                            Text("Remit FatCrab to \(buyTaker.peerFcAddr ?? "??") for Maker, before clicking to notify")
                             TextField(text: $fatcrabTxId) {
                                 Text("FatCrab Transaction ID")
                             }
