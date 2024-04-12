@@ -50,16 +50,23 @@ struct BookView: View {
             .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
         }
         .sheet(isPresented: $showMakeNewOrderView) {
+            Task {
+                await updateBookView()
+            }
+        } content: {
             MakeNewOrderView()
         }
         .sheet(isPresented: $showOrderDetailView) {
+            Task {
+                await updateBookView()
+            }
+        } content: {
             TradeDetailView(orderEnvelope: $showOrderDetailViewForOrder, trade: $showOrderDetailViewForTrade)
         }
     }
     
     func updateBookView() async {
         do {
-            await model.updateTrades()
             try await model.updateOrderBook()
         } catch let fatCrabError as FatCrabError {
             Task { @MainActor in
