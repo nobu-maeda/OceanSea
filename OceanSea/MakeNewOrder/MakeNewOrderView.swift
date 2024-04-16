@@ -21,9 +21,10 @@ struct MakeNewOrderView: View {
     @State private var priceInputString = ""
     @State private var amountInputString = ""
     @State private var fatcrabRxAddrInputString = ""
+    @State private var isBusy = false
     
     @FocusState private var focusedField: FocusedField?
-
+    
     @State private var showAlert = false
     @State private var alertTitleString = ""
     @State private var alertBodyString = ""
@@ -38,7 +39,7 @@ struct MakeNewOrderView: View {
                 
                 TextField("Price (Sats / FatCrab)", text: $priceInputString)
                     .focused($focusedField, equals: .price)
-                    .onSubmit { 
+                    .onSubmit {
                         if validatePriceField() != nil {
                             focusedField = .amount
                         } else {
@@ -90,6 +91,7 @@ struct MakeNewOrderView: View {
                     Button("Dismiss", action: dismiss.callAsFunction)
                 }
             }
+            .modifier(ActivityIndicatorModifier(isLoading: isBusy))
             .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
         }
         .onAppear(perform: { focusedField = .price })
@@ -100,18 +102,17 @@ struct MakeNewOrderView: View {
         guard let amount = validateAmountField() else { return }
         
         // Is there a way to validate the input string against valid FatCrab address?
+        
+        isBusy = true
+        
         Task {
             do {
                 switch orderType {
                 case .buy:
                     _ = try await model.makeBuyOrder(price: price, amount: amount, fatcrabRxAddr: fatcrabRxAddrInputString)
-                    
-                    
                 case .sell:
                     _ = try await model.makeSellOrder(price: price, amount: amount)
                 }
-                
-                dismiss.callAsFunction()
             } catch let fatCrabError as FatCrabError {
                 Task { @MainActor in
                     alertTitleString = "Error"
@@ -126,6 +127,9 @@ struct MakeNewOrderView: View {
                     showAlert = true
                 }
             }
+
+            isBusy = false
+            dismiss.callAsFunction()
         }
     }
     

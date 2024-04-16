@@ -9,6 +9,7 @@ import SwiftUI
 
 struct TradeDetailActionView: View {
     @Binding var trade: FatCrabTrade?
+    @Binding var isBusy: Bool
     
     @State private var fatcrabTxId = ""
     @State private var showAlert = false
@@ -128,6 +129,8 @@ struct TradeDetailActionView: View {
     }
     
     private func acceptOffer(for maker: FatCrabMakerTrade) {
+        isBusy = true
+        
         Task {
             do {
                 let offer = maker.offers.first!
@@ -146,6 +149,7 @@ struct TradeDetailActionView: View {
                     showAlert = true
                 }
             }
+            isBusy = false
         }
     }
     
@@ -156,6 +160,8 @@ struct TradeDetailActionView: View {
             showAlert = true
             return
         }
+        
+        isBusy = true
         
         Task {
             do {
@@ -179,10 +185,13 @@ struct TradeDetailActionView: View {
                     showAlert = true
                 }
             }
+            isBusy = false
         }
     }
     
     private func releaseBtcNotifyTaker(by maker: FatCrabMakerTrade) {
+        isBusy = true
+        
         Task {
             do {
                 switch maker {
@@ -205,10 +214,12 @@ struct TradeDetailActionView: View {
                     showAlert = true
                 }
             }
+            isBusy = false
         }
     }
     
     private func tradeComplete(maker: FatCrabMakerTrade) {
+        isBusy = true
         Task {
             do {
                 try await maker.tradeComplete()
@@ -222,6 +233,7 @@ struct TradeDetailActionView: View {
                 alertBodyString = error.localizedDescription
                 showAlert = true
             }
+            isBusy = false
         }
     }
     
@@ -232,6 +244,8 @@ struct TradeDetailActionView: View {
             showAlert = true
             return
         }
+        
+        isBusy = true
         
         Task {
             do {
@@ -256,10 +270,12 @@ struct TradeDetailActionView: View {
                     showAlert = true
                 }
             }
+            isBusy = false
         }
     }
     
     private func tradeComplete(taker: FatCrabTakerTrade) {
+        isBusy = true
         Task {
             do {
                 try await taker.tradeComplete()
@@ -277,56 +293,57 @@ struct TradeDetailActionView: View {
                     showAlert = true
                 }
             }
+            isBusy = false
         }
     }
 }
 
 #Preview("Maker Buy - Random") {
     @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade)
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
 }
 
 #Preview("Maker Sell - Random") {
     @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.random(for: .sell), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade)
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
 }
 
 #Preview("Taker Buy - Random") {
     @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade)
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
 }
 
 #Preview("Taker Sell - Random") {
     @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.random(for: .sell), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade)
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
 }
 
 #Preview("Maker - Received Offer") {
     @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.receivedOffer, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade)
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
 }
 
 #Preview("Maker - Inbound Btc Notified") {
     @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.inboundBtcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade)
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
 }
 
 #Preview("Maker - Inbound FatCrab Notified") {
     @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.inboundFcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade)
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
 }
 
 #Preview("Taker Buy - Offer Accepted") {
     @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.offerAccepted, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade)
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
 }
 
 #Preview("Taker Sell - Offer Accepted") {
     @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.offerAccepted, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade)
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
 }
 
 #Preview("Taker - Inbound FatCrab Notified") {
     @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.inboundFcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade)
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
 }

@@ -11,6 +11,7 @@ struct TakeOrderActionView: View {
     @Environment(\.fatCrabModel) var model
     @Binding var orderEnvelope: FatCrabOrderEnvelopeProtocol?
     @Binding var trade: FatCrabTrade?
+    @Binding var isBusy: Bool
     
     @State private var fatcrabRxAddr = ""
     @State private var showAlert = false
@@ -48,6 +49,8 @@ struct TakeOrderActionView: View {
     }
     
     func takeBuyOrder() {
+        isBusy = true
+        
         Task {
             do {
                 let buyTaker = try await model.takeBuyOrder(orderEnvelope: orderEnvelope as! FatCrabOrderEnvelope)
@@ -69,6 +72,7 @@ struct TakeOrderActionView: View {
                     showAlert = true
                 }
             }
+            isBusy = false
         }
     }
     
@@ -79,6 +83,8 @@ struct TakeOrderActionView: View {
             showAlert = true
             return
         }
+        
+        isBusy = true
         
         Task {
             do {
@@ -101,6 +107,7 @@ struct TakeOrderActionView: View {
                     showAlert = true
                 }
             }
+            isBusy = false
         }
     }
 }
@@ -109,12 +116,12 @@ struct TakeOrderActionView: View {
     let order = FatCrabOrder(orderType: .buy, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9)
     @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
     @State var trade: FatCrabTrade? = nil
-    return TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade)
+    return TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade, isBusy: .constant(false))
 }
 
 #Preview("Sell") {
     let order = FatCrabOrder(orderType: .sell, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9)
     @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
     @State var trade: FatCrabTrade? = nil
-    return TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade)
+    return TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade, isBusy: .constant(false))
 }

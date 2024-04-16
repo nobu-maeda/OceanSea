@@ -14,6 +14,8 @@ struct TradeDetailView: View {
     @Binding var orderEnvelope: FatCrabOrderEnvelopeProtocol?
     @Binding var trade: FatCrabTrade?
     
+    @State private var isBusy = false
+    
     var body: some View {
         let tradeType = tradeType()
         let orderType = orderType()
@@ -47,14 +49,14 @@ struct TradeDetailView: View {
                 if trade != nil {
                     if shouldShowAction() {
                         Section {
-                            TradeDetailActionView(trade: $trade)
+                            TradeDetailActionView(trade: $trade, isBusy: $isBusy)
                         } header: {
                             Text("Action")
                         }
                     }
                 } else if orderEnvelope != nil {
                     Section {
-                        TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade)
+                        TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade, isBusy: $isBusy)
                     } header: {
                         Text("Action")
                     }
@@ -62,6 +64,7 @@ struct TradeDetailView: View {
             }
             .navigationTitle(navigationTitleString())
             .navigationBarTitleDisplayMode(.inline)
+            .modifier(ActivityIndicatorModifier(isLoading: isBusy))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Dismiss", action: dismiss.callAsFunction)

@@ -12,6 +12,7 @@
 		0832F13E2B95F1CF00991AE0 /* TradeRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0832F13D2B95F1CF00991AE0 /* TradeRowView.swift */; };
 		084BB58B2BCE72D5002B829D /* BookFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084BB58A2BCE72D5002B829D /* BookFilter.swift */; };
 		084BB58D2BCE825E002B829D /* TradesFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084BB58C2BCE825E002B829D /* TradesFilter.swift */; };
+		084BB58F2BCEB279002B829D /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084BB58E2BCEB279002B829D /* ActivityIndicator.swift */; };
 		08529CC62BAC3E6A00D57E4C /* OrderDetailSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08529CC52BAC3E6A00D57E4C /* OrderDetailSummaryView.swift */; };
 		08529CC82BAC3E8000D57E4C /* TradeDetailExplainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08529CC72BAC3E8000D57E4C /* TradeDetailExplainView.swift */; };
 		08529CCA2BAC3E9700D57E4C /* TradeDetailStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08529CC92BAC3E9700D57E4C /* TradeDetailStatusView.swift */; };
@@ -72,6 +73,7 @@
 		0832F13D2B95F1CF00991AE0 /* TradeRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeRowView.swift; sourceTree = "<group>"; };
 		084BB58A2BCE72D5002B829D /* BookFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookFilter.swift; sourceTree = "<group>"; };
 		084BB58C2BCE825E002B829D /* TradesFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradesFilter.swift; sourceTree = "<group>"; };
+		084BB58E2BCEB279002B829D /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 		08529CC52BAC3E6A00D57E4C /* OrderDetailSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailSummaryView.swift; sourceTree = "<group>"; };
 		08529CC72BAC3E8000D57E4C /* TradeDetailExplainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeDetailExplainView.swift; sourceTree = "<group>"; };
 		08529CC92BAC3E9700D57E4C /* TradeDetailStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeDetailStatusView.swift; sourceTree = "<group>"; };
@@ -193,6 +195,7 @@
 			isa = PBXGroup;
 			children = (
 				08529CCD2BAC560400D57E4C /* Common.swift */,
+				084BB58E2BCEB279002B829D /* ActivityIndicator.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -410,6 +413,7 @@
 				08529CDC2BB301F400D57E4C /* FatCrabTakerBuyMock.swift in Sources */,
 				08DC5B692B3D771300B71A22 /* TradesView.swift in Sources */,
 				08C1EFB42B3EF8C3000F4527 /* AppSecureStorage.swift in Sources */,
+				084BB58F2BCEB279002B829D /* ActivityIndicator.swift in Sources */,
 				085FE4E62B3EDBCA0061DF95 /* TitleValueHStack.swift in Sources */,
 				08529CDE2BB3020100D57E4C /* FatCrabTakerSellMock.swift in Sources */,
 				08DC5B782B3DA55500B71A22 /* ShowSeedsView.swift in Sources */,

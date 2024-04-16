@@ -66,8 +66,8 @@ import OSLog
                 Task { @MainActor in
                     if blockchainHeight > self.blockHeight {
                         self.blockHeight = UInt(blockchainHeight)
-                        try await self.updateBalances()
                     }
+                    try await self.updateBalances()
                 }
             } catch {
                 Logger.appInterface.error("Error getting block height: \(error)")
