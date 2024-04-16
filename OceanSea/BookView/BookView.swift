@@ -20,18 +20,28 @@ struct BookView: View {
     @State var showOrderDetailViewForOrder: FatCrabOrderEnvelopeProtocol? = nil
     @State var bookFilter = BookFilter.new
     @State var buySellFilter = BuySellFilter.both
+    @State var sortOption = SortOption.priceAscending
     
     var body: some View {
         NavigationStack {
-            List() {
-                ForEach(filteredOrderUuids(), id: \.self) { orderUuid in
-                    if let orderEnvelope = model.queriedOrders[orderUuid] {
-                        TradeRowView(orderUuid: orderUuid)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            showOrderDetailViewForOrder = orderEnvelope
-                            showOrderDetailViewForTrade = model.trades[orderUuid]
-                            showOrderDetailView = true
+            VStack {
+                Picker("Sort By", selection: $sortOption) {
+                    Text("Amount △").tag(SortOption.amountAscending)
+                    Text("Amount ▽").tag(SortOption.amountDescending)
+                    Text("Price △").tag(SortOption.priceAscending)
+                    Text("Price ▽").tag(SortOption.priceDescending)
+                }.pickerStyle(SegmentedPickerStyle())
+                
+                List {
+                    ForEach(processOrderUuids(), id: \.self) { orderUuid in
+                        if let orderEnvelope = model.queriedOrders[orderUuid] {
+                            TradeRowView(orderUuid: orderUuid)
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    showOrderDetailViewForOrder = orderEnvelope
+                                    showOrderDetailViewForTrade = model.trades[orderUuid]
+                                    showOrderDetailView = true
+                                }
                         }
                     }
                 }
@@ -104,28 +114,39 @@ struct BookView: View {
         }
     }
     
-    func filteredOrderUuids() -> [UUID] {
-        var filteredOrderUuids: [UUID]
+    func processOrderUuids() -> [UUID] {
+        var processOrderUuids: [UUID]
         
         switch bookFilter {
         case .all:
-            filteredOrderUuids = model.queriedOrders.keys.map({ $0 })
+            processOrderUuids = model.queriedOrders.keys.map({ $0 })
         case .new:
-            filteredOrderUuids = model.queriedOrders.filter({ model.trades.index(forKey: $0.key) == nil }).keys.map({ $0 })
+            processOrderUuids = model.queriedOrders.filter({ model.trades.index(forKey: $0.key) == nil }).keys.map({ $0 })
         case .ongoing:
-            filteredOrderUuids = model.queriedOrders.filter({ model.trades.index(forKey: $0.key) != nil }).keys.map({ $0 })
+            processOrderUuids = model.queriedOrders.filter({ model.trades.index(forKey: $0.key) != nil }).keys.map({ $0 })
         }
         
         switch buySellFilter {
         case .both:
             break
         case .buy:
-            filteredOrderUuids = filteredOrderUuids.filter({ model.queriedOrders[$0]?.order().orderType == .buy })
+            processOrderUuids = processOrderUuids.filter({ model.queriedOrders[$0]?.order().orderType == .buy })
         case .sell:
-            filteredOrderUuids = filteredOrderUuids.filter({ model.queriedOrders[$0]?.order().orderType == .sell })
+            processOrderUuids = processOrderUuids.filter({ model.queriedOrders[$0]?.order().orderType == .sell })
         }
         
-        return filteredOrderUuids
+        switch sortOption {
+        case .priceAscending:
+            processOrderUuids.sort(by: { model.queriedOrders[$0]?.order().price ?? 0 < model.queriedOrders[$1]?.order().price ?? 0 })
+        case .priceDescending:
+            processOrderUuids.sort(by: { model.queriedOrders[$0]?.order().price ?? 0 > model.queriedOrders[$1]?.order().price ?? 0 })
+        case .amountAscending:
+            processOrderUuids.sort(by: { model.queriedOrders[$0]?.order().amount ?? 0 < model.queriedOrders[$1]?.order().amount ?? 0 })
+        case .amountDescending:
+            processOrderUuids.sort(by: { model.queriedOrders[$0]?.order().amount ?? 0 > model.queriedOrders[$1]?.order().amount ?? 0 })
+        }
+        
+        return processOrderUuids
     }
     
     func updateBookView() async {

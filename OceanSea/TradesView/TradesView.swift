@@ -16,17 +16,27 @@ struct TradesView: View {
     @State var showTradeDetailViewForTrade: FatCrabTrade? = nil
     @State var tradesFilter = TradesFilter.ongoing
     @State var buySellFilter = BuySellFilter.both
+    @State var sortOption = SortOption.priceAscending
     
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(filteredTradeUuids(), id: \.self) { tradeUuid in
-                    if let trade = model.trades[tradeUuid] {
-                        TradeRowView(orderUuid: tradeUuid)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            showTradeDetailViewForTrade = trade
-                            showTradeDetailView = true
+            VStack {
+                Picker("Sort By", selection: $sortOption) {
+                    Text("Amount △").tag(SortOption.amountAscending)
+                    Text("Amount ▽").tag(SortOption.amountDescending)
+                    Text("Price △").tag(SortOption.priceAscending)
+                    Text("Price ▽").tag(SortOption.priceDescending)
+                }.pickerStyle(SegmentedPickerStyle())
+                
+                List {
+                    ForEach(processTradeUuids(), id: \.self) { tradeUuid in
+                        if let trade = model.trades[tradeUuid] {
+                            TradeRowView(orderUuid: tradeUuid)
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    showTradeDetailViewForTrade = trade
+                                    showTradeDetailView = true
+                                }
                         }
                     }
                 }
@@ -82,28 +92,39 @@ struct TradesView: View {
         }
     }
     
-    func filteredTradeUuids() -> [UUID] {
-        var filteredTradeUuids: [UUID]
+    func processTradeUuids() -> [UUID] {
+        var processTradeUuids: [UUID]
         
         switch tradesFilter {
         case .all:
-            filteredTradeUuids = model.trades.keys.map({ $0 })
+            processTradeUuids = model.trades.keys.map({ $0 })
         case .ongoing:
-            filteredTradeUuids = model.trades.keys.filter({ model.trades[$0]?.isCompleted == false })
+            processTradeUuids = model.trades.keys.filter({ model.trades[$0]?.isCompleted == false })
         case .completed:
-            filteredTradeUuids = model.trades.keys.filter({ model.trades[$0]?.isCompleted == true })
+            processTradeUuids = model.trades.keys.filter({ model.trades[$0]?.isCompleted == true })
         }
         
         switch buySellFilter {
         case .both:
             break
         case .buy:
-            filteredTradeUuids = filteredTradeUuids.filter({ model.trades[$0]?.orderType == .buy })
+            processTradeUuids = processTradeUuids.filter({ model.trades[$0]?.orderType == .buy })
         case .sell:
-            filteredTradeUuids = filteredTradeUuids.filter({ model.trades[$0]?.orderType == .sell })
+            processTradeUuids = processTradeUuids.filter({ model.trades[$0]?.orderType == .sell })
         }
         
-        return filteredTradeUuids
+        switch sortOption {
+        case .priceAscending:
+            processTradeUuids.sort(by: { model.trades[$0]?.orderPrice ?? 0 < model.trades[$1]?.orderPrice ?? 0 })
+        case .priceDescending:
+            processTradeUuids.sort(by: { model.trades[$0]?.orderPrice ?? 0 > model.trades[$1]?.orderPrice ?? 0 })
+        case .amountAscending:
+            processTradeUuids.sort(by: { model.trades[$0]?.orderAmount ?? 0 < model.trades[$1]?.orderAmount ?? 0 })
+        case .amountDescending:
+            processTradeUuids.sort(by: { model.trades[$0]?.orderAmount ?? 0 > model.trades[$1]?.orderAmount ?? 0 })
+        }
+        
+        return processTradeUuids
     }
 }
 

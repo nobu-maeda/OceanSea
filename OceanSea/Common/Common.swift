@@ -27,6 +27,15 @@ enum BuySellFilter: String {
     case sell = "Sell Only"
 }
 
+enum SortOption: String {
+    static var allOptions: [Self] { [.priceDescending, .priceAscending, .amountDescending, .amountAscending] }
+
+    case priceAscending = "Price △"
+    case priceDescending = "Price ▽"
+    case amountAscending = "Amount △"
+    case amountDescending = "Amount ▽"
+}
+
 extension Logger {
     /// Using your bundle identifier is a great way to ensure a unique identifier.
     private static var subsystem = Bundle.main.bundleIdentifier!
