@@ -70,7 +70,11 @@ struct BookView: View {
                             Button {
                                 bookFilter = filter
                             } label: {
-                                Text(filter.rawValue)
+                                if bookFilter == filter {
+                                    Text("\(filter.rawValue) ✓")
+                                } else {
+                                    Text(filter.rawValue)
+                                }
                             }
                         }
                     }, label: {
@@ -85,7 +89,11 @@ struct BookView: View {
                             Button {
                                 buySellFilter = filter
                             } label: {
-                                Text(filter.rawValue)
+                                if buySellFilter == filter {
+                                    Text("\(filter.rawValue) ✓")
+                                } else {
+                                    Text(filter.rawValue)
+                                }
                             }
                         }
                     }, label: {

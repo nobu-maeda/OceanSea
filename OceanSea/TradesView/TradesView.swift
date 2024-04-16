@@ -57,7 +57,11 @@ struct TradesView: View {
                             Button {
                                 tradesFilter = filter
                             } label: {
-                                Text(filter.rawValue)
+                                if tradesFilter == filter {
+                                    Text("\(filter.rawValue) ✓")
+                                } else {
+                                    Text(filter.rawValue)
+                                }
                             }
                         }
                     }, label: {
@@ -72,7 +76,11 @@ struct TradesView: View {
                             Button {
                                 buySellFilter = filter
                             } label: {
-                                Text(filter.rawValue)
+                                if buySellFilter == filter {
+                                    Text("\(filter.rawValue) ✓")
+                                } else {
+                                    Text(filter.rawValue)
+                                }
                             }
                         }
                     }, label: {
