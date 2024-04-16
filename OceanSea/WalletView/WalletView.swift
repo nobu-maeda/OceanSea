@@ -44,13 +44,6 @@ struct WalletView: View {
                 }
             }
             .navigationTitle("Wallet")
-            .toolbar(content: {
-                ToolbarItem(placement: .primaryAction) {
-                    Button("Refresh Wallet", systemImage: "arrow.clockwise.circle") {
-                        updateBalances()
-                    }
-                }
-            })
             .navigationDestination(for: WalletNavigationDestination.self) { destination in
                 switch destination {
                 case .send:
@@ -63,9 +56,6 @@ struct WalletView: View {
                     EnterSeedsView()
                     
                 }
-            }
-            .onAppear() {
-                updateBalances()
             }
             .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
         }

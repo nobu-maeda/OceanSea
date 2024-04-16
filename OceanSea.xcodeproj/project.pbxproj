@@ -7,10 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0825B6492B7271BC00E7AC0E /* AddRelayToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0825B6482B7271BC00E7AC0E /* AddRelayToolbarItem.swift */; };
 		0825B64B2B7271CF00E7AC0E /* AddRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0825B64A2B7271CF00E7AC0E /* AddRelayView.swift */; };
 		0832F13C2B95F1C500991AE0 /* TradeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0832F13B2B95F1C500991AE0 /* TradeDetailView.swift */; };
 		0832F13E2B95F1CF00991AE0 /* TradeRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0832F13D2B95F1CF00991AE0 /* TradeRowView.swift */; };
+		084BB58B2BCE72D5002B829D /* BookFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084BB58A2BCE72D5002B829D /* BookFilter.swift */; };
+		084BB58D2BCE825E002B829D /* TradesFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084BB58C2BCE825E002B829D /* TradesFilter.swift */; };
 		08529CC62BAC3E6A00D57E4C /* OrderDetailSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08529CC52BAC3E6A00D57E4C /* OrderDetailSummaryView.swift */; };
 		08529CC82BAC3E8000D57E4C /* TradeDetailExplainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08529CC72BAC3E8000D57E4C /* TradeDetailExplainView.swift */; };
 		08529CCA2BAC3E9700D57E4C /* TradeDetailStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08529CC92BAC3E9700D57E4C /* TradeDetailStatusView.swift */; };
@@ -35,7 +36,6 @@
 		08C1EFB42B3EF8C3000F4527 /* AppSecureStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08C1EFB32B3EF8C3000F4527 /* AppSecureStorage.swift */; };
 		08C1EFB72B3EFA68000F4527 /* KeychainWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08C1EFB62B3EFA68000F4527 /* KeychainWrapper.swift */; };
 		08C1EFB92B3EFAB4000F4527 /* KeychainItemAccessibiliy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08C1EFB82B3EFAB4000F4527 /* KeychainItemAccessibiliy.swift */; };
-		08C1EFBC2B42D887000F4527 /* MakeNewOrderToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08C1EFBB2B42D887000F4527 /* MakeNewOrderToolbarItem.swift */; };
 		08C1EFBE2B42D9A4000F4527 /* MakeNewOrderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08C1EFBD2B42D9A4000F4527 /* MakeNewOrderView.swift */; };
 		08DC5B372B2C446900B71A22 /* OceanSeaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08DC5B362B2C446900B71A22 /* OceanSeaApp.swift */; };
 		08DC5B392B2C446900B71A22 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08DC5B382B2C446900B71A22 /* ContentView.swift */; };
@@ -67,10 +67,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0825B6482B7271BC00E7AC0E /* AddRelayToolbarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRelayToolbarItem.swift; sourceTree = "<group>"; };
 		0825B64A2B7271CF00E7AC0E /* AddRelayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRelayView.swift; sourceTree = "<group>"; };
 		0832F13B2B95F1C500991AE0 /* TradeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeDetailView.swift; sourceTree = "<group>"; };
 		0832F13D2B95F1CF00991AE0 /* TradeRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeRowView.swift; sourceTree = "<group>"; };
+		084BB58A2BCE72D5002B829D /* BookFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookFilter.swift; sourceTree = "<group>"; };
+		084BB58C2BCE825E002B829D /* TradesFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradesFilter.swift; sourceTree = "<group>"; };
 		08529CC52BAC3E6A00D57E4C /* OrderDetailSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailSummaryView.swift; sourceTree = "<group>"; };
 		08529CC72BAC3E8000D57E4C /* TradeDetailExplainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeDetailExplainView.swift; sourceTree = "<group>"; };
 		08529CC92BAC3E9700D57E4C /* TradeDetailStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeDetailStatusView.swift; sourceTree = "<group>"; };
@@ -94,7 +95,6 @@
 		08C1EFB32B3EF8C3000F4527 /* AppSecureStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSecureStorage.swift; sourceTree = "<group>"; };
 		08C1EFB62B3EFA68000F4527 /* KeychainWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainWrapper.swift; sourceTree = "<group>"; };
 		08C1EFB82B3EFAB4000F4527 /* KeychainItemAccessibiliy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainItemAccessibiliy.swift; sourceTree = "<group>"; };
-		08C1EFBB2B42D887000F4527 /* MakeNewOrderToolbarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeNewOrderToolbarItem.swift; sourceTree = "<group>"; };
 		08C1EFBD2B42D9A4000F4527 /* MakeNewOrderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeNewOrderView.swift; sourceTree = "<group>"; };
 		08DC5B332B2C446900B71A22 /* OceanSea.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OceanSea.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08DC5B362B2C446900B71A22 /* OceanSeaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OceanSeaApp.swift; sourceTree = "<group>"; };
@@ -160,7 +160,6 @@
 		08C1EFBA2B42D863000F4527 /* MakeNewOrder */ = {
 			isa = PBXGroup;
 			children = (
-				08C1EFBB2B42D887000F4527 /* MakeNewOrderToolbarItem.swift */,
 				08C1EFBD2B42D9A4000F4527 /* MakeNewOrderView.swift */,
 			);
 			path = MakeNewOrder;
@@ -270,6 +269,7 @@
 			isa = PBXGroup;
 			children = (
 				08DC5B642B3D770000B71A22 /* BookView.swift */,
+				084BB58A2BCE72D5002B829D /* BookFilter.swift */,
 			);
 			path = BookView;
 			sourceTree = "<group>";
@@ -278,6 +278,7 @@
 			isa = PBXGroup;
 			children = (
 				08DC5B682B3D771300B71A22 /* TradesView.swift */,
+				084BB58C2BCE825E002B829D /* TradesFilter.swift */,
 			);
 			path = TradesView;
 			sourceTree = "<group>";
@@ -286,7 +287,6 @@
 			isa = PBXGroup;
 			children = (
 				08DC5B6A2B3D771A00B71A22 /* RelaysView.swift */,
-				0825B6482B7271BC00E7AC0E /* AddRelayToolbarItem.swift */,
 				0825B64A2B7271CF00E7AC0E /* AddRelayView.swift */,
 			);
 			path = RelaysView;
@@ -375,13 +375,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				085FE4DC2B3EB78B0061DF95 /* ReceiveView.swift in Sources */,
-				0825B6492B7271BC00E7AC0E /* AddRelayToolbarItem.swift in Sources */,
 				08529CC62BAC3E6A00D57E4C /* OrderDetailSummaryView.swift in Sources */,
 				08529CCE2BAC560400D57E4C /* Common.swift in Sources */,
 				08529CCA2BAC3E9700D57E4C /* TradeDetailStatusView.swift in Sources */,
 				08DC5B6F2B3D7E0E00B71A22 /* FatCrabModel.swift in Sources */,
 				08529CCC2BAC3EA300D57E4C /* TradeDetailActionView.swift in Sources */,
-				08C1EFBC2B42D887000F4527 /* MakeNewOrderToolbarItem.swift in Sources */,
 				08529CDA2BB301EA00D57E4C /* FatCrabMakerSellMock.swift in Sources */,
 				085FE4E02B3ECBF10061DF95 /* FatCrabMock.swift in Sources */,
 				08529CD02BB3014800D57E4C /* FatCrabMakerBuyModel.swift in Sources */,
@@ -394,6 +392,8 @@
 				0832F13E2B95F1CF00991AE0 /* TradeRowView.swift in Sources */,
 				08529CD22BB3015900D57E4C /* FatCrabMakerSellModel.swift in Sources */,
 				08C1EFB92B3EFAB4000F4527 /* KeychainItemAccessibiliy.swift in Sources */,
+				084BB58B2BCE72D5002B829D /* BookFilter.swift in Sources */,
+				084BB58D2BCE825E002B829D /* TradesFilter.swift in Sources */,
 				08529CE12BB4149F00D57E4C /* TakeOrderActionView.swift in Sources */,
 				08DC5B802B3DD29000B71A22 /* FatCrabTrading.swift in Sources */,
 				08DC5B392B2C446900B71A22 /* ContentView.swift in Sources */,

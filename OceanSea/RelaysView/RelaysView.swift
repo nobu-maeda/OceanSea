@@ -31,7 +31,15 @@ struct RelaysView: View {
                 }
             }
             .toolbar(content: {
-                AddRelayToolbarItem(showAddRelayToolbarView: $showAddRelayToolbarView)
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: {
+                        showAddRelayToolbarView.toggle()
+                    }, label: {
+                        Image(systemName: "plus")
+                            .font(.headline)
+                            .foregroundColor(.blue)
+                    })
+                }
             })
             .navigationTitle("Nostr Relays")
             .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })

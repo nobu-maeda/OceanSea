@@ -218,6 +218,15 @@ enum FatCrabTrade {
             taker.peerPubkey
         }
     }
+    
+    var isCompleted: Bool {
+        switch self {
+        case .maker(let maker):
+            return maker.state == .tradeCompleted
+        case .taker(let taker):
+            return taker.state == .tradeCompleted
+        }
+    }
 }
 
 extension FatCrabMakerState {

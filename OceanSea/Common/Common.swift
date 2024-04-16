@@ -19,6 +19,14 @@ enum FatCrabTradeType {
     case taker
 }
 
+enum BuySellFilter: String {
+    static var allFilters: [Self] { [.both, .buy, .sell] }
+    
+    case both = "Both"
+    case buy = "Buy Only"
+    case sell = "Sell Only"
+}
+
 extension Logger {
     /// Using your bundle identifier is a great way to ensure a unique identifier.
     private static var subsystem = Bundle.main.bundleIdentifier!
