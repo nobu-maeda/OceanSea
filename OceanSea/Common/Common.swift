@@ -12,6 +12,8 @@ let allZeroUUIDString: String = "00000000-0000-0000-0000-000000000000"
 
 enum OceanSeaError: Error {
     case invalidState(String)
+    case invalidAddress
+    case invalidAmount
 }
 
 enum FatCrabTradeType {

@@ -252,6 +252,12 @@ import OSLog
         }.value
     }
     
+    func walletSendToAddress(address: String, amount: UInt) async throws -> String {
+        try await Task {
+            try trader.walletSendToAddress(address: address, amount: UInt64(amount))
+        }.value
+    }
+    
     func walletGenerateReceiveAddress() async throws -> String {
         try await Task {
             try trader.walletGenerateReceiveAddress()

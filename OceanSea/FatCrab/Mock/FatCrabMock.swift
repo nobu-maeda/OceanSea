@@ -69,6 +69,10 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
         return height
     }
     
+    func walletSendToAddress(address: String, amount: UInt) async throws -> String {
+        return UUID().uuidString
+    }
+    
     func walletGenerateReceiveAddress() async throws -> String {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         return "bc1q3048unvsjhdfgpvw9ehmyvp0ijgmcwhergvmw0eirjgcm"

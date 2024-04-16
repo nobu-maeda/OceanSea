@@ -296,6 +296,7 @@ protocol FatCrabProtocol: ObservableObject {
     
     func updateBalances() async throws
     func walletGetHeight() async throws -> UInt32
+    func walletSendToAddress(address: String, amount: UInt) async throws -> String
     func walletGenerateReceiveAddress() async throws -> String
     
     var relays: [RelayInfo] { get }

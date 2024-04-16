@@ -9,12 +9,12 @@ import SwiftUI
 
 struct ReceiveView: View {
     @Environment(\.fatCrabModel) var model
-    @State var receive_address: String = ""
+    @State var receiveAddress: String = ""
     @State var isBusy = true
     
     var body: some View {
         VStack {
-            Text(receive_address)
+            Text(receiveAddress)
             .textSelection(.enabled)
         }
         .onAppear(perform: {
@@ -22,7 +22,7 @@ struct ReceiveView: View {
                 let address = try await model.walletGenerateReceiveAddress()
                 
                 Task { @MainActor in
-                    receive_address = address
+                    receiveAddress = address
                     isBusy = false
                 }
             }
