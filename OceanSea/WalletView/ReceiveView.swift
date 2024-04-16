@@ -10,18 +10,26 @@ import SwiftUI
 struct ReceiveView: View {
     @Environment(\.fatCrabModel) var model
     @State var receive_address: String = ""
+    @State var isBusy = true
     
     var body: some View {
-        Text(receive_address)
+        VStack {
+            Text(receive_address)
             .textSelection(.enabled)
-            .onAppear(perform: {
-                Task {
-                    receive_address = try await model.walletGenerateReceiveAddress()
+        }
+        .onAppear(perform: {
+            Task {
+                let address = try await model.walletGenerateReceiveAddress()
+                
+                Task { @MainActor in
+                    receive_address = address
+                    isBusy = false
                 }
-            })
-            .navigationTitle("Receive Address")
+            }
+        })
+        .navigationTitle("Receive Address")
+        .modifier(ActivityIndicatorModifier(isLoading: isBusy))
     }
-    
 }
 
 #Preview {
