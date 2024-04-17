@@ -12,14 +12,21 @@ struct ShowSeedsView: View {
     
     var body: some View {
         let numSeedWords = model.mnemonic.count
-        
-        List {
-            ForEach(0..<(numSeedWords/2), id:\.self) { i in
-                let firstIndex = 2*i
-                let secondIndex = 2*i+1
-                TitleValueHStack(title: "\(firstIndex+1). \(model.mnemonic[firstIndex])",
-                                 value: "\(secondIndex+1). \(model.mnemonic[secondIndex])",
-                                 format: .around)
+        VStack {
+            Text("Write down the seed words & keep them in a safe place").font(.caption)
+            ScrollView(.vertical) {
+                HStack(spacing: 0) {
+                    List {
+                        ForEach(0..<(numSeedWords/2), id:\.self) { i in
+                            Text("\(i+1). \(model.mnemonic[i])")
+                        }
+                    }.scrollDisabled(true)
+                    List {
+                        ForEach(0..<(numSeedWords/2), id:\.self) { i in
+                            Text("\(i+1+numSeedWords/2). \(model.mnemonic[i+numSeedWords/2])")
+                        }
+                    }.scrollDisabled(true)
+                }.frame(height: 600)
             }
         }
         .navigationTitle("Seed Words")
