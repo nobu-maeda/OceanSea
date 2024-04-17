@@ -9,8 +9,9 @@ import SwiftUI
 
 struct ReceiveView: View {
     @Environment(\.fatCrabModel) var model
-    @State var receiveAddress: String = ""
-    @State var isBusy = true
+    
+    @State private var receiveAddress: String = ""
+    @State private var isBusy = true
     
     var body: some View {
         VStack {

@@ -30,6 +30,10 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
     var queriedOrders: [UUID: FatCrabOrderEnvelopeProtocol]
     var trades: [UUID : FatCrabTrade]
     
+    static func resetWallet(with mnemonic: [String]) -> any FatCrabProtocol {
+        FatCrabMock()
+    }
+    
     init() {
         trustedPendingAmount = 0
         untrustedPendingAmount = 0
@@ -62,10 +66,10 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
         restoreTrades()
     }
     
-    func walletGetHeight() async throws -> UInt32 {
+    func walletGetHeight() async throws -> UInt {
         // Generate random UInt32 between 738755 to 93438755
-        let height = UInt32.random(in: 738755...93438755)
-        blockHeight = UInt(height)
+        let height = UInt.random(in: 738755...93438755)
+        blockHeight = height
         return height
     }
     
@@ -74,19 +78,20 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
     }
     
     func walletGenerateReceiveAddress() async throws -> String {
-        try await Task.sleep(nanoseconds: 1_000_000_000)
+        try await Task.sleep(nanoseconds: 10_000_000)
         return "bc1q3048unvsjhdfgpvw9ehmyvp0ijgmcwhergvmw0eirjgcm"
     }
     
     func updateBalances() {
         Task {
-            try await Task.sleep(nanoseconds: 1_000_000_000)
+            try await Task.sleep(nanoseconds: 10_000_000)
             
             Task { @MainActor in
                 trustedPendingAmount = 123456
                 untrustedPendingAmount = 234567
                 confirmedAmount = 2309465
                 allocatedAmount = 345678
+                blockHeight = 738755
             }
         }
     }

@@ -287,6 +287,8 @@ extension EnvironmentValues {
 }
 
 protocol FatCrabProtocol: ObservableObject {
+    static func resetWallet(with mnemonic: [String]) -> any FatCrabProtocol
+    
     var mnemonic: [String] { get }
     var trustedPendingAmount: Int { get }
     var untrustedPendingAmount: Int { get }
@@ -295,7 +297,7 @@ protocol FatCrabProtocol: ObservableObject {
     var blockHeight: UInt { get }
     
     func updateBalances() async throws
-    func walletGetHeight() async throws -> UInt32
+    func walletGetHeight() async throws -> UInt
     func walletSendToAddress(address: String, amount: UInt) async throws -> String
     func walletGenerateReceiveAddress() async throws -> String
     

@@ -12,29 +12,31 @@ struct HomeView: View {
         case wallet, book, orders, relays
     }
     
+    @Binding var model: any FatCrabProtocol
+    
     @State private var selectedTab: Tab = .wallet
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            WalletView()
+            WalletView(model: $model)
                 .tabItem {
                     Label("Wallet", systemImage: "bitcoinsign.square")
                 }
                 .tag(Tab.wallet)
             
-            BookView()
+            BookView().environment(\.fatCrabModel, model)
                 .tabItem {
                     Label("Book", systemImage: "text.book.closed")
                 }
                 .tag(Tab.book)
             
-            TradesView()
+            TradesView().environment(\.fatCrabModel, model)
                 .tabItem {
                     Label("Trades", systemImage: "list.bullet")
                 }
                 .tag(Tab.orders)
             
-            RelaysView()
+            RelaysView().environment(\.fatCrabModel, model)
                 .tabItem {
                     Label("Relays", systemImage: "network")
                 }
@@ -44,5 +46,6 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    @State var fatCrabModel: any FatCrabProtocol = FatCrabMock()
+    return HomeView(model: $fatCrabModel)
 }

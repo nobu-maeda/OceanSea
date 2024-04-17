@@ -11,7 +11,7 @@ import OSLog
 @Observable class FatCrabModel: FatCrabProtocol {
     private let trader: FatCrabTrader  // Should we inject this? Or is this good?
     
-    let MNEMONIC_KEYCHAIN_WRAPPER_KEY: String = "mnemonic"
+    static let MNEMONIC_KEYCHAIN_WRAPPER_KEY: String = "mnemonic"
     
     var mnemonic: [String]
     var trustedPendingAmount: Int
@@ -23,6 +23,13 @@ import OSLog
     
     var queriedOrders: [UUID: FatCrabOrderEnvelopeProtocol]
     var trades: [UUID: FatCrabTrade]
+    
+    static func resetWallet(with mnemonic: [String]) -> any FatCrabProtocol {
+        let walletMnemonic = mnemonic.joined(separator: " ")
+        KeychainWrapper.standard.removeObject(forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY)
+        KeychainWrapper.standard.set(walletMnemonic, forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked)
+        return FatCrabModel()
+    }
     
     init() {
         let url = "ssl://electrum.blockstream.info:60002"
@@ -41,7 +48,7 @@ import OSLog
         queriedOrders = [:]
         trades = [:]
         
-        if let storedMnemonic = KeychainWrapper.standard.string(forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked) {
+        if let storedMnemonic = KeychainWrapper.standard.string(forKey: Self.MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked) {
             trader = FatCrabTrader.newWithMnemonic(mnemonic: storedMnemonic, info: info, appDirPath: appDir[0])
             
             mnemonic = storedMnemonic.components(separatedBy: " ")
@@ -51,7 +58,7 @@ import OSLog
             Task {
                 // Update initial values asynchronously
                 let walletMnemonic = try trader.walletBip39Mnemonic()
-                KeychainWrapper.standard.set(walletMnemonic, forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked)
+                KeychainWrapper.standard.set(walletMnemonic, forKey: Self.MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked)
                 
                 Task { @MainActor in
                     mnemonic = walletMnemonic.components(separatedBy: " ")
@@ -246,9 +253,13 @@ import OSLog
     
     // Async/Await Task wrappers
     
-    func walletGetHeight() async throws -> UInt32 {
+    func walletGetHeight() async throws -> UInt {
         try await Task {
-            try trader.walletBlockchainHeight()
+            let blockchainHeight = UInt(try trader.walletBlockchainHeight())
+            Task { @MainActor in
+                self.blockHeight = blockchainHeight
+            }
+            return blockchainHeight
         }.value
     }
     

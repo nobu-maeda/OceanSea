@@ -15,7 +15,7 @@ struct WalletView: View {
         case newWallet
     }
     
-    @Environment(\.fatCrabModel) var model
+    @Binding var model: any FatCrabProtocol
     
     @State private var showAlert = false
     @State private var alertTitleString = ""
@@ -40,37 +40,47 @@ struct WalletView: View {
                 }
                 Section {
                     NavigationLink("Show Seed Words", value: WalletNavigationDestination.showSeedWords)
-                    NavigationLink("Delete Wallet & Enter new Seed", value: WalletNavigationDestination.newWallet)
+                    NavigationLink("Enter Seed Words & Reset Wallet", value: WalletNavigationDestination.newWallet)
                 }
             }
             .navigationTitle("Wallet")
             .navigationDestination(for: WalletNavigationDestination.self) { destination in
                 switch destination {
                 case .send:
-                    SendView()
+                    SendView().environment(\.fatCrabModel, model)
                 case .receive:
-                    ReceiveView()
+                    ReceiveView().environment(\.fatCrabModel, model)
                 case .showSeedWords:
-                    ShowSeedsView()
+                    ShowSeedsView().environment(\.fatCrabModel, model)
                 case .newWallet:
-                    EnterSeedsView()
-                    
+                    EnterSeedsView(model: $model)
+                }
+            }
+            .refreshable {
+                await updateWalletView()
+            }
+            .onAppear() {
+                Task {
+                    await updateWalletView()
                 }
             }
             .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
         }
     }
     
-    private func updateBalances() {
-        Task {
-            do {
-                try await model.updateBalances()
-            } catch let fatCrabError as FatCrabError {
+    func updateWalletView() async {
+        do {
+            try await model.updateBalances()
+            _ = try await model.walletGetHeight()
+        } catch let fatCrabError as FatCrabError {
+            Task { @MainActor in
                 alertTitleString = "Error"
                 alertBodyString = fatCrabError.description()
                 showAlert = true
             }
-            catch {
+        }
+        catch {
+            Task { @MainActor in
                 alertTitleString = "Error"
                 alertBodyString = error.localizedDescription
                 showAlert = true
@@ -78,6 +88,8 @@ struct WalletView: View {
         }
     }
 }
+
 #Preview {
-    WalletView().environment(\.fatCrabModel, FatCrabMock())
+    @State var fatCrabMock: any FatCrabProtocol = FatCrabMock()
+    return WalletView(model: $fatCrabMock)
 }

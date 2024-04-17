@@ -8,13 +8,107 @@
 import SwiftUI
 
 struct EnterSeedsView: View {
-    @Environment(\.fatCrabModel) var model
+    enum EnterSeedsViewAlertType {
+        case resetWalletConfirm
+        case resetWalletError
+    }
+    
+    @Environment(\.dismiss) private var dismiss
+    
+    @Binding var model: any FatCrabProtocol
+    
+    @State private var mnemonic: [String] = Array(repeating: "", count: 24)
+    @State private var isBusy = false
+    
+    @State private var showAlert = false
+    @State private var alertTitleString = ""
+    @State private var alertBodyString = ""
+    @State private var alertType = EnterSeedsViewAlertType.resetWalletConfirm
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            ScrollView(.vertical) {
+                HStack(spacing: 0) {
+                    List {
+                        ForEach(0..<(mnemonic.count/2), id:\.self) { i in
+                            TextField("Word #\(i+1)", text: $mnemonic[i])
+                                .textInputAutocapitalization(.never)
+                                .disableAutocorrection(true)
+                        }
+                    }.scrollDisabled(true)
+                    List {
+                        ForEach(mnemonic.count/2..<(mnemonic.count), id:\.self) { i in
+                            TextField("Word #\(i+1)", text: $mnemonic[i])
+                                .textInputAutocapitalization(.never)
+                                .disableAutocorrection(true)
+                        }
+                    }.scrollDisabled(true)
+                }.frame(height: 600)
+            }
+            Spacer()
+            Button("Reset Wallet with Seed Words") {
+                checkSeedsAndConfirmResetWallet()
+            }
+            Spacer()
+        }
+        .navigationTitle("Reset Wallet")
+        .modifier(ActivityIndicatorModifier(isLoading: isBusy))
+        .alert(alertTitleString, isPresented: $showAlert) {
+            switch alertType {
+                case .resetWalletConfirm:
+                    Button("Proceed", role: .destructive) {
+                        resetWallet()
+                    }
+                    Button("Cancel", role: .cancel) {}
+                case .resetWalletError:
+                    Button("OK", role: .cancel) {}
+            }
+        } message: { Text(alertBodyString) }
+    }
+    
+    func checkSeedsAndConfirmResetWallet() {
+        for word in mnemonic {
+            if word.isEmpty {
+                alertTitleString = "Error"
+                alertBodyString = "All 24 seed words must be entered."
+                alertType = .resetWalletError
+                showAlert = true
+                return
+            }
+        }
+        showResetWalletConfirm()
+    }
+    
+    func showMnemonicError() {
+        alertTitleString = "Error"
+        alertBodyString = "The entered seed words are not valid. Please check and try again."
+        alertType = .resetWalletError
+        showAlert = true
+    }
+    
+    func showResetWalletConfirm() {
+        alertTitleString = "Reset Wallet"
+        alertBodyString = "The entered seeds will be used to create a wallet. If any matching trade data is locally found related to the entered seeds, it will be restored. Please ensure the current wallet seeds is backed up before proceeding, as the seeds will be destroyed."
+        alertType = .resetWalletConfirm
+        showAlert = true
+    }
+    
+    func resetWallet() {
+        isBusy = true
+        
+        Task {
+            let newWalletModel = type(of: model).resetWallet(with: mnemonic)
+            
+            Task { @MainActor in
+                model = newWalletModel
+                isBusy = false
+                dismiss.callAsFunction()
+            }
+        }
     }
 }
 
 #Preview {
-    EnterSeedsView().environment(\.fatCrabModel, FatCrabMock())
+    @State var fatCrabModel: any FatCrabProtocol = FatCrabMock()
+    return EnterSeedsView(model: $fatCrabModel)
 }

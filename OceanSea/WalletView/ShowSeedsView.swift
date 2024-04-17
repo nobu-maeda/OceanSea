@@ -22,8 +22,8 @@ struct ShowSeedsView: View {
                         }
                     }.scrollDisabled(true)
                     List {
-                        ForEach(0..<(numSeedWords/2), id:\.self) { i in
-                            Text("\(i+1+numSeedWords/2). \(model.mnemonic[i+numSeedWords/2])")
+                        ForEach(numSeedWords/2..<numSeedWords, id:\.self) { i in
+                            Text("\(i+1). \(model.mnemonic[i])")
                         }
                     }.scrollDisabled(true)
                 }.frame(height: 600)
