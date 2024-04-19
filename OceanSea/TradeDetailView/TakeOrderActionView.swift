@@ -12,11 +12,11 @@ struct TakeOrderActionView: View {
     @Binding var orderEnvelope: FatCrabOrderEnvelopeProtocol?
     @Binding var trade: FatCrabTrade?
     @Binding var isBusy: Bool
+    @Binding var showAlert: Bool
+    @Binding var alertTitleString: String
+    @Binding var alertBodyString: String
     
     @State private var fatcrabRxAddr = ""
-    @State private var showAlert = false
-    @State private var alertTitleString = ""
-    @State private var alertBodyString = ""
     
     var body: some View {
         VStack {
@@ -45,7 +45,6 @@ struct TakeOrderActionView: View {
                     .controlSize(.regular)
             }
         }
-        .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
     }
     
     func takeBuyOrder() {
@@ -116,12 +115,12 @@ struct TakeOrderActionView: View {
     let order = FatCrabOrder(orderType: .buy, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9)
     @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
     @State var trade: FatCrabTrade? = nil
-    return TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade, isBusy: .constant(false))
+    return TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""))
 }
 
 #Preview("Sell") {
     let order = FatCrabOrder(orderType: .sell, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9)
     @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
     @State var trade: FatCrabTrade? = nil
-    return TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade, isBusy: .constant(false))
+    return TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""))
 }

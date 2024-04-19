@@ -410,6 +410,8 @@ private struct FfiConverterString: FfiConverter {
 }
 
 public protocol FatCrabBuyMakerProtocol: AnyObject {
+    func cancelOrder() throws
+
     func getOrderDetails() throws -> FatCrabOrder
 
     func getPeerPubkey() throws -> String?
@@ -451,6 +453,13 @@ public class FatCrabBuyMaker:
 
     deinit {
         try! rustCall { uniffi_fatcrab_trading_fn_free_fatcrabbuymaker(pointer, $0) }
+    }
+
+    public func cancelOrder() throws {
+        try
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabbuymaker_cancel_order(self.uniffiClonePointer(), $0)
+            }
     }
 
     public func getOrderDetails() throws -> FatCrabOrder {
@@ -592,6 +601,8 @@ public protocol FatCrabBuyTakerProtocol: AnyObject {
 
     func notifyPeer(fatcrabTxid: String) throws -> FatCrabTakerState
 
+    func queryPeerMsg() throws -> FatCrabPeerEnvelope?
+
     func queryTradeRsp() throws -> FatCrabTradeRspEnvelope?
 
     func registerNotifDelegate(delegate: FatCrabTakerNotifDelegate) throws
@@ -660,6 +671,14 @@ public class FatCrabBuyTaker:
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabbuytaker_notify_peer(self.uniffiClonePointer(),
                                                                              FfiConverterString.lower(fatcrabTxid), $0)
+            }
+        )
+    }
+
+    public func queryPeerMsg() throws -> FatCrabPeerEnvelope? {
+        return try FfiConverterOptionTypeFatCrabPeerEnvelope.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabbuytaker_query_peer_msg(self.uniffiClonePointer(), $0)
             }
         )
     }
@@ -1190,6 +1209,8 @@ public func FfiConverterTypeFatCrabPeerEnvelope_lower(_ value: FatCrabPeerEnvelo
 }
 
 public protocol FatCrabSellMakerProtocol: AnyObject {
+    func cancelOrder() throws
+
     func checkBtcTxConfirmation() throws -> UInt32
 
     func getOrderDetails() throws -> FatCrabOrder
@@ -1235,6 +1256,13 @@ public class FatCrabSellMaker:
 
     deinit {
         try! rustCall { uniffi_fatcrab_trading_fn_free_fatcrabsellmaker(pointer, $0) }
+    }
+
+    public func cancelOrder() throws {
+        try
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabsellmaker_cancel_order(self.uniffiClonePointer(), $0)
+            }
     }
 
     public func checkBtcTxConfirmation() throws -> UInt32 {
@@ -1387,7 +1415,11 @@ public protocol FatCrabSellTakerProtocol: AnyObject {
 
     func getState() throws -> FatCrabTakerState
 
+    func queryPeerMsg() throws -> FatCrabPeerEnvelope?
+
     func registerNotifDelegate(delegate: FatCrabTakerNotifDelegate) throws
+
+    func releaseNotifyPeer() throws -> FatCrabTakerState
 
     func takeOrder() throws -> FatCrabTakerState
 
@@ -1432,12 +1464,28 @@ public class FatCrabSellTaker:
         )
     }
 
+    public func queryPeerMsg() throws -> FatCrabPeerEnvelope? {
+        return try FfiConverterOptionTypeFatCrabPeerEnvelope.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabselltaker_query_peer_msg(self.uniffiClonePointer(), $0)
+            }
+        )
+    }
+
     public func registerNotifDelegate(delegate: FatCrabTakerNotifDelegate) throws {
         try
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabselltaker_register_notif_delegate(self.uniffiClonePointer(),
                                                                                           FfiConverterTypeFatCrabTakerNotifDelegate.lower(delegate), $0)
             }
+    }
+
+    public func releaseNotifyPeer() throws -> FatCrabTakerState {
+        return try FfiConverterTypeFatCrabTakerState.lift(
+            rustCallWithError(FfiConverterTypeFatCrabError.lift) {
+                uniffi_fatcrab_trading_fn_method_fatcrabselltaker_release_notify_peer(self.uniffiClonePointer(), $0)
+            }
+        )
     }
 
     public func takeOrder() throws -> FatCrabTakerState {
@@ -3756,6 +3804,9 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_func_init_tracing_for_oslog() != 16348 {
         return InitializationResult.apiChecksumMismatch
     }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_cancel_order() != 16367 {
+        return InitializationResult.apiChecksumMismatch
+    }
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_get_order_details() != 19480 {
         return InitializationResult.apiChecksumMismatch
     }
@@ -3804,6 +3855,9 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_notify_peer() != 22205 {
         return InitializationResult.apiChecksumMismatch
     }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_query_peer_msg() != 47328 {
+        return InitializationResult.apiChecksumMismatch
+    }
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuytaker_query_trade_rsp() != 9656 {
         return InitializationResult.apiChecksumMismatch
     }
@@ -3835,6 +3889,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabpeerenvelope_message() != 13486 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_cancel_order() != 10768 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_check_btc_tx_confirmation() != 20595 {
@@ -3882,7 +3939,13 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_method_fatcrabselltaker_get_state() != 22729 {
         return InitializationResult.apiChecksumMismatch
     }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabselltaker_query_peer_msg() != 45189 {
+        return InitializationResult.apiChecksumMismatch
+    }
     if uniffi_fatcrab_trading_checksum_method_fatcrabselltaker_register_notif_delegate() != 24573 {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if uniffi_fatcrab_trading_checksum_method_fatcrabselltaker_release_notify_peer() != 55759 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabselltaker_take_order() != 14858 {

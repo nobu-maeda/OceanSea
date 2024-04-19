@@ -15,6 +15,9 @@ struct TradeDetailView: View {
     @Binding var trade: FatCrabTrade?
     
     @State private var isBusy = false
+    @State private var showAlert = false
+    @State private var alertTitleString = ""
+    @State private var alertBodyString = ""
     
     var body: some View {
         let tradeType = tradeType()
@@ -49,14 +52,14 @@ struct TradeDetailView: View {
                 if trade != nil {
                     if shouldShowAction() {
                         Section {
-                            TradeDetailActionView(trade: $trade, isBusy: $isBusy)
+                            TradeDetailActionView(trade: $trade, isBusy: $isBusy, showAlert: $showAlert, alertTitleString: $alertTitleString, alertBodyString: $alertBodyString)
                         } header: {
                             Text("Action")
                         }
                     }
                 } else if orderEnvelope != nil {
                     Section {
-                        TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade, isBusy: $isBusy)
+                        TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade, isBusy: $isBusy, showAlert: $showAlert, alertTitleString: $alertTitleString, alertBodyString: $alertBodyString)
                     } header: {
                         Text("Action")
                     }
@@ -65,6 +68,7 @@ struct TradeDetailView: View {
             .navigationTitle(navigationTitleString())
             .navigationBarTitleDisplayMode(.inline)
             .modifier(ActivityIndicatorModifier(isLoading: isBusy))
+            .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Dismiss", action: dismiss.callAsFunction)

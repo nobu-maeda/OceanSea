@@ -31,6 +31,7 @@ import Foundation
             let state = try taker.getState()
             let orderEnvelope = try taker.getOrderDetails()
             let tradeRspEnvelope = try taker.queryTradeRsp()
+            let peerEnvelope = try taker.queryPeerMsg()
             let order = orderEnvelope.order()
             
             Task { @MainActor in
@@ -40,8 +41,7 @@ import Foundation
                 self.tradeUuid = UUID(uuidString: order.tradeUuid) ?? UUID.init(uuidString: allZeroUUIDString)!
                 self.peerPubkey = orderEnvelope.pubkey()
                 self.tradeRspEnvelope = tradeRspEnvelope
-                
-                
+                self.peerEnvelope = peerEnvelope
             }
         }
     }

@@ -10,11 +10,12 @@ import SwiftUI
 struct TradeDetailActionView: View {
     @Binding var trade: FatCrabTrade?
     @Binding var isBusy: Bool
+    @Binding var showAlert: Bool
+    @Binding var alertTitleString: String
+    @Binding var alertBodyString: String
     
     @State private var fatcrabTxId = ""
-    @State private var showAlert = false
-    @State private var alertTitleString = ""
-    @State private var alertBodyString = ""
+    
     
     var body: some View {
         VStack {
@@ -99,7 +100,13 @@ struct TradeDetailActionView: View {
                                 Text("Notify Maker of FatCrab remitted")
                             }.buttonStyle(.borderedProminent)
                         case .sell:
-                            Text("No Actions Available")
+                            Text("Offer Accepted. Send BTC and notifying Maker")
+                            Button() {
+                                releaseBtcNotifyMaker(by: taker)
+                            } label: {
+                                Text("Release BTC & notify Taker")
+                            }.buttonStyle(.borderedProminent)
+                                .controlSize(.regular)
                         }
                     case .offerRejected:
                         Text("No Actions Available")
@@ -125,7 +132,6 @@ struct TradeDetailActionView: View {
                 }
             }
         }
-        .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
     }
     
     private func acceptOffer(for maker: FatCrabMakerTrade) {
@@ -274,6 +280,36 @@ struct TradeDetailActionView: View {
         }
     }
     
+    private func releaseBtcNotifyMaker(by taker: FatCrabTakerTrade) {
+        isBusy = true
+        
+        Task {
+            do {
+                switch taker {
+                case .buy:
+                    throw OceanSeaError.invalidState("Can only release Btc & notify Maker for Sell Takers")
+                    
+                case .sell(let sellTaker):
+                    try await sellTaker.releaseNotifyPeer()
+                }
+            } catch let fatCrabError as FatCrabError {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = fatCrabError.description()
+                    showAlert = true
+                }
+            }
+            catch {
+                Task { @MainActor in
+                    alertTitleString = "Error"
+                    alertBodyString = error.localizedDescription
+                    showAlert = true
+                }
+            }
+            isBusy = false
+        }
+    }
+    
     private func tradeComplete(taker: FatCrabTakerTrade) {
         isBusy = true
         Task {
@@ -300,50 +336,50 @@ struct TradeDetailActionView: View {
 
 #Preview("Maker Buy - Random") {
     @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""))
 }
 
 #Preview("Maker Sell - Random") {
     @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.random(for: .sell), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""))
 }
 
 #Preview("Taker Buy - Random") {
     @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""))
 }
 
 #Preview("Taker Sell - Random") {
     @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.random(for: .sell), amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""))
 }
 
 #Preview("Maker - Received Offer") {
     @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.receivedOffer, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""))
 }
 
 #Preview("Maker - Inbound Btc Notified") {
     @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.inboundBtcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""))
 }
 
 #Preview("Maker - Inbound FatCrab Notified") {
     @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.inboundFcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""))
 }
 
 #Preview("Taker Buy - Offer Accepted") {
     @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.offerAccepted, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""))
 }
 
 #Preview("Taker Sell - Offer Accepted") {
     @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.offerAccepted, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""))
 }
 
 #Preview("Taker - Inbound FatCrab Notified") {
     @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.inboundFcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
-    return TradeDetailActionView(trade: $trade, isBusy: .constant(false))
+    return TradeDetailActionView(trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""))
 }

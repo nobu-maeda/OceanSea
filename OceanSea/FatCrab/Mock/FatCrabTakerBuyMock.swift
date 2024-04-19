@@ -16,8 +16,9 @@ import Foundation
     var peerFcAddr: String?
     var peerBtcTxid: String?
     var tradeRspEnvelope: FatCrabTradeRspEnvelope?
+    var peerEnvelope: FatCrabPeerEnvelope?
     
-    init(state: FatCrabTakerState, amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String, peerBtcTxid: String? = nil, tradeRspEnvelope: FatCrabTradeRspEnvelope? = nil) {
+    init(state: FatCrabTakerState, amount: Double, price: Double, tradeUuid: UUID, peerPubkey: String, peerBtcTxid: String? = nil, tradeRspEnvelope: FatCrabTradeRspEnvelope? = nil, peerEnvelope: FatCrabPeerEnvelope? = nil) {
         self.state = state
         self.orderAmount = amount
         self.orderPrice = price

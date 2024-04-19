@@ -359,6 +359,7 @@ protocol FatCrabTakerBuyProtocol: ObservableObject {
     var peerFcAddr: String? { get }
     var peerBtcTxid: String? { get }
     var tradeRspEnvelope: FatCrabTradeRspEnvelope? { get }
+    var peerEnvelope: FatCrabPeerEnvelope? { get }
     
     func takeOrder() async throws
     func notifyPeer(fatcrabTxid: String) async throws
@@ -373,7 +374,9 @@ protocol FatCrabTakerSellProtocol: ObservableObject {
     var tradeUuid: UUID { get }
     var peerPubkey: String { get }
     var peerFcTxid: String? { get }
+    var peerEnvelope: FatCrabPeerEnvelope? { get }
     
     func takeOrder() async throws
+    func releaseNotifyPeer() async throws
     func tradeComplete() async throws
 }

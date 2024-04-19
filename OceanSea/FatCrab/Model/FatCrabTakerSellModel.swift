@@ -30,6 +30,7 @@ import Foundation
             
             let state = try taker.getState()
             let orderEnvelope = try taker.getOrderDetails()
+            let peerEnvelope = try taker.queryPeerMsg()
             let order = orderEnvelope.order()
             
             Task { @MainActor in
@@ -37,6 +38,7 @@ import Foundation
                 self.orderAmount = order.amount
                 self.orderPrice = order.price
                 self.tradeUuid = UUID(uuidString: order.tradeUuid) ?? UUID.init(uuidString: allZeroUUIDString)!
+                self.peerEnvelope = peerEnvelope
                 self.peerPubkey = orderEnvelope.pubkey()
             }
         }
@@ -51,6 +53,16 @@ import Foundation
     func takeOrder() async throws {
         try await Task {
             let state = try taker.takeOrder()
+            
+            Task { @MainActor in
+                self.state = state
+            }
+        }.value
+    }
+    
+    func releaseNotifyPeer() async throws {
+        try await Task {
+            let state = try taker.releaseNotifyPeer()
             
             Task { @MainActor in
                 self.state = state

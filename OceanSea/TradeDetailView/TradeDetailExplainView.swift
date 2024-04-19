@@ -8,12 +8,10 @@
 import SwiftUI
 
 struct TradeDetailExplainView: View {
-    @State var numOffers = 0
-    
-    @State var tradeType: FatCrabTradeType
-    @State var orderType: FatCrabOrderType
-    @State var orderAmount: Double
-    @State var orderPrice: Double
+    let tradeType: FatCrabTradeType
+    let orderType: FatCrabOrderType
+    let orderAmount: Double
+    let orderPrice: Double
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12.0) {
@@ -61,5 +59,5 @@ struct TradeDetailExplainView: View {
 }
 
 #Preview {
-    TradeDetailExplainView(tradeType: .taker, orderType: .sell, orderAmount: 1234.56, orderPrice: 5678.9)
+    TradeDetailExplainView(tradeType: .taker, orderType: .sell, orderAmount: 123.4, orderPrice: 567.8)
 }
