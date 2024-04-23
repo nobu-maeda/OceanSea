@@ -98,7 +98,11 @@ import Foundation
     
     func cancelOrder() async throws {
         try await Task {
-            try self.maker.cancelOrder()
+            let state = try self.maker.cancelOrder()
+            
+            Task { @MainActor in
+                self.state = state
+            }
         }.value
     }
 }

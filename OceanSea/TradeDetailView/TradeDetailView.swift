@@ -217,6 +217,8 @@ struct TradeDetailView: View {
                 return true
             case .tradeCompleted:
                 return false
+            case .tradeCancelled:
+                return false
             }
         case .taker(let taker):
             switch taker.state {

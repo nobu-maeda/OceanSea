@@ -410,7 +410,7 @@ private struct FfiConverterString: FfiConverter {
 }
 
 public protocol FatCrabBuyMakerProtocol: AnyObject {
-    func cancelOrder() throws
+    func cancelOrder() throws -> FatCrabMakerState
 
     func getOrderDetails() throws -> FatCrabOrder
 
@@ -455,11 +455,12 @@ public class FatCrabBuyMaker:
         try! rustCall { uniffi_fatcrab_trading_fn_free_fatcrabbuymaker(pointer, $0) }
     }
 
-    public func cancelOrder() throws {
-        try
+    public func cancelOrder() throws -> FatCrabMakerState {
+        return try FfiConverterTypeFatCrabMakerState.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabbuymaker_cancel_order(self.uniffiClonePointer(), $0)
             }
+        )
     }
 
     public func getOrderDetails() throws -> FatCrabOrder {
@@ -1209,7 +1210,7 @@ public func FfiConverterTypeFatCrabPeerEnvelope_lower(_ value: FatCrabPeerEnvelo
 }
 
 public protocol FatCrabSellMakerProtocol: AnyObject {
-    func cancelOrder() throws
+    func cancelOrder() throws -> FatCrabMakerState
 
     func checkBtcTxConfirmation() throws -> UInt32
 
@@ -1258,11 +1259,12 @@ public class FatCrabSellMaker:
         try! rustCall { uniffi_fatcrab_trading_fn_free_fatcrabsellmaker(pointer, $0) }
     }
 
-    public func cancelOrder() throws {
-        try
+    public func cancelOrder() throws -> FatCrabMakerState {
+        return try FfiConverterTypeFatCrabMakerState.lift(
             rustCallWithError(FfiConverterTypeFatCrabError.lift) {
                 uniffi_fatcrab_trading_fn_method_fatcrabsellmaker_cancel_order(self.uniffiClonePointer(), $0)
             }
+        )
     }
 
     public func checkBtcTxConfirmation() throws -> UInt32 {
@@ -2984,6 +2986,7 @@ public enum FatCrabMakerState {
     case inboundFcNotified
     case notifiedOutbound
     case tradeCompleted
+    case tradeCancelled
 }
 
 public struct FfiConverterTypeFatCrabMakerState: FfiConverterRustBuffer {
@@ -3007,6 +3010,8 @@ public struct FfiConverterTypeFatCrabMakerState: FfiConverterRustBuffer {
         case 7: return .notifiedOutbound
 
         case 8: return .tradeCompleted
+
+        case 9: return .tradeCancelled
 
         default: throw UniffiInternalError.unexpectedEnumCase
         }
@@ -3037,6 +3042,9 @@ public struct FfiConverterTypeFatCrabMakerState: FfiConverterRustBuffer {
 
         case .tradeCompleted:
             writeInt(&buf, Int32(8))
+
+        case .tradeCancelled:
+            writeInt(&buf, Int32(9))
         }
     }
 }
@@ -3804,7 +3812,7 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_func_init_tracing_for_oslog() != 16348 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_cancel_order() != 16367 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_cancel_order() != 18877 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabbuymaker_get_order_details() != 19480 {
@@ -3891,7 +3899,7 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_method_fatcrabpeerenvelope_message() != 13486 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_cancel_order() != 10768 {
+    if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_cancel_order() != 62590 {
         return InitializationResult.apiChecksumMismatch
     }
     if uniffi_fatcrab_trading_checksum_method_fatcrabsellmaker_check_btc_tx_confirmation() != 20595 {

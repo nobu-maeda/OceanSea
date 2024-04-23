@@ -254,12 +254,7 @@ import OSLog
     }
     
     func cancelTrade(for maker: FatCrabMakerTrade) async throws {
-        let uuid = maker.tradeUuid
         try await maker.cancelOrder()
-        
-        Task { @MainActor in
-            trades.removeValue(forKey: uuid)
-        }
     }
     
     // Async/Await Task wrappers

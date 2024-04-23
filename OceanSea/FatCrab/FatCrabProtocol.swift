@@ -231,7 +231,7 @@ enum FatCrabTrade {
     var isCompleted: Bool {
         switch self {
         case .maker(let maker):
-            return maker.state == .tradeCompleted
+            return maker.state == .tradeCompleted || maker.state == .tradeCancelled
         case .taker(let taker):
             return taker.state == .tradeCompleted || taker.state == .offerRejected
         }
@@ -257,6 +257,8 @@ extension FatCrabMakerState {
             return "Notified Outbound"
         case .tradeCompleted:
             return "Trade Completed"
+        case .tradeCancelled:
+            return "Trade Cancelled"
         }
     }
 }

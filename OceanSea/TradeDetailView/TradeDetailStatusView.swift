@@ -60,6 +60,8 @@ struct TradeDetailStatusView: View {
                     }
                 case .tradeCompleted:
                     Text("Trade Completed")
+                case .tradeCancelled:
+                    Text("Trade Cancelled")
                 }
                 
             case .taker(let taker):

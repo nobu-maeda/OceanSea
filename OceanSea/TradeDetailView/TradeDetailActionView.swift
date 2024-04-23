@@ -101,6 +101,8 @@ struct TradeDetailActionView: View {
                         }.buttonStyle(.borderedProminent)
                     case .tradeCompleted:
                         Text("No Actions Available")
+                    case .tradeCancelled:
+                        Text("No Actions Available")
                     }
                 case .taker(let taker):
                     switch taker.state {
