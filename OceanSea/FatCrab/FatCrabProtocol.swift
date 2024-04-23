@@ -233,7 +233,7 @@ enum FatCrabTrade {
         case .maker(let maker):
             return maker.state == .tradeCompleted
         case .taker(let taker):
-            return taker.state == .tradeCompleted
+            return taker.state == .tradeCompleted || taker.state == .offerRejected
         }
     }
 }
