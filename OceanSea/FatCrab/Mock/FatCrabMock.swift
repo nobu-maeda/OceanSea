@@ -202,6 +202,10 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
         trades.updateValue(trade, forKey: uuid)
     }
     
+    func cancelTrade(for maker: FatCrabMakerTrade) async throws {
+        trades.removeValue(forKey: maker.tradeUuid)
+    }
+        
     func restoreTrades() {
         if Bool.random() {
             addToCurrentTrades()

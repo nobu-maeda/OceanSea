@@ -180,12 +180,13 @@ import OSLog
     
     func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) async throws -> any FatCrabTakerBuyProtocol {
         try await Task {
+            let tradeUuid = UUID(uuidString: orderEnvelope.order().tradeUuid)!
             let taker = try trader.newBuyTaker(orderEnvelope: orderEnvelope)
             let takerModel = FatCrabTakerBuyModel(taker: taker)
             let takerTrade = FatCrabTakerTrade.buy(taker: takerModel)
             
             Task { @MainActor in
-                trades.updateValue(.taker(taker: takerTrade), forKey: takerModel.tradeUuid)
+                trades.updateValue(.taker(taker: takerTrade), forKey: tradeUuid)
             }
             
             _ = try taker.takeOrder()
@@ -195,12 +196,13 @@ import OSLog
     
     func takeSellOrder(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) async throws -> any FatCrabTakerSellProtocol {
         try await Task {
+            let tradeUuid = UUID(uuidString: orderEnvelope.order().tradeUuid)!
             let taker = try trader.newSellTaker(orderEnvelope: orderEnvelope, fatcrabRxAddr: fatcrabRxAddr)
             let takerModel = FatCrabTakerSellModel(taker: taker)
             let takerTrade = FatCrabTakerTrade.sell(taker: takerModel)
             
             Task { @MainActor in
-                trades.updateValue(.taker(taker: takerTrade), forKey: takerModel.tradeUuid)
+                trades.updateValue(.taker(taker: takerTrade), forKey: tradeUuid)
             }
             
             _ = try taker.takeOrder()
@@ -249,6 +251,15 @@ import OSLog
                 }
             }
         }.value
+    }
+    
+    func cancelTrade(for maker: FatCrabMakerTrade) async throws {
+        let uuid = maker.tradeUuid
+        try await maker.cancelOrder()
+        
+        Task { @MainActor in
+            trades.removeValue(forKey: uuid)
+        }
     }
     
     // Async/Await Task wrappers

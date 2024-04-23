@@ -10,13 +10,14 @@ import SwiftUI
 struct TradesView: View {
     @Environment(\.fatCrabModel) var model
     
-    @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = nil
-    @State var showMakeNewOrderView = false
-    @State var showTradeDetailView = false
-    @State var showTradeDetailViewForTrade: FatCrabTrade? = nil
-    @State var tradesFilter = TradesFilter.ongoing
-    @State var buySellFilter = BuySellFilter.both
-    @State var sortOption = SortOption.priceAscending
+    @State private var orderEnvelope: FatCrabOrderEnvelopeProtocol? = nil
+    @State private var showMakeNewOrderView = false
+    @State private var showTradeDetailView = false
+    @State private var showTradeDetailViewForTrade: FatCrabTrade? = nil
+    
+    @State private var tradesFilter = TradesFilter.ongoing
+    @State private var buySellFilter = BuySellFilter.both
+    @State private var sortOption = SortOption.priceAscending
     
     var body: some View {
         NavigationStack {

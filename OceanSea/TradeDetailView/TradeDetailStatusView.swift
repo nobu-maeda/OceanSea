@@ -10,11 +10,13 @@ import OSLog
 
 struct TradeDetailStatusView: View {
     @Environment(\.fatCrabModel) var model
-    @Binding var trade: FatCrabTrade?
     
-    @State private var showAlert = false
-    @State private var alertTitleString = ""
-    @State private var alertBodyString = ""
+    @Binding var trade: FatCrabTrade?
+    @Binding var showAlert: Bool
+    @Binding var alertTitleString: String
+    @Binding var alertBodyString: String
+    @Binding var alertType: TradeDetailViewAlertType
+    
     @State private var btcConfs = 0
     
     var body: some View {
@@ -47,7 +49,6 @@ struct TradeDetailStatusView: View {
                         .task(id: model.blockHeight) {
                             await updateBtcConfs(trade: trade)
                         }
-                        .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
                 case .inboundFcNotified:
                     Text("Taker claims FatCrab sent with TxID \(txID ?? "")")
                 case .notifiedOutbound:
@@ -90,7 +91,6 @@ struct TradeDetailStatusView: View {
                         .task(id: model.blockHeight) {
                             await updateBtcConfs(trade: trade)
                         }
-                        .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
                 case .inboundFcNotified:
                     Text("Maker claims FatCrab sent with TxID \(txID ?? "")")
                 case .tradeCompleted:
@@ -132,6 +132,7 @@ struct TradeDetailStatusView: View {
             Task { @MainActor in
                 alertTitleString = "Error"
                 alertBodyString = error.localizedDescription
+                alertType = .okAlert
                 showAlert = true
             }
         }
@@ -140,15 +141,15 @@ struct TradeDetailStatusView: View {
 
 #Preview("BuyMaker") {
     @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.random(for: .buy), amount: 1234.56, price: 5678.9, tradeUuid: UUID())))
-    return TradeDetailStatusView(trade: $trade)
+    return TradeDetailStatusView(trade: $trade, showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""), alertType: .constant(.okAlert))
 }
 
 #Preview("SellMaker") {
     @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.inboundBtcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerBtcTxid: "SomeTxID000-0057")))
-    return TradeDetailStatusView(trade: $trade)
+    return TradeDetailStatusView(trade: $trade, showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""), alertType: .constant(.okAlert))
 }
 
 #Preview("BuyTaker") {
     @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.inboundBtcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0057", peerBtcTxid: "SomeTxID000-0057")))
-    return TradeDetailStatusView(trade: $trade)
+    return TradeDetailStatusView(trade: $trade, showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""), alertType: .constant(.okAlert))
 }

@@ -10,17 +10,18 @@ import SwiftUI
 struct BookView: View {
     @Environment(\.fatCrabModel) var model
     
+    @State private var showMakeNewOrderView = false
+    @State private var showOrderDetailView = false
+    @State private var showOrderDetailViewForTrade: FatCrabTrade? = nil
+    @State private var showOrderDetailViewForOrder: FatCrabOrderEnvelopeProtocol? = nil
+    
+    @State private var bookFilter = BookFilter.new
+    @State private var buySellFilter = BuySellFilter.both
+    @State private var sortOption = SortOption.priceAscending
+    
     @State private var showAlert = false
     @State private var alertTitleString = ""
     @State private var alertBodyString = ""
-    
-    @State var showMakeNewOrderView = false
-    @State var showOrderDetailView = false
-    @State var showOrderDetailViewForTrade: FatCrabTrade? = nil
-    @State var showOrderDetailViewForOrder: FatCrabOrderEnvelopeProtocol? = nil
-    @State var bookFilter = BookFilter.new
-    @State var buySellFilter = BuySellFilter.both
-    @State var sortOption = SortOption.priceAscending
     
     var body: some View {
         NavigationStack {

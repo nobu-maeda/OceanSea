@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+enum TradeDetailViewAlertType {
+    case okAlert
+    case cancelOrder
+}
+
 struct TradeDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.fatCrabModel) var model
@@ -18,6 +23,7 @@ struct TradeDetailView: View {
     @State private var showAlert = false
     @State private var alertTitleString = ""
     @State private var alertBodyString = ""
+    @State private var alertType = TradeDetailViewAlertType.okAlert
     
     var body: some View {
         let tradeType = tradeType()
@@ -43,7 +49,7 @@ struct TradeDetailView: View {
                 
                 if trade != nil, shouldShowStatus() {
                     Section {
-                        TradeDetailStatusView(trade: $trade)
+                        TradeDetailStatusView(trade: $trade, showAlert: $showAlert, alertTitleString: $alertTitleString, alertBodyString: $alertBodyString, alertType: $alertType)
                     } header: {
                         Text("Status")
                     }
@@ -52,14 +58,14 @@ struct TradeDetailView: View {
                 if trade != nil {
                     if shouldShowAction() {
                         Section {
-                            TradeDetailActionView(trade: $trade, isBusy: $isBusy, showAlert: $showAlert, alertTitleString: $alertTitleString, alertBodyString: $alertBodyString)
+                            TradeDetailActionView(trade: $trade, isBusy: $isBusy, showAlert: $showAlert, alertTitleString: $alertTitleString, alertBodyString: $alertBodyString, alertType: $alertType)
                         } header: {
                             Text("Action")
                         }
                     }
                 } else if orderEnvelope != nil {
                     Section {
-                        TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade, isBusy: $isBusy, showAlert: $showAlert, alertTitleString: $alertTitleString, alertBodyString: $alertBodyString)
+                        TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade, isBusy: $isBusy, showAlert: $showAlert, alertTitleString: $alertTitleString, alertBodyString: $alertBodyString, alertType: $alertType)
                     } header: {
                         Text("Action")
                     }
@@ -68,12 +74,36 @@ struct TradeDetailView: View {
             .navigationTitle(navigationTitleString())
             .navigationBarTitleDisplayMode(.inline)
             .modifier(ActivityIndicatorModifier(isLoading: isBusy))
-            .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Dismiss", action: dismiss.callAsFunction)
                 }
             }
+            .alert(alertTitleString, isPresented: $showAlert) {
+                switch alertType {
+                    case .cancelOrder:
+                        if let trade = trade  {
+                            switch trade {
+                            case .maker(let maker):
+                                Button("Ok", role: .destructive) {
+                                    Task {
+                                        try await model.cancelTrade(for: maker)
+                                        Task { @MainActor in
+                                            dismiss.callAsFunction()
+                                        }
+                                    }
+                                }
+                                Button("Cancel", role: .cancel) {}
+                            case .taker:
+                                Text("Cannot cancel order for Taker trade")
+                            }
+                        } else {
+                            Text("Cannot cancel order without a Maker Trade")
+                        }
+                    case .okAlert:
+                        Button("OK", role: .cancel) {}
+                }
+            } message: { Text(alertBodyString) }
         }
     }
     
@@ -172,9 +202,9 @@ struct TradeDetailView: View {
         case .maker(let maker):
             switch maker.state {
             case .new:
-                return false
+                return true
             case .waitingForOffers:
-                return false
+                return true
             case .receivedOffer:
                 return true
             case .acceptedOffer:

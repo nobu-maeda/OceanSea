@@ -91,6 +91,15 @@ enum FatCrabMakerTrade {
             try await maker.tradeComplete()
         }
     }
+    
+    func cancelOrder() async throws {
+        switch self {
+        case .buy(let maker):
+            try await maker.cancelOrder()
+        case .sell(let maker):
+            try await maker.cancelOrder()
+        }
+    }
 }
 
 enum FatCrabTakerTrade {
@@ -313,6 +322,7 @@ protocol FatCrabProtocol: ObservableObject {
     func makeSellOrder(price: Double, amount: Double) async throws -> any FatCrabMakerSellProtocol
     func takeBuyOrder(orderEnvelope: FatCrabOrderEnvelope) async throws -> any FatCrabTakerBuyProtocol
     func takeSellOrder(orderEnvelope: FatCrabOrderEnvelope, fatcrabRxAddr: String) async throws -> any FatCrabTakerSellProtocol
+    func cancelTrade(for maker: FatCrabMakerTrade) async throws
     func restoreTrades() async
 }
 
@@ -330,6 +340,7 @@ protocol FatCrabMakerBuyProtocol: ObservableObject {
     func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) async throws
     func releaseNotifyPeer() async throws
     func tradeComplete() async throws
+    func cancelOrder() async throws
 }
 
 protocol FatCrabMakerSellProtocol: ObservableObject {
@@ -348,6 +359,7 @@ protocol FatCrabMakerSellProtocol: ObservableObject {
     func checkBtcTxConfirmation() async throws -> UInt32
     func notifyPeer(fatcrabTxid: String) async throws
     func tradeComplete() async throws
+    func cancelOrder() async throws
 }
 
 protocol FatCrabTakerBuyProtocol: ObservableObject {

@@ -95,6 +95,12 @@ import Foundation
             }
         }.value
     }
+    
+    func cancelOrder() async throws {
+        try await Task {
+            try self.maker.cancelOrder()
+        }.value
+    }
 }
 
 extension FatCrabMakerBuyModel: FatCrabMakerNotifDelegate {

@@ -33,7 +33,7 @@ import Foundation
         self.state = FatCrabMakerState.waitingForOffers
     }
     
-    func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) throws {
+    func tradeResponse(tradeRspType: FatCrabTradeRspType, offerEnvelope: FatCrabOfferEnvelope) async throws {
         switch tradeRspType {
         case .accept:
             self.state = FatCrabMakerState.acceptedOffer
@@ -46,11 +46,14 @@ import Foundation
         return 6
     }
     
-    func notifyPeer(fatcrabTxid: String) throws {
+    func notifyPeer(fatcrabTxid: String) async throws {
         self.state = FatCrabMakerState.notifiedOutbound
     }
     
-    func tradeComplete() throws {
+    func tradeComplete() async throws {
         self.state = FatCrabMakerState.tradeCompleted
+    }
+    
+    func cancelOrder() async throws {
     }
 }

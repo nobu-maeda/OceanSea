@@ -9,12 +9,15 @@ import SwiftUI
 
 struct TakeOrderActionView: View {
     @Environment(\.fatCrabModel) var model
+    
     @Binding var orderEnvelope: FatCrabOrderEnvelopeProtocol?
     @Binding var trade: FatCrabTrade?
     @Binding var isBusy: Bool
+    
     @Binding var showAlert: Bool
     @Binding var alertTitleString: String
     @Binding var alertBodyString: String
+    @Binding var alertType: TradeDetailViewAlertType
     
     @State private var fatcrabRxAddr = ""
     
@@ -61,6 +64,7 @@ struct TakeOrderActionView: View {
                 Task { @MainActor in
                     alertTitleString = "Error"
                     alertBodyString = fatCrabError.description()
+                    alertType = .okAlert
                     showAlert = true
                 }
             }
@@ -68,6 +72,7 @@ struct TakeOrderActionView: View {
                 Task { @MainActor in
                     alertTitleString = "Error"
                     alertBodyString = error.localizedDescription
+                    alertType = .okAlert
                     showAlert = true
                 }
             }
@@ -79,6 +84,7 @@ struct TakeOrderActionView: View {
         guard !fatcrabRxAddr.isEmpty else {
             alertTitleString = "Error"
             alertBodyString = "FatCrab Receive Address is empty"
+            alertType = .okAlert
             showAlert = true
             return
         }
@@ -96,6 +102,7 @@ struct TakeOrderActionView: View {
                 Task { @MainActor in
                     alertTitleString = "Error"
                     alertBodyString = fatCrabError.description()
+                    alertType = .okAlert
                     showAlert = true
                 }
             }
@@ -103,6 +110,7 @@ struct TakeOrderActionView: View {
                 Task { @MainActor in
                     alertTitleString = "Error"
                     alertBodyString = error.localizedDescription
+                    alertType = .okAlert
                     showAlert = true
                 }
             }
@@ -115,12 +123,12 @@ struct TakeOrderActionView: View {
     let order = FatCrabOrder(orderType: .buy, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9)
     @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
     @State var trade: FatCrabTrade? = nil
-    return TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""))
+    return TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""), alertType: .constant(.okAlert))
 }
 
 #Preview("Sell") {
     let order = FatCrabOrder(orderType: .sell, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9)
     @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
     @State var trade: FatCrabTrade? = nil
-    return TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""))
+    return TakeOrderActionView(orderEnvelope: $orderEnvelope, trade: $trade, isBusy: .constant(false), showAlert: .constant(false), alertTitleString: .constant(""), alertBodyString: .constant(""), alertType: .constant(.okAlert))
 }
