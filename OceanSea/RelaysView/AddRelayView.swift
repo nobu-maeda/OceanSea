@@ -19,6 +19,7 @@ struct AddRelayView: View {
     
     @FocusState private var focusedField: FocusedField?
     
+    @State private var isBusy = false
     @State private var showAlert = false
     @State private var alertTitleString = ""
     @State private var alertBodyString = ""
@@ -26,7 +27,7 @@ struct AddRelayView: View {
     var body: some View {
         NavigationStack {
             List {
-                TextField("Relay URL - wws://", text: $relayUrlString)
+                TextField("Relay URL - wss://", text: $relayUrlString)
                     .focused($focusedField, equals: .relayUrl)
                     .onSubmit {
                         if validateRelayUrl() != nil {
@@ -48,6 +49,7 @@ struct AddRelayView: View {
                     Button("Dismiss", action: dismiss.callAsFunction)
                 }
             }
+            .modifier(ActivityIndicatorModifier(isLoading: isBusy))
             .alert(alertTitleString, isPresented: $showAlert, actions: {
                 Button("OK", role: .cancel) {}}, message: {
                     Text(alertBodyString)
@@ -60,15 +62,19 @@ struct AddRelayView: View {
         guard let relayUrl = validateRelayUrl() else { return }
         let relayAddr = RelayAddr(url: relayUrl.absoluteString, socketAddr: nil)
         
+        isBusy = true
+        
         Task {
             do {
                 try await model.addRelays(relayAddrs: [relayAddr])
                 
                 Task { @MainActor in
+                    isBusy = false
                     dismiss()
                 }
             } catch {
                 Task { @MainActor in
+                    isBusy = false
                     alertTitleString = "Error"
                     alertBodyString = error.localizedDescription
                     showAlert = true

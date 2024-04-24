@@ -86,9 +86,11 @@ struct TradeDetailView: View {
                             switch trade {
                             case .maker(let maker):
                                 Button("Ok", role: .destructive) {
+                                    isBusy = true
                                     Task {
-                                        try await model.cancelTrade(for: maker)
+                                        await cancelOrder(for: maker)
                                         Task { @MainActor in
+                                            isBusy = false
                                             dismiss.callAsFunction()
                                         }
                                     }
@@ -238,6 +240,27 @@ struct TradeDetailView: View {
                 return true
             case .tradeCompleted:
                 return false
+            }
+        }
+    }
+    
+    private func cancelOrder(for maker: FatCrabMakerTrade) async {
+        do {
+            try await model.cancelTrade(for: maker)
+        } catch let fatCrabError as FatCrabError {
+            Task { @MainActor in
+                alertTitleString = "Error"
+                alertBodyString = fatCrabError.description()
+                alertType = .okAlert
+                showAlert = true
+            }
+        }
+        catch {
+            Task { @MainActor in
+                alertTitleString = "Error"
+                alertBodyString = error.localizedDescription
+                alertType = .okAlert
+                showAlert = true
             }
         }
     }
