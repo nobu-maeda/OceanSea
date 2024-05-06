@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct BookView: View {
+    @Binding var selection: HomeView.Tab
     @Environment(\.fatCrabModel) var model
     
     @State private var showMakeNewOrderView = false
@@ -56,52 +57,55 @@ struct BookView: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        showMakeNewOrderView.toggle()
-                    }, label: {
-                        Image(systemName: "plus")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                    })
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu(content: {
-                        ForEach (BookFilter.allFilters, id: \.self) { filter in
-                            Button {
-                                bookFilter = filter
-                            } label: {
-                                if bookFilter == filter {
-                                    Text("\(filter.rawValue) ✓")
-                                } else {
-                                    Text(filter.rawValue)
+                switch selection {
+                case .book:
+                    ToolbarItemGroup(placement: .primaryAction) {
+                        Button(action: {
+                            showMakeNewOrderView.toggle()
+                        }, label: {
+                            Image(systemName: "plus")
+                                .font(.headline)
+                                .foregroundColor(.blue)
+                        })
+                        Menu(content: {
+                            ForEach (BookFilter.allFilters, id: \.self) { filter in
+                                Button {
+                                    bookFilter = filter
+                                } label: {
+                                    if bookFilter == filter {
+                                        Text("\(filter.rawValue) ✓")
+                                    } else {
+                                        Text(filter.rawValue)
+                                    }
                                 }
                             }
-                        }
-                    }, label: {
-                        Image(systemName: "line.3.horizontal.decrease")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                    })
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu(content: {
-                        ForEach (BuySellFilter.allFilters, id: \.self) { filter in
-                            Button {
-                                buySellFilter = filter
-                            } label: {
-                                if buySellFilter == filter {
-                                    Text("\(filter.rawValue) ✓")
-                                } else {
-                                    Text(filter.rawValue)
+                        }, label: {
+                            Image(systemName: "line.3.horizontal.decrease")
+                                .font(.headline)
+                                .foregroundColor(.blue)
+                        })
+                        Menu(content: {
+                            ForEach (BuySellFilter.allFilters, id: \.self) { filter in
+                                Button {
+                                    buySellFilter = filter
+                                } label: {
+                                    if buySellFilter == filter {
+                                        Text("\(filter.rawValue) ✓")
+                                    } else {
+                                        Text(filter.rawValue)
+                                    }
                                 }
                             }
-                        }
-                    }, label: {
-                        Image(systemName: "arrow.up.arrow.down")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                    })
+                        }, label: {
+                            Image(systemName: "arrow.up.arrow.down")
+                                .font(.headline)
+                                .foregroundColor(.blue)
+                        })
+                    }
+                default:
+                    ToolbarItem(placement: .primaryAction) {
+                        EmptyView()
+                    }
                 }
             }
             .navigationTitle("Order Book")
@@ -179,5 +183,6 @@ struct BookView: View {
 }
 
 #Preview {
-    BookView().environment(\.fatCrabModel, FatCrabMock())
+    @State var selectedTab = HomeView.Tab.book
+    return BookView(selection: $selectedTab).environment(\.fatCrabModel, FatCrabMock())
 }

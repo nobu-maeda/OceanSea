@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     enum Tab {
-        case wallet, book, orders, relays
+        case wallet, book, trades, relays
     }
     
     @Binding var model: any FatCrabProtocol
@@ -24,19 +24,19 @@ struct HomeView: View {
                 }
                 .tag(Tab.wallet)
             
-            BookView().environment(\.fatCrabModel, model)
+            BookView(selection: $selectedTab).environment(\.fatCrabModel, model)
                 .tabItem {
                     Label("Book", systemImage: "text.book.closed")
                 }
                 .tag(Tab.book)
             
-            TradesView().environment(\.fatCrabModel, model)
+            TradesView(selection: $selectedTab).environment(\.fatCrabModel, model)
                 .tabItem {
                     Label("Trades", systemImage: "list.bullet")
                 }
-                .tag(Tab.orders)
+                .tag(Tab.trades)
             
-            RelaysView().environment(\.fatCrabModel, model)
+            RelaysView(selection: $selectedTab).environment(\.fatCrabModel, model)
                 .tabItem {
                     Label("Relays", systemImage: "network")
                 }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TradesView: View {
+    @Binding var selection: HomeView.Tab
     @Environment(\.fatCrabModel) var model
     
     @State private var orderEnvelope: FatCrabOrderEnvelopeProtocol? = nil
@@ -42,53 +43,56 @@ struct TradesView: View {
                     }
                 }
             }
-            .toolbar() {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        showMakeNewOrderView.toggle()
-                    }, label: {
-                        Image(systemName: "plus")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                    })
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu(content: {
-                        ForEach(TradesFilter.allFilters, id: \.self) { filter in
-                            Button {
-                                tradesFilter = filter
-                            } label: {
-                                if tradesFilter == filter {
-                                    Text("\(filter.rawValue) ✓")
-                                } else {
-                                    Text(filter.rawValue)
+            .toolbar {
+                switch selection {
+                case .trades:
+                    ToolbarItemGroup(placement: .primaryAction) {
+                        Button(action: {
+                            showMakeNewOrderView.toggle()
+                        }, label: {
+                            Image(systemName: "plus")
+                                .font(.headline)
+                                .foregroundColor(.blue)
+                        })
+                        Menu(content: {
+                            ForEach(TradesFilter.allFilters, id: \.self) { filter in
+                                Button {
+                                    tradesFilter = filter
+                                } label: {
+                                    if tradesFilter == filter {
+                                        Text("\(filter.rawValue) ✓")
+                                    } else {
+                                        Text(filter.rawValue)
+                                    }
                                 }
                             }
-                        }
-                    }, label: {
-                        Image(systemName: "line.3.horizontal.decrease")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                    })
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu(content: {
-                        ForEach (BuySellFilter.allFilters, id: \.self) { filter in
-                            Button {
-                                buySellFilter = filter
-                            } label: {
-                                if buySellFilter == filter {
-                                    Text("\(filter.rawValue) ✓")
-                                } else {
-                                    Text(filter.rawValue)
+                        }, label: {
+                            Image(systemName: "line.3.horizontal.decrease")
+                                .font(.headline)
+                                .foregroundColor(.blue)
+                        })
+                        Menu(content: {
+                            ForEach (BuySellFilter.allFilters, id: \.self) { filter in
+                                Button {
+                                    buySellFilter = filter
+                                } label: {
+                                    if buySellFilter == filter {
+                                        Text("\(filter.rawValue) ✓")
+                                    } else {
+                                        Text(filter.rawValue)
+                                    }
                                 }
                             }
-                        }
-                    }, label: {
-                        Image(systemName: "arrow.up.arrow.down")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                    })
+                        }, label: {
+                            Image(systemName: "arrow.up.arrow.down")
+                                .font(.headline)
+                                .foregroundColor(.blue)
+                        })
+                    }
+                default:
+                    ToolbarItem(placement: .primaryAction) {
+                        EmptyView()
+                    }
                 }
             }
             .navigationTitle("Trade Status")
@@ -138,5 +142,6 @@ struct TradesView: View {
 }
 
 #Preview {
-    TradesView().environment(\.fatCrabModel, FatCrabMock())
+    @State var selectedTab = HomeView.Tab.trades
+    return TradesView(selection: $selectedTab).environment(\.fatCrabModel, FatCrabMock())
 }

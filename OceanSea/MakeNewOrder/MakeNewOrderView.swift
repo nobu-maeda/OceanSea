@@ -103,6 +103,10 @@ struct MakeNewOrderView: View {
             .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
         }
         .onAppear(perform: { focusedField = .price })
+#if os(macOS)
+        .frame(width: 300, height: 300)
+        .fixedSize()
+#endif
     }
     
     private func createNewOrder() {

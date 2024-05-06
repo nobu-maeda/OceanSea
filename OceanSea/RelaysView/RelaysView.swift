@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct RelaysView: View {
+    @Binding var selection: HomeView.Tab
     @Environment(\.fatCrabModel) var model
     
     @State var showAddRelayToolbarView = false
@@ -30,17 +31,24 @@ struct RelaysView: View {
                     }
                 }
             }
-            .toolbar(content: {
-                ToolbarItem(placement: .primaryAction) {
-                    Button(action: {
-                        showAddRelayToolbarView.toggle()
-                    }, label: {
-                        Image(systemName: "plus")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                    })
+            .toolbar {
+                switch selection {
+                case .relays:
+                    ToolbarItem(placement: .primaryAction) {
+                        Button(action: {
+                            showAddRelayToolbarView.toggle()
+                        }, label: {
+                            Image(systemName: "plus")
+                                .font(.headline)
+                                .foregroundColor(.blue)
+                        })
+                    }
+                default:
+                    ToolbarItem(placement: .primaryAction) {
+                        EmptyView()
+                    }
                 }
-            })
+            }
             .navigationTitle("Nostr Relays")
             .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
         }
@@ -72,5 +80,6 @@ struct RelaysView: View {
 }
 
 #Preview {
-    RelaysView().environment(\.fatCrabModel, FatCrabMock())
+    @State var selectedTab = HomeView.Tab.relays
+    return RelaysView(selection: $selectedTab).environment(\.fatCrabModel, FatCrabMock())
 }

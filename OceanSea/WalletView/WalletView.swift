@@ -56,6 +56,11 @@ struct WalletView: View {
                     EnterSeedsView(model: $model)
                 }
             }
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Text("")
+                }
+            }
             .refreshable {
                 await updateWalletView()
             }
