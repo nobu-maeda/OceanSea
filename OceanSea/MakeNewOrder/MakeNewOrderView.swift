@@ -46,8 +46,10 @@ struct MakeNewOrderView: View {
                             focusedField = .price
                         }
                     }
-                    .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
+#if os(iOS)
+                    .textInputAutocapitalization(.never)
+#endif
                 
                 TextField("Amount (# of FatCrabs)", text: $amountInputString)
                     .focused($focusedField, equals: .amount)
@@ -62,8 +64,10 @@ struct MakeNewOrderView: View {
                             focusedField = .amount
                         }
                     }
-                    .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
+#if os(iOS)
+                    .textInputAutocapitalization(.never)
+#endif
                 
                 if orderType == .buy {
                     TextField("FatCrab Receive Address", text: $fatcrabRxAddrInputString)
@@ -75,12 +79,16 @@ struct MakeNewOrderView: View {
                                 focusedField = .fatcrabAddr
                             }
                         }
-                        .textInputAutocapitalization(.never)
                         .disableAutocorrection(true)
+#if os(iOS)
+                        .textInputAutocapitalization(.never)
+#endif
                 }
             }
             .navigationTitle("Make New Order")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Create") {

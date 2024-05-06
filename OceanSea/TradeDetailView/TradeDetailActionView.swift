@@ -69,14 +69,18 @@ struct TradeDetailActionView: View {
                             Text("No Actions Available")
                         case .sell(let sellMaker):
                             Text("Remit FatCrab to \(sellMaker.peerFcAddr ?? "??") for Taker, before clicking to notify")
+                            
                             TextField(text: $fatcrabTxId) {
                                 Text("FatCrab Transaction ID")
                             }
                             .padding(.leading)
                             .padding(.trailing)
-                            .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
+#if os(iOS)
+                            .textInputAutocapitalization(.never)
                             .textFieldStyle(.roundedBorder)
+#endif
+                                
                             Button() {
                                 notifyTaker(of: fatcrabTxId, by: maker)
                             } label: {
@@ -114,14 +118,18 @@ struct TradeDetailActionView: View {
                         switch taker {
                         case .buy(let buyTaker):
                             Text("Remit FatCrab to \(buyTaker.peerFcAddr ?? "??") for Maker, before clicking to notify")
+                            
                             TextField(text: $fatcrabTxId) {
                                 Text("FatCrab Transaction ID")
                             }
                             .padding(.leading)
                             .padding(.trailing)
-                            .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
+#if os(iOS)
+                            .textInputAutocapitalization(.never)
                             .textFieldStyle(.roundedBorder)
+#endif
+                            
                             Button() {
                                 notifyMaker(of: fatcrabTxId, by: taker)
                             } label: {

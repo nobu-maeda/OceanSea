@@ -32,15 +32,20 @@ struct EnterSeedsView: View {
                     List {
                         ForEach(0..<(mnemonic.count/2), id:\.self) { i in
                             TextField("Word #\(i+1)", text: $mnemonic[i])
-                                .textInputAutocapitalization(.never)
                                 .disableAutocorrection(true)
+#if os(iOS)
+                                .textInputAutocapitalization(.never)
+#endif
                         }
                     }.scrollDisabled(true)
                     List {
                         ForEach(mnemonic.count/2..<(mnemonic.count), id:\.self) { i in
                             TextField("Word #\(i+1)", text: $mnemonic[i])
-                                .textInputAutocapitalization(.never)
+                                
                                 .disableAutocorrection(true)
+#if os(iOS)
+                                .textInputAutocapitalization(.never)
+#endif
                         }
                     }.scrollDisabled(true)
                 }.frame(height: 600)

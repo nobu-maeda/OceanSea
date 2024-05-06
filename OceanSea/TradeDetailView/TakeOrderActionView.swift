@@ -37,9 +37,12 @@ struct TakeOrderActionView: View {
                 }
                 .padding(.leading)
                 .padding(.trailing)
-                .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
+#if os(iOS)
+                .textInputAutocapitalization(.never)
                 .textFieldStyle(.roundedBorder)
+#endif
+
                 Button() {
                     takeSellOrder()
                 } label: {

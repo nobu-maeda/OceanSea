@@ -72,7 +72,9 @@ struct TradeDetailView: View {
                 }
             }
             .navigationTitle(navigationTitleString())
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .modifier(ActivityIndicatorModifier(isLoading: isBusy))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

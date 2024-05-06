@@ -7,18 +7,7 @@
 
 import SwiftUI
 
-struct ActivityIndicator: UIViewRepresentable {
-    @Binding var isAnimating: Bool
-    let style: UIActivityIndicatorView.Style
-
-    func makeUIView(context: UIViewRepresentableContext<ActivityIndicator>) -> UIActivityIndicatorView {
-        return UIActivityIndicatorView(style: style)
-    }
-
-    func updateUIView(_ uiView: UIActivityIndicatorView, context: UIViewRepresentableContext<ActivityIndicator>) {
-        isAnimating ? uiView.startAnimating() : uiView.stopAnimating()
-    }
-}
+//#if os(iOS)
 
 struct ActivityIndicatorModifier: AnimatableModifier {
     var isLoading: Bool
@@ -41,8 +30,7 @@ struct ActivityIndicatorModifier: AnimatableModifier {
                             .disabled(self.isLoading)
                             .blur(radius: self.isLoading ? 3 : 0)
                         VStack {
-//                            Text("Now Loading")
-                            ActivityIndicator(isAnimating: .constant(true), style: .large)
+                            ProgressView()
                         }
                         .frame(width: geometry.size.width / 2,
                                height: geometry.size.height / 5)
@@ -64,3 +52,9 @@ struct ActivityIndicatorModifier: AnimatableModifier {
     Text("Some text")
     .modifier(ActivityIndicatorModifier(isLoading: true))
 }
+
+//#elseif os(macOS)
+
+
+
+//#endif

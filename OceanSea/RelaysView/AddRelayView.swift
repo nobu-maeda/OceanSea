@@ -27,6 +27,7 @@ struct AddRelayView: View {
     var body: some View {
         NavigationStack {
             List {
+                
                 TextField("Relay URL - wss://", text: $relayUrlString)
                     .focused($focusedField, equals: .relayUrl)
                     .onSubmit {
@@ -34,11 +35,16 @@ struct AddRelayView: View {
                             addRelay()
                         }
                     }
-                    .textInputAutocapitalization(.never)
+                    
                     .disableAutocorrection(true)
+#if os(iOS)
+                    .textInputAutocapitalization(.never)
+#endif
             }
             .navigationTitle("Add Relay")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") {
