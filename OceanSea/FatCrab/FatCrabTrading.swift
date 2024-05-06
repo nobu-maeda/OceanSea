@@ -1839,9 +1839,10 @@ public class FatCrabTrader:
         return try! rustCall { uniffi_fatcrab_trading_fn_clone_fatcrabtrader(self.pointer, $0) }
     }
 
-    public convenience init(info: BlockchainInfo, appDirPath: String) {
+    public convenience init(prodLvl: ProductionLevel, info: BlockchainInfo, appDirPath: String) {
         self.init(unsafeFromRawPointer: try! rustCall {
             uniffi_fatcrab_trading_fn_constructor_fatcrabtrader_new(
+                FfiConverterTypeProductionLevel.lower(prodLvl),
                 FfiConverterTypeBlockchainInfo.lower(info),
                 FfiConverterString.lower(appDirPath), $0
             )
@@ -1852,9 +1853,10 @@ public class FatCrabTrader:
         try! rustCall { uniffi_fatcrab_trading_fn_free_fatcrabtrader(pointer, $0) }
     }
 
-    public static func newWithMnemonic(mnemonic: String, info: BlockchainInfo, appDirPath: String) -> FatCrabTrader {
+    public static func newWithMnemonic(prodLvl: ProductionLevel, mnemonic: String, info: BlockchainInfo, appDirPath: String) -> FatCrabTrader {
         return FatCrabTrader(unsafeFromRawPointer: try! rustCall {
             uniffi_fatcrab_trading_fn_constructor_fatcrabtrader_new_with_mnemonic(
+                FfiConverterTypeProductionLevel.lower(prodLvl),
                 FfiConverterString.lower(mnemonic),
                 FfiConverterTypeBlockchainInfo.lower(info),
                 FfiConverterString.lower(appDirPath), $0
@@ -3384,6 +3386,48 @@ extension Network: Equatable, Hashable {}
 
 // Note that we don't yet support `indirect` for enums.
 // See https://github.com/mozilla/uniffi-rs/issues/396 for further discussion.
+public enum ProductionLevel {
+    case debug
+    case production
+}
+
+public struct FfiConverterTypeProductionLevel: FfiConverterRustBuffer {
+    typealias SwiftType = ProductionLevel
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> ProductionLevel {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        case 1: return .debug
+
+        case 2: return .production
+
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: ProductionLevel, into buf: inout [UInt8]) {
+        switch value {
+        case .debug:
+            writeInt(&buf, Int32(1))
+
+        case .production:
+            writeInt(&buf, Int32(2))
+        }
+    }
+}
+
+public func FfiConverterTypeProductionLevel_lift(_ buf: RustBuffer) throws -> ProductionLevel {
+    return try FfiConverterTypeProductionLevel.lift(buf)
+}
+
+public func FfiConverterTypeProductionLevel_lower(_ value: ProductionLevel) -> RustBuffer {
+    return FfiConverterTypeProductionLevel.lower(value)
+}
+
+extension ProductionLevel: Equatable, Hashable {}
+
+// Note that we don't yet support `indirect` for enums.
+// See https://github.com/mozilla/uniffi-rs/issues/396 for further discussion.
 public enum RelayStatus {
     case initialized
     case pending
@@ -4037,10 +4081,10 @@ private var initializationResult: InitializationResult {
     if uniffi_fatcrab_trading_checksum_method_fatcrabtrader_wallet_send_to_address() != 63105 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_constructor_fatcrabtrader_new() != 46569 {
+    if uniffi_fatcrab_trading_checksum_constructor_fatcrabtrader_new() != 7048 {
         return InitializationResult.apiChecksumMismatch
     }
-    if uniffi_fatcrab_trading_checksum_constructor_fatcrabtrader_new_with_mnemonic() != 53834 {
+    if uniffi_fatcrab_trading_checksum_constructor_fatcrabtrader_new_with_mnemonic() != 1571 {
         return InitializationResult.apiChecksumMismatch
     }
 
