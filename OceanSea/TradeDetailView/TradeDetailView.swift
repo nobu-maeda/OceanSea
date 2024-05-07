@@ -109,6 +109,10 @@ struct TradeDetailView: View {
                 }
             } message: { Text(alertBodyString) }
         }
+#if os(macOS)
+        .frame(width: 400, height: 400)
+        .fixedSize()
+#endif
     }
     
     func navigationTitleString() -> String {

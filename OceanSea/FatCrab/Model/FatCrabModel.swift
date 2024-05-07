@@ -66,17 +66,19 @@ import OSLog
         }
         
         Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { timer in
-            do {
-                let blockchainHeight = try self.trader.walletBlockchainHeight()
-                
-                Task { @MainActor in
-                    if blockchainHeight > self.blockHeight {
-                        self.blockHeight = UInt(blockchainHeight)
+            Task {
+                do {
+                    let blockchainHeight = try self.trader.walletBlockchainHeight()
+                    
+                    Task { @MainActor in
+                        if blockchainHeight > self.blockHeight {
+                            self.blockHeight = UInt(blockchainHeight)
+                        }
+                        try await self.updateBalances()
                     }
-                    try await self.updateBalances()
+                } catch {
+                    Logger.appInterface.error("Error getting block height: \(error)")
                 }
-            } catch {
-                Logger.appInterface.error("Error getting block height: \(error)")
             }
         }
         
