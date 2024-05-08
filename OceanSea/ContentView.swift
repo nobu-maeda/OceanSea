@@ -9,7 +9,7 @@ import SwiftUI
 import FatCrabTradingFFI
 
 struct ContentView: View {
-    @State var fatCrabModel: any FatCrabProtocol = FatCrabModel()
+    @State var fatCrabModel: any FatCrabProtocol = FatCrabModel(for: .signet)
     
     var body: some View {
         HomeView(model: $fatCrabModel)

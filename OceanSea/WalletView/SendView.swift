@@ -80,5 +80,5 @@ struct SendView: View {
 }
 
 #Preview {
-    SendView().environment(\.fatCrabModel, FatCrabMock())
+    SendView().environment(\.fatCrabModel, FatCrabMock(for: .signet))
 }

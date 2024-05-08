@@ -95,6 +95,6 @@ struct WalletView: View {
 }
 
 #Preview {
-    @State var fatCrabMock: any FatCrabProtocol = FatCrabMock()
+    @State var fatCrabMock: any FatCrabProtocol = FatCrabMock(for: .signet)
     return WalletView(model: $fatCrabMock)
 }

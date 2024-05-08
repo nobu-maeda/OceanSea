@@ -12,6 +12,8 @@ import OSLog
     private let trader: FatCrabTrader  // Should we inject this? Or is this good?
     
     static let MNEMONIC_KEYCHAIN_WRAPPER_KEY: String = "mnemonic"
+    static let ELECTRUM_SERVER_ADDR_TESTNET = "ssl://electrum.blockstream.info:60002"
+    static let ELECTRUM_SERVER_ADDR_SIGNET = "ssl://mempool.space:60602"
     
     var mnemonic: [String]
     var trustedPendingAmount: Int
@@ -24,16 +26,25 @@ import OSLog
     var queriedOrders: [UUID: FatCrabOrderEnvelopeProtocol]
     var trades: [UUID: FatCrabTrade]
     
-    static func resetWallet(with mnemonic: [String]) -> any FatCrabProtocol {
+    static func resetWallet(with mnemonic: [String], for network: Network) -> any FatCrabProtocol {
         let walletMnemonic = mnemonic.joined(separator: " ")
         KeychainWrapper.standard.removeObject(forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY)
         KeychainWrapper.standard.set(walletMnemonic, forKey: MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked)
-        return FatCrabModel()
+        return FatCrabModel(for: network)
     }
     
-    init() {
-        let url = "ssl://electrum.blockstream.info:60002"
-        let network = Network.testnet
+    required init(for network: Network) {
+        let url: String
+        
+        switch network {
+        case .testnet:
+            url = Self.ELECTRUM_SERVER_ADDR_TESTNET
+        case .signet:
+            url = Self.ELECTRUM_SERVER_ADDR_SIGNET
+        default:
+            fatalError("Only Testnet and Signet are supported for Fatcrab Model")
+        }
+        
         let info = BlockchainInfo.electrum(url: url, network: network)
         let appDir = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)
         
@@ -112,6 +123,8 @@ import OSLog
         }.value
     }
     
+    var network: Network { trader.getNetwork() }
+    
     func addRelays(relayAddrs: [RelayAddr]) async throws {
         try await Task {
             try trader.addRelays(relayAddrs: relayAddrs)
@@ -148,7 +161,7 @@ import OSLog
     func makeBuyOrder(price: Double, amount: Double, fatcrabRxAddr: String) async throws -> any FatCrabMakerBuyProtocol {
         try await Task {
             let uuid = UUID()
-            let order = FatCrabOrder(orderType: FatCrabOrderType.buy, tradeUuid: uuid.uuidString, amount: amount, price: price)
+            let order = FatCrabOrder(orderType: FatCrabOrderType.buy, tradeUuid: uuid.uuidString, amount: amount, price: price, network: trader.getNetwork())
             let maker = try trader.newBuyMaker(order: order, fatcrabRxAddr: fatcrabRxAddr)
             let makerModel = FatCrabMakerBuyModel(maker: maker)
             let makerTrade = FatCrabMakerTrade.buy(maker: makerModel)
@@ -165,7 +178,7 @@ import OSLog
     func makeSellOrder(price: Double, amount: Double) async throws -> any FatCrabMakerSellProtocol {
         try await Task {
             let uuid = UUID()
-            let order = FatCrabOrder(orderType: FatCrabOrderType.sell, tradeUuid: uuid.uuidString, amount: amount, price: price)
+            let order = FatCrabOrder(orderType: FatCrabOrderType.sell, tradeUuid: uuid.uuidString, amount: amount, price: price, network: trader.getNetwork())
             let maker = try trader.newSellMaker(order: order)
             let makerModel = FatCrabMakerSellModel(maker: maker)
             let makerTrade = FatCrabMakerTrade.sell(maker: makerModel)

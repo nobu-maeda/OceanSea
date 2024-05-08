@@ -171,5 +171,5 @@ struct MakeNewOrderView: View {
 }
 
 #Preview {
-    MakeNewOrderView().environment(\.fatCrabModel, FatCrabMock())
+    MakeNewOrderView().environment(\.fatCrabModel, FatCrabMock(for: .signet))
 }

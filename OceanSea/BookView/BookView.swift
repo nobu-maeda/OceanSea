@@ -184,5 +184,5 @@ struct BookView: View {
 
 #Preview {
     @State var selectedTab = HomeView.Tab.book
-    return BookView(selection: $selectedTab).environment(\.fatCrabModel, FatCrabMock())
+    return BookView(selection: $selectedTab).environment(\.fatCrabModel, FatCrabMock(for: .signet))
 }

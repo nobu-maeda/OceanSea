@@ -26,20 +26,22 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
     var allocatedAmount: Int
     var blockHeight: UInt
     var relays: [RelayInfo]
+    var bitcoinNetwork: Network
     
     var queriedOrders: [UUID: FatCrabOrderEnvelopeProtocol]
     var trades: [UUID : FatCrabTrade]
     
-    static func resetWallet(with mnemonic: [String]) -> any FatCrabProtocol {
-        FatCrabMock()
+    static func resetWallet(with mnemonic: [String], for network: Network) -> any FatCrabProtocol {
+        FatCrabMock(for: network)
     }
     
-    init() {
+    required init(for network: Network) {
         trustedPendingAmount = 0
         untrustedPendingAmount = 0
         confirmedAmount = 0
         allocatedAmount = 0
         blockHeight = 0
+        bitcoinNetwork = network
         mnemonic = ["Word1", "Word2", "Word3", "Word4", "Word5", "Word6", "Word7", "Word8", "Word9", "Word10", "Word11", "Word12", "Word13", "Word14", "Word15", "Word16", "Word17", "Word18", "Word19", "Word20", "Word21", "Word22", "Word23", "Word24"]
         
         let relayAddr1 = RelayAddr(url: "https://relay1.fatcrab.nostr", socketAddr: nil)
@@ -102,6 +104,8 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
         return RelayInfo(url: relayAddr.url, status: relayStatus, document: relayInfoDocument)
     }
     
+    var network: Network { bitcoinNetwork }
+    
     func addRelays(relayAddrs: [RelayAddr]) throws {
         relayAddrs.forEach { relayAddr in
             let relayInfo = Self.createRelayInfo(relayAddr: relayAddr)
@@ -121,7 +125,7 @@ class FatCrabOrderEnvelopeMock: FatCrabOrderEnvelopeProtocol {
         let amount = Double.random(in: 1...1000000)
         let price = Double.random(in: 1...1000000)
         
-        let queriedOrder = FatCrabOrder(orderType: orderType, tradeUuid: tradeUuid.uuidString, amount: amount, price: price)
+        let queriedOrder = FatCrabOrder(orderType: orderType, tradeUuid: tradeUuid.uuidString, amount: amount, price: price, network: bitcoinNetwork)
         queriedOrders.updateValue(FatCrabOrderEnvelopeMock(order: queriedOrder), forKey: tradeUuid)
         
         return FatCrabOrderEnvelopeMock(order: queriedOrder)

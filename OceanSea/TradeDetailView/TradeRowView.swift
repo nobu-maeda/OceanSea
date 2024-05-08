@@ -65,13 +65,13 @@ struct TradeRowView: View {
 }
 
 #Preview("Trade") {
-    let model = FatCrabMock()
+    let model = FatCrabMock(for: .signet)
     let tradeUuid = model.getRandomTradeUuid()
     return TradeRowView(orderUuid: tradeUuid).environment(\.fatCrabModel, model)
 }
 
 #Preview("Order") {
-    let model = FatCrabMock()
+    let model = FatCrabMock(for: .signet)
     let orderUuid = model.getRandomOrderUuid()
     return TradeRowView(orderUuid: orderUuid).environment(\.fatCrabModel, model)
 }

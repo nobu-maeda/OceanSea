@@ -34,5 +34,5 @@ struct ShowSeedsView: View {
 }
 
 #Preview {
-    ShowSeedsView().environment(\.fatCrabModel, FatCrabMock())
+    ShowSeedsView().environment(\.fatCrabModel, FatCrabMock(for: .signet))
 }

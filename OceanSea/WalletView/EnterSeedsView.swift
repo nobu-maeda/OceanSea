@@ -102,7 +102,7 @@ struct EnterSeedsView: View {
         isBusy = true
         
         Task {
-            let newWalletModel = type(of: model).resetWallet(with: mnemonic)
+            let newWalletModel = type(of: model).resetWallet(with: mnemonic, for: model.network)
             
             Task { @MainActor in
                 model = newWalletModel
@@ -114,6 +114,6 @@ struct EnterSeedsView: View {
 }
 
 #Preview {
-    @State var fatCrabModel: any FatCrabProtocol = FatCrabMock()
+    @State var fatCrabModel: any FatCrabProtocol = FatCrabMock(for: .signet)
     return EnterSeedsView(model: $fatCrabModel)
 }

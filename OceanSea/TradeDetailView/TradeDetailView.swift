@@ -273,14 +273,14 @@ struct TradeDetailView: View {
 }
 
 #Preview("Order Details - Buy") {
-    let order = FatCrabOrder(orderType: .buy, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9)
+    let order = FatCrabOrder(orderType: .buy, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9, network: .signet)
     @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
     @State var trade: FatCrabTrade? = nil
     return TradeDetailView(orderEnvelope: $orderEnvelope, trade: $trade)
 }
 
 #Preview("Order Details - Sell") {
-    let order = FatCrabOrder(orderType: .sell, tradeUuid: UUID().uuidString, amount: 32498.99, price: 4)
+    let order = FatCrabOrder(orderType: .sell, tradeUuid: UUID().uuidString, amount: 32498.99, price: 4, network: .signet)
     @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
     @State var trade: FatCrabTrade? = nil
     return TradeDetailView(orderEnvelope: $orderEnvelope, trade: $trade)
@@ -293,28 +293,28 @@ struct TradeDetailView: View {
 }
 
 #Preview("Maker - Inbound Btc Notified") {
-    let order = FatCrabOrder(orderType: .buy, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9)
+    let order = FatCrabOrder(orderType: .buy, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9, network: .signet)
     @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
     @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.sell(maker: FatCrabMakerSellMock(state: FatCrabMakerState.inboundBtcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailView(orderEnvelope: $orderEnvelope, trade: $trade)
 }
 
 #Preview("Maker - Inbound FatCrab Notified") {
-    let order = FatCrabOrder(orderType: .sell, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9)
+    let order = FatCrabOrder(orderType: .sell, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9, network: .signet)
     @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
     @State var trade: FatCrabTrade? = FatCrabTrade.maker(maker: FatCrabMakerTrade.buy(maker: FatCrabMakerBuyMock(state: FatCrabMakerState.inboundFcNotified, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailView(orderEnvelope: $orderEnvelope, trade: $trade)
 }
 
 #Preview("Taker Buy - Offer Accepted") {
-    let order = FatCrabOrder(orderType: .buy, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9)
+    let order = FatCrabOrder(orderType: .buy, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9, network: .signet)
     @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
     @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.buy(taker: FatCrabTakerBuyMock(state: FatCrabTakerState.offerAccepted, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailView(orderEnvelope: $orderEnvelope, trade: $trade)
 }
 
 #Preview("Taker Sell - Offer Accepted") {
-    let order = FatCrabOrder(orderType: .buy, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9)
+    let order = FatCrabOrder(orderType: .buy, tradeUuid: UUID().uuidString, amount: 1234.56, price: 5678.9, network: .signet)
     @State var orderEnvelope: FatCrabOrderEnvelopeProtocol? = FatCrabOrderEnvelopeMock(order: order)
     @State var trade: FatCrabTrade? = FatCrabTrade.taker(taker: FatCrabTakerTrade.sell(taker: FatCrabTakerSellMock(state: FatCrabTakerState.offerAccepted, amount: 1234.56, price: 5678.9, tradeUuid: UUID(), peerPubkey: "SomePubKey000-0014")))
     return TradeDetailView(orderEnvelope: $orderEnvelope, trade: $trade)

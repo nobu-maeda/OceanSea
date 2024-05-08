@@ -81,5 +81,5 @@ struct RelaysView: View {
 
 #Preview {
     @State var selectedTab = HomeView.Tab.relays
-    return RelaysView(selection: $selectedTab).environment(\.fatCrabModel, FatCrabMock())
+    return RelaysView(selection: $selectedTab).environment(\.fatCrabModel, FatCrabMock(for: .signet))
 }

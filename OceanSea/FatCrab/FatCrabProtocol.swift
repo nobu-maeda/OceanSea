@@ -287,7 +287,7 @@ extension FatCrabTakerState {
 }
 
 struct FatCrabModelKey: EnvironmentKey {
-    static let defaultValue: any FatCrabProtocol = FatCrabMock()
+    static let defaultValue: any FatCrabProtocol = FatCrabMock(for: Network.signet)
 }
 
 extension EnvironmentValues {
@@ -298,7 +298,7 @@ extension EnvironmentValues {
 }
 
 protocol FatCrabProtocol: ObservableObject {
-    static func resetWallet(with mnemonic: [String]) -> any FatCrabProtocol
+    static func resetWallet(with mnemonic: [String], for network: Network) -> any FatCrabProtocol
     
     var mnemonic: [String] { get }
     var trustedPendingAmount: Int { get }
@@ -307,12 +307,16 @@ protocol FatCrabProtocol: ObservableObject {
     var allocatedAmount: Int { get }
     var blockHeight: UInt { get }
     
+    init(for network: Network)
+    
     func updateBalances() async throws
     func walletGetHeight() async throws -> UInt
     func walletSendToAddress(address: String, amount: UInt) async throws -> String
     func walletGenerateReceiveAddress() async throws -> String
     
+    var network: Network { get }
     var relays: [RelayInfo] { get }
+    
     func addRelays(relayAddrs: [RelayAddr]) async throws
     func removeRelay(url: String) async throws
     

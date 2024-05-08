@@ -46,6 +46,6 @@ struct HomeView: View {
 }
 
 #Preview {
-    @State var fatCrabModel: any FatCrabProtocol = FatCrabMock()
+    @State var fatCrabModel: any FatCrabProtocol = FatCrabMock(for: .signet)
     return HomeView(model: $fatCrabModel)
 }

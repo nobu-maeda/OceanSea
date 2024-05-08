@@ -34,5 +34,5 @@ struct ReceiveView: View {
 }
 
 #Preview {
-    ReceiveView().environment(\.fatCrabModel, FatCrabMock())
+    ReceiveView().environment(\.fatCrabModel, FatCrabMock(for: .signet))
 }

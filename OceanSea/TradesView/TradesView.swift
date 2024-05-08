@@ -143,5 +143,5 @@ struct TradesView: View {
 
 #Preview {
     @State var selectedTab = HomeView.Tab.trades
-    return TradesView(selection: $selectedTab).environment(\.fatCrabModel, FatCrabMock())
+    return TradesView(selection: $selectedTab).environment(\.fatCrabModel, FatCrabMock(for: .signet))
 }
