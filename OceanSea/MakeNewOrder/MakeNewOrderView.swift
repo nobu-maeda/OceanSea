@@ -104,7 +104,7 @@ struct MakeNewOrderView: View {
         }
         .onAppear(perform: { focusedField = .price })
 #if os(macOS)
-        .frame(width: 300, height: 300)
+        .frame(width: 400, height: 400)
         .fixedSize()
 #endif
     }

@@ -110,7 +110,7 @@ struct TradeDetailView: View {
             } message: { Text(alertBodyString) }
         }
 #if os(macOS)
-        .frame(width: 400, height: 400)
+        .frame(width: 500, height: 500)
         .fixedSize()
 #endif
     }
