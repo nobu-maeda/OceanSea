@@ -74,10 +74,7 @@ struct EnterSeedsView: View {
     func checkSeedsAndConfirmResetWallet() {
         for word in mnemonic {
             if word.isEmpty {
-                alertTitleString = "Error"
-                alertBodyString = "All 24 seed words must be entered."
-                alertType = .resetWalletError
-                showAlert = true
+                showMnemonicError()
                 return
             }
         }
@@ -86,7 +83,7 @@ struct EnterSeedsView: View {
     
     func showMnemonicError() {
         alertTitleString = "Error"
-        alertBodyString = "The entered seed words are not valid. Please check and try again."
+        alertBodyString = "All 24 seed words must be entered."
         alertType = .resetWalletError
         showAlert = true
     }

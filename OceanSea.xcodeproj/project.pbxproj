@@ -10,6 +10,8 @@
 		0825B64B2B7271CF00E7AC0E /* AddRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0825B64A2B7271CF00E7AC0E /* AddRelayView.swift */; };
 		0832F13C2B95F1C500991AE0 /* TradeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0832F13B2B95F1C500991AE0 /* TradeDetailView.swift */; };
 		0832F13E2B95F1CF00991AE0 /* TradeRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0832F13D2B95F1CF00991AE0 /* TradeRowView.swift */; };
+		083329DC2BED25D700807427 /* NetworkSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083329DB2BED25D700807427 /* NetworkSelectView.swift */; };
+		083329DE2BEE332E00807427 /* NetworkStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083329DD2BEE332E00807427 /* NetworkStorage.swift */; };
 		084BB58B2BCE72D5002B829D /* BookFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084BB58A2BCE72D5002B829D /* BookFilter.swift */; };
 		084BB58D2BCE825E002B829D /* TradesFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084BB58C2BCE825E002B829D /* TradesFilter.swift */; };
 		084BB58F2BCEB279002B829D /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084BB58E2BCEB279002B829D /* ActivityIndicator.swift */; };
@@ -73,6 +75,8 @@
 		0825B64A2B7271CF00E7AC0E /* AddRelayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRelayView.swift; sourceTree = "<group>"; };
 		0832F13B2B95F1C500991AE0 /* TradeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeDetailView.swift; sourceTree = "<group>"; };
 		0832F13D2B95F1CF00991AE0 /* TradeRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeRowView.swift; sourceTree = "<group>"; };
+		083329DB2BED25D700807427 /* NetworkSelectView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkSelectView.swift; sourceTree = "<group>"; };
+		083329DD2BEE332E00807427 /* NetworkStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStorage.swift; sourceTree = "<group>"; };
 		084BB58A2BCE72D5002B829D /* BookFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookFilter.swift; sourceTree = "<group>"; };
 		084BB58C2BCE825E002B829D /* TradesFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradesFilter.swift; sourceTree = "<group>"; };
 		084BB58E2BCEB279002B829D /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
@@ -155,14 +159,15 @@
 			path = ViewElements;
 			sourceTree = "<group>";
 		};
-		08C1EFB52B3EFA4D000F4527 /* AppSecureStorage */ = {
+		08C1EFB52B3EFA4D000F4527 /* AppStorage */ = {
 			isa = PBXGroup;
 			children = (
 				08C1EFB32B3EF8C3000F4527 /* AppSecureStorage.swift */,
 				08C1EFB62B3EFA68000F4527 /* KeychainWrapper.swift */,
 				08C1EFB82B3EFAB4000F4527 /* KeychainItemAccessibiliy.swift */,
+				083329DD2BEE332E00807427 /* NetworkStorage.swift */,
 			);
-			path = AppSecureStorage;
+			path = AppStorage;
 			sourceTree = "<group>";
 		};
 		08C1EFBA2B42D863000F4527 /* MakeNewOrder */ = {
@@ -227,7 +232,7 @@
 			isa = PBXGroup;
 			children = (
 				08C1EFD42B67A8EF000F4527 /* Common */,
-				08C1EFB52B3EFA4D000F4527 /* AppSecureStorage */,
+				08C1EFB52B3EFA4D000F4527 /* AppStorage */,
 				08DC5B7E2B3DA6C300B71A22 /* FatCrab */,
 				08DC5B362B2C446900B71A22 /* OceanSeaApp.swift */,
 				08DC5B382B2C446900B71A22 /* ContentView.swift */,
@@ -270,6 +275,7 @@
 				08DC5B622B3D76F600B71A22 /* WalletView.swift */,
 				085FE4D92B3EB77D0061DF95 /* SendView.swift */,
 				085FE4DB2B3EB78B0061DF95 /* ReceiveView.swift */,
+				083329DB2BED25D700807427 /* NetworkSelectView.swift */,
 				08DC5B772B3DA55500B71A22 /* ShowSeedsView.swift */,
 				08DC5B792B3DA56E00B71A22 /* EnterSeedsView.swift */,
 			);
@@ -389,6 +395,7 @@
 				08529CC62BAC3E6A00D57E4C /* OrderDetailSummaryView.swift in Sources */,
 				08529CCE2BAC560400D57E4C /* Common.swift in Sources */,
 				08529CCA2BAC3E9700D57E4C /* TradeDetailStatusView.swift in Sources */,
+				083329DC2BED25D700807427 /* NetworkSelectView.swift in Sources */,
 				08DC5B6F2B3D7E0E00B71A22 /* FatCrabModel.swift in Sources */,
 				08529CCC2BAC3EA300D57E4C /* TradeDetailActionView.swift in Sources */,
 				08529CDA2BB301EA00D57E4C /* FatCrabMakerSellMock.swift in Sources */,
@@ -422,6 +429,7 @@
 				08DC5B692B3D771300B71A22 /* TradesView.swift in Sources */,
 				08C1EFB42B3EF8C3000F4527 /* AppSecureStorage.swift in Sources */,
 				084BB58F2BCEB279002B829D /* ActivityIndicator.swift in Sources */,
+				083329DE2BEE332E00807427 /* NetworkStorage.swift in Sources */,
 				085FE4E62B3EDBCA0061DF95 /* TitleValueHStack.swift in Sources */,
 				08529CDE2BB3020100D57E4C /* FatCrabTakerSellMock.swift in Sources */,
 				08DC5B782B3DA55500B71A22 /* ShowSeedsView.swift in Sources */,

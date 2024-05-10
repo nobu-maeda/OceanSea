@@ -11,6 +11,7 @@ struct WalletView: View {
     enum WalletNavigationDestination: Hashable {
         case send
         case receive
+        case networkSelect
         case showSeedWords
         case newWallet
     }
@@ -39,6 +40,7 @@ struct WalletView: View {
                     NavigationLink("Receive Funds", value: WalletNavigationDestination.receive)
                 }
                 Section {
+                    NavigationLink("Network Select", value: WalletNavigationDestination.networkSelect)
                     NavigationLink("Show Seed Words", value: WalletNavigationDestination.showSeedWords)
                     NavigationLink("Enter Seed Words & Reset Wallet", value: WalletNavigationDestination.newWallet)
                 }
@@ -50,6 +52,8 @@ struct WalletView: View {
                     SendView().environment(\.fatCrabModel, model)
                 case .receive:
                     ReceiveView().environment(\.fatCrabModel, model)
+                case .networkSelect:
+                    NetworkSelectView(model: $model)
                 case .showSeedWords:
                     ShowSeedsView().environment(\.fatCrabModel, model)
                 case .newWallet:
