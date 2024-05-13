@@ -15,42 +15,42 @@ struct TradeDetailExplainView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12.0) {
-            let orderBtc = orderAmount/orderPrice
+            let orderBtc = orderAmount*orderPrice
             
             switch tradeType {
             case .maker:
                 switch orderType {
                 case .buy:
-                    Text("As a Maker of a buy order, you are buying FatCrab with BTC. If this order completes...")
+                    Text("As Maker of a Buy order, you are buying FatCrab with BTC. If the order completes...")
                     HStack {
-                        Text("FC + \(orderAmount)")
+                        Text("FC + \(Int(orderAmount))")
                         Spacer()
-                        Text("BTC - \(orderBtc)")
+                        Text("Sats - \(Int(orderBtc))")
                     }
                 case .sell:
-                    Text("As a Maker of a sell order, you are selling FatCrab for BTC. If this order completes...")
+                    Text("As Maker of a Sell order, you are selling FatCrab for BTC. If the order completes...")
                     HStack {
-                        Text("FC - \(orderAmount)")
+                        Text("FC - \(Int(orderAmount))")
                         Spacer()
-                        Text("BTC + \(orderBtc)")
+                        Text("Sats + \(Int(orderBtc))")
                     }
                 }
                 
             case .taker:
                 switch orderType {
                 case .buy:
-                    Text("As a Taker of a buy order, you are selling FatCrab for BTC. If this order completes...")
+                    Text("As Taker of a Buy order, you are selling FatCrab for BTC. If the order completes...")
                     HStack {
-                        Text("FC - \(orderAmount)")
+                        Text("FC - \(Int(orderAmount))")
                         Spacer()
-                        Text("BTC + \(orderBtc)")
+                        Text("Sats + \(Int(orderBtc))")
                     }
                 case .sell:
-                    Text("As a Taker of a sell order, you are buying FatCrab with BTC. If this order completes...")
+                    Text("As Taker of a Sell order, you are buying FatCrab with BTC. If the order completes...")
                     HStack {
-                        Text("FC + \(orderAmount)")
+                        Text("FC + \(Int(orderAmount))")
                         Spacer()
-                        Text("BTC - \(orderBtc)")
+                        Text("Sats - \(Int(orderBtc))")
                     }
                 }
             }

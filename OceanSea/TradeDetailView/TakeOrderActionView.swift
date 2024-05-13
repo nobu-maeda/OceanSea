@@ -30,10 +30,10 @@ struct TakeOrderActionView: View {
                 } label: {
                     Text("Take Buy Order to Sell FatCrab")
                 }.buttonStyle(.borderedProminent)
-                    .controlSize(.regular)
+                    .controlSize(.large)
             case .sell:
                 TextField(text: $fatcrabRxAddr) {
-                    Text("FatCrab Receive Address")
+                    Text("FatCrab Receive Webank Account ID")
                 }
                 .padding(.leading)
                 .padding(.trailing)
@@ -48,7 +48,7 @@ struct TakeOrderActionView: View {
                 } label: {
                     Text("Take Sell Order to Buy FatCrab")
                 }.buttonStyle(.borderedProminent)
-                    .controlSize(.regular)
+                    .controlSize(.large)
             }
         }
     }
@@ -86,7 +86,7 @@ struct TakeOrderActionView: View {
     func takeSellOrder() {
         guard !fatcrabRxAddr.isEmpty else {
             alertTitleString = "Error"
-            alertBodyString = "FatCrab Receive Address is empty"
+            alertBodyString = "FatCrab Receive Account ID is empty"
             alertType = .okAlert
             showAlert = true
             return

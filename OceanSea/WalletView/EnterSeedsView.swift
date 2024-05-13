@@ -54,6 +54,9 @@ struct EnterSeedsView: View {
             Button("Reset Wallet with Seed Words") {
                 checkSeedsAndConfirmResetWallet()
             }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .disabled(!checkMnemonicComplete())
             Spacer()
         }
         .navigationTitle("Reset Wallet")
@@ -69,6 +72,15 @@ struct EnterSeedsView: View {
                     Button("OK", role: .cancel) {}
             }
         } message: { Text(alertBodyString) }
+    }
+    
+    func checkMnemonicComplete() -> Bool {
+        for word in mnemonic {
+            if word.isEmpty {
+                return false
+            }
+        }
+        return true
     }
     
     func checkSeedsAndConfirmResetWallet() {

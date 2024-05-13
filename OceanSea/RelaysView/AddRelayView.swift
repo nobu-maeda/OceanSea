@@ -63,7 +63,7 @@ struct AddRelayView: View {
         }
         .onAppear(perform: { focusedField = .relayUrl })
 #if os(macOS)
-        .frame(width: 300, height: 300)
+        .frame(width: 300, height: 200)
         .fixedSize()
 #endif
     }

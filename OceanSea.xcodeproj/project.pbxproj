@@ -113,7 +113,7 @@
 		08DC5B622B3D76F600B71A22 /* WalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletView.swift; sourceTree = "<group>"; };
 		08DC5B642B3D770000B71A22 /* BookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookView.swift; sourceTree = "<group>"; };
 		08DC5B682B3D771300B71A22 /* TradesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradesView.swift; sourceTree = "<group>"; };
-		08DC5B6A2B3D771A00B71A22 /* RelaysView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelaysView.swift; sourceTree = "<group>"; };
+		08DC5B6A2B3D771A00B71A22 /* RelaysView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 1; path = RelaysView.swift; sourceTree = "<group>"; };
 		08DC5B6C2B3D7B0800B71A22 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		08DC5B6E2B3D7E0E00B71A22 /* FatCrabModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FatCrabModel.swift; sourceTree = "<group>"; };
 		08DC5B772B3DA55500B71A22 /* ShowSeedsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowSeedsView.swift; sourceTree = "<group>"; };

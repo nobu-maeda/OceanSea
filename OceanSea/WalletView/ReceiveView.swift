@@ -14,9 +14,11 @@ struct ReceiveView: View {
     @State private var isBusy = true
     
     var body: some View {
-        VStack {
-            Text(receiveAddress)
-            .textSelection(.enabled)
+        List {
+            Text("Bitcoin address to receive with:").bold()
+            Text(receiveAddress).textSelection(.enabled)
+            Text("Network:").bold()
+            Text(model.network.toString())
         }
         .onAppear(perform: {
             Task {
@@ -28,7 +30,7 @@ struct ReceiveView: View {
                 }
             }
         })
-        .navigationTitle("Receive Address")
+        .navigationTitle("Receive Funds")
         .modifier(ActivityIndicatorModifier(isLoading: isBusy))
     }
 }

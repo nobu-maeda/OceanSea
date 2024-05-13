@@ -20,21 +20,23 @@ struct SendView: View {
     
     var body: some View {
         VStack {
-            TextField("Bitcoin Address to send to", text: $bitcoinAddressString)
-                .textFieldStyle(.roundedBorder)
-            Spacer()
-            TextField("Number of sats to send", text: $satsAmountString)
-                .textFieldStyle(.roundedBorder)
-            Spacer()
-            Spacer()
+            List {
+                Text("Bitcoin address to send to:").bold()
+                TextField("tb1.....", text: $bitcoinAddressString)
+                    .textFieldStyle(.roundedBorder)
+                Text("Bitcoin amount in sats:").bold()
+                TextField("546 sats dust limit minimum", text: $satsAmountString)
+                    .textFieldStyle(.roundedBorder)
+            }
             Button {
                 sendFunds()
             } label: {
                 Text("Send")
             }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .disabled(bitcoinAddressString.isEmpty || satsAmountString.isEmpty)
         }
-        .padding()
-        .frame(maxWidth: 500, maxHeight: 128)
         .navigationTitle("Send Funds")
         .modifier(ActivityIndicatorModifier(isLoading: isBusy))
         .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
@@ -49,7 +51,7 @@ struct SendView: View {
                     throw OceanSeaError.invalidAmount
                 }
                 
-                if satsAmount == 0 {
+                if satsAmount <= 546 {
                     throw OceanSeaError.invalidAmount
                 }
                 

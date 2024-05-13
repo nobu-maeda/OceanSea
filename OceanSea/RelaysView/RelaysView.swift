@@ -28,6 +28,7 @@ struct RelaysView: View {
                         } label: {
                             Image(systemName: "multiply").foregroundColor(.black)
                         }
+                        .buttonStyle(.borderless)
                     }
                 }
             }

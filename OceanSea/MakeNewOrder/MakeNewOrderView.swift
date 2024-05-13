@@ -70,7 +70,7 @@ struct MakeNewOrderView: View {
 #endif
                 
                 if orderType == .buy {
-                    TextField("FatCrab Receive Address", text: $fatcrabRxAddrInputString)
+                    TextField("FatCrab Receive Account ID", text: $fatcrabRxAddrInputString)
                         .focused($focusedField, equals: .fatcrabAddr)
                         .onSubmit {
                             if validateFatCrabAddrField() != nil {
@@ -104,7 +104,7 @@ struct MakeNewOrderView: View {
         }
         .onAppear(perform: { focusedField = .price })
 #if os(macOS)
-        .frame(width: 400, height: 400)
+        .frame(width: 400, height: 300)
         .fixedSize()
 #endif
     }

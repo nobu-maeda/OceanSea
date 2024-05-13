@@ -45,12 +45,12 @@ struct TradeDetailStatusView: View {
                         Text("Accepted Offer. Waiting for BTC from Taker")
                     }
                 case .inboundBtcNotified:
-                    Text("Taker claims BTC sent. \(btcConfs) confirmations detected for TxID: \(txID ?? "")")
+                    Text("Taker claims BTC sent. \(btcConfs) confirmations detected for Transaction ID: \(txID ?? "")")
                         .task(id: model.blockHeight) {
                             await updateBtcConfs(trade: trade)
                         }
                 case .inboundFcNotified:
-                    Text("Taker claims FatCrab sent with TxID \(txID ?? "")")
+                    Text("Taker claims FatCrab sent with Transaction ID \(txID ?? "")")
                 case .notifiedOutbound:
                     switch maker {
                     case .buy:
@@ -89,12 +89,12 @@ struct TradeDetailStatusView: View {
                         Text("Maker notified of BTC sent. Waiting for FatCrab from Maker")
                     }
                 case .inboundBtcNotified:
-                    Text("Maker claims BTC sent. \(btcConfs) confirmations detected for TxID: \(txID ?? "")")
+                    Text("Maker claims BTC sent. \(btcConfs) confirmations detected for Transaction ID: \(txID ?? "")")
                         .task(id: model.blockHeight) {
                             await updateBtcConfs(trade: trade)
                         }
                 case .inboundFcNotified:
-                    Text("Maker claims FatCrab sent with TxID \(txID ?? "")")
+                    Text("Maker claims FatCrab sent with Transaction ID \(txID ?? "")")
                 case .tradeCompleted:
                     Text("Trade Completed")
                 }

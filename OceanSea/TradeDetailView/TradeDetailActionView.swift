@@ -33,7 +33,7 @@ struct TradeDetailActionView: View {
                         } label: {
                             Text("Cancel Order")
                         }.buttonStyle(.borderedProminent)
-                            .controlSize(.regular)
+                            .controlSize(.large)
                             .tint(.red)
                     case .waitingForOffers:
                         Text("You can cancel the order if you no longer want to wait for offers")
@@ -42,7 +42,7 @@ struct TradeDetailActionView: View {
                         } label: {
                             Text("Cancel Order")
                         }.buttonStyle(.borderedProminent)
-                            .controlSize(.regular)
+                            .controlSize(.large)
                             .tint(.red)
                     case .receivedOffer:
                         Text("Click to accept the first valid offer received. You will no longer be able to cancel this order once you have accepted the offer")
@@ -52,13 +52,13 @@ struct TradeDetailActionView: View {
                             } label: {
                                 Text("Accept Offer")
                             }.buttonStyle(.borderedProminent)
-                                .controlSize(.regular)
+                                .controlSize(.large)
                             Button() {
                                 cancelOrder(for: maker)
                             } label: {
                                 Text("Cancel Order")
                             }.buttonStyle(.borderedProminent)
-                                .controlSize(.regular)
+                                .controlSize(.large)
                                 .tint(.red)
                         }
                     case .acceptedOffer:
@@ -68,10 +68,10 @@ struct TradeDetailActionView: View {
                         case .buy:
                             Text("No Actions Available")
                         case .sell(let sellMaker):
-                            Text("Remit FatCrab to \(sellMaker.peerFcAddr ?? "??") for Taker, before clicking to notify")
+                            Text("Remit FatCrab to Webank Account ID \(sellMaker.peerFcAddr ?? "??") for Taker, before clicking to notify")
                             
                             TextField(text: $fatcrabTxId) {
-                                Text("FatCrab Transaction ID")
+                                Text("FatCrab Webank Transaction ID")
                             }
                             .padding(.leading)
                             .padding(.trailing)
@@ -86,16 +86,16 @@ struct TradeDetailActionView: View {
                             } label: {
                                 Text("Notify Taker of FatCrab remitted")
                             }.buttonStyle(.borderedProminent)
-                                .controlSize(.regular)
+                                .controlSize(.large)
                         }
                     case .inboundFcNotified:
-                        Text("Confirm FatCrab received before releasing BTC and notifying Taker")
+                        Text("Confirm FatCrab received in Webank before releasing BTC and notifying Taker")
                         Button() {
                             releaseBtcNotifyTaker(by: maker)
                         } label: {
                             Text("Release BTC & notify Taker")
                         }.buttonStyle(.borderedProminent)
-                            .controlSize(.regular)
+                            .controlSize(.large)
                     case .notifiedOutbound:
                         Text("Mark Trade Completed")
                         Button() {
@@ -117,10 +117,10 @@ struct TradeDetailActionView: View {
                     case .offerAccepted:
                         switch taker {
                         case .buy(let buyTaker):
-                            Text("Remit FatCrab to \(buyTaker.peerFcAddr ?? "??") for Maker, before clicking to notify")
+                            Text("Remit FatCrab to Webank Account ID \(buyTaker.peerFcAddr ?? "??") for Maker, before clicking to notify")
                             
                             TextField(text: $fatcrabTxId) {
-                                Text("FatCrab Transaction ID")
+                                Text("FatCrab Webank Transaction ID")
                             }
                             .padding(.leading)
                             .padding(.trailing)
@@ -142,7 +142,7 @@ struct TradeDetailActionView: View {
                             } label: {
                                 Text("Release BTC & notify Taker")
                             }.buttonStyle(.borderedProminent)
-                                .controlSize(.regular)
+                                .controlSize(.large)
                         }
                     case .offerRejected:
                         Text("No Actions Available")
@@ -156,7 +156,7 @@ struct TradeDetailActionView: View {
                             Text("BTC receive confirmed")
                         }.buttonStyle(.borderedProminent)
                     case .inboundFcNotified:
-                        Text("Confirm FatCrab received before marking Trade completed")
+                        Text("Confirm FatCrab received in Webank before marking Trade completed")
                         Button() {
                             tradeComplete(taker: taker)
                         } label: {

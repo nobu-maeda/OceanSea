@@ -31,12 +31,12 @@ struct OrderDetailSummaryView: View {
                 Text(tradeUuidString)
             }
             HStack {
-                Text("Price")
+                Text("Price (Sats)")
                 Spacer()
                 Text(priceString)
             }
             HStack {
-                Text("Amount")
+                Text("Amount (Fatcrab)")
                 Spacer()
                 Text(amountString)
             }
