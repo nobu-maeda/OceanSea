@@ -23,16 +23,16 @@ struct TradeDetailExplainView: View {
                 case .buy:
                     Text("As Maker of a Buy order, you are buying FatCrab with BTC. If the order completes...")
                     HStack {
-                        Text("FC + \(Int(orderAmount))")
+                        Text("FC + \(Int(orderAmount.rounded()))")
                         Spacer()
-                        Text("Sats - \(Int(orderBtc))")
+                        Text("Sats - \(Int(orderBtc.rounded()))")
                     }
                 case .sell:
                     Text("As Maker of a Sell order, you are selling FatCrab for BTC. If the order completes...")
                     HStack {
-                        Text("FC - \(Int(orderAmount))")
+                        Text("FC - \(Int(orderAmount.rounded()))")
                         Spacer()
-                        Text("Sats + \(Int(orderBtc))")
+                        Text("Sats + \(Int(orderBtc.rounded()))")
                     }
                 }
                 
@@ -41,16 +41,16 @@ struct TradeDetailExplainView: View {
                 case .buy:
                     Text("As Taker of a Buy order, you are selling FatCrab for BTC. If the order completes...")
                     HStack {
-                        Text("FC - \(Int(orderAmount))")
+                        Text("FC - \(Int(orderAmount.rounded()))")
                         Spacer()
-                        Text("Sats + \(Int(orderBtc))")
+                        Text("Sats + \(Int(orderBtc.rounded()))")
                     }
                 case .sell:
                     Text("As Taker of a Sell order, you are buying FatCrab with BTC. If the order completes...")
                     HStack {
-                        Text("FC + \(Int(orderAmount))")
+                        Text("FC + \(Int(orderAmount.rounded()))")
                         Spacer()
-                        Text("Sats - \(Int(orderBtc))")
+                        Text("Sats - \(Int(orderBtc.rounded()))")
                     }
                 }
             }
