@@ -121,12 +121,16 @@ import Foundation
 
 extension FatCrabMakerSellModel: FatCrabMakerNotifDelegate {
     func onMakerOfferNotif(offerNotif: FatCrabMakerNotifOfferStruct) {
-        self.offerEnvelopes.append(offerNotif.offerEnvelope)
-        self.state = offerNotif.state
+        Task { @MainActor in
+            self.offerEnvelopes.append(offerNotif.offerEnvelope)
+            self.state = offerNotif.state
+        }
     }
     
     func onMakerPeerNotif(peerNotif: FatCrabMakerNotifPeerStruct) {
-        self.peerEnvelope = peerNotif.peerEnvelope
-        self.state = peerNotif.state
+        Task { @MainActor in
+            self.peerEnvelope = peerNotif.peerEnvelope
+            self.state = peerNotif.state
+        }
     }
 }

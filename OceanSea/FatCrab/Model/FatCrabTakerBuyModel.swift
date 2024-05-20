@@ -106,12 +106,16 @@ import Foundation
 
 extension FatCrabTakerBuyModel: FatCrabTakerNotifDelegate {
     func onTakerTradeRspNotif(tradeRspNotif: FatCrabTakerNotifTradeRspStruct) {
-        self.tradeRspEnvelope = tradeRspNotif.tradeRspEnvelope
-        self.state = tradeRspNotif.state
+        Task { @MainActor in
+            self.tradeRspEnvelope = tradeRspNotif.tradeRspEnvelope
+            self.state = tradeRspNotif.state
+        }
     }
     
     func onTakerPeerNotif(peerNotif: FatCrabTakerNotifPeerStruct) {
-        self.peerEnvelope = peerNotif.peerEnvelope
-        self.state = peerNotif.state
+        Task { @MainActor in
+            self.peerEnvelope = peerNotif.peerEnvelope
+            self.state = peerNotif.state
+        }
     }
 }
