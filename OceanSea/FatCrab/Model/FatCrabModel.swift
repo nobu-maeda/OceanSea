@@ -48,6 +48,12 @@ import OSLog
         let info = BlockchainInfo.electrum(url: url, network: network)
         let appDir = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)
         
+        #if DEBUG
+        let prodLvl = ProductionLevel.debug
+        #else
+        let prodLvl = ProductionLevel.production
+        #endif
+        
         mnemonic = []
         trustedPendingAmount = 0
         untrustedPendingAmount = 0
@@ -60,7 +66,7 @@ import OSLog
         trades = [:]
         
         if let storedMnemonic = KeychainWrapper.standard.string(forKey: Self.MNEMONIC_KEYCHAIN_WRAPPER_KEY, withAccessibility: .whenUnlocked) {
-            trader = FatCrabTrader.newWithMnemonic(prodLvl: .debug, mnemonic: storedMnemonic, info: info, appDirPath: appDir[0])
+            trader = FatCrabTrader.newWithMnemonic(prodLvl: prodLvl, mnemonic: storedMnemonic, info: info, appDirPath: appDir[0])
             mnemonic = storedMnemonic.components(separatedBy: " ")
         } else {
             trader = FatCrabTrader(prodLvl: .debug, info: info, appDirPath: appDir[0])
