@@ -42,7 +42,7 @@ struct TakeOrderActionView: View {
                 .textInputAutocapitalization(.never)
                 .textFieldStyle(.roundedBorder)
 #endif
-
+                
                 Button() {
                     takeSellOrder()
                 } label: {

@@ -31,7 +31,7 @@ enum BuySellFilter: String {
 
 enum SortOption: String {
     static var allOptions: [Self] { [.priceDescending, .priceAscending, .amountDescending, .amountAscending] }
-
+    
     case priceAscending = "Price △"
     case priceDescending = "Price ▽"
     case amountAscending = "Amount △"
@@ -41,7 +41,7 @@ enum SortOption: String {
 extension Logger {
     /// Using your bundle identifier is a great way to ensure a unique identifier.
     private static var subsystem = Bundle.main.bundleIdentifier!
-
+    
     /// Logs the view cycles like a view that appeared.
     static let appInterface = Logger(subsystem: subsystem, category: "appInterface")
 }

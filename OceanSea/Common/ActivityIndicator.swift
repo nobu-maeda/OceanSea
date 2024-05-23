@@ -11,16 +11,16 @@ import SwiftUI
 
 struct ActivityIndicatorModifier: AnimatableModifier {
     var isLoading: Bool
-
+    
     init(isLoading: Bool, color: Color = .primary, lineWidth: CGFloat = 3) {
         self.isLoading = isLoading
     }
-
+    
     var animatableData: Bool {
         get { isLoading }
         set { isLoading = newValue }
     }
-
+    
     func body(content: Content) -> some View {
         ZStack {
             if isLoading {
@@ -50,7 +50,7 @@ struct ActivityIndicatorModifier: AnimatableModifier {
 
 #Preview {
     Text("Some text")
-    .modifier(ActivityIndicatorModifier(isLoading: true))
+        .modifier(ActivityIndicatorModifier(isLoading: true))
 }
 
 //#elseif os(macOS)

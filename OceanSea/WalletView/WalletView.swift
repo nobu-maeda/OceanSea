@@ -30,7 +30,7 @@ struct WalletView: View {
                     TitleValueHStack(title: "Trusted Pending Amount", value: "\(model.trustedPendingAmount)")
                     TitleValueHStack(title: "Untrusted Pending Amount", value: "\(model.untrustedPendingAmount)")
                     TitleValueHStack(title: "Allocated Amount", value: "\(model.allocatedAmount)")
-//                    TitleValueHStack(title: "Spendable Balance*", value: "\(model.confirmedAmount + model.trustedPendingAmount - model.allocatedAmount)")
+                    //                    TitleValueHStack(title: "Spendable Balance*", value: "\(model.confirmedAmount + model.trustedPendingAmount - model.allocatedAmount)")
                 }
                 Section {
                     TitleValueHStack(title: "Current Block Height", value: "\(model.blockHeight)")

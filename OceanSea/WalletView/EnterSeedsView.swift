@@ -41,7 +41,7 @@ struct EnterSeedsView: View {
                     List {
                         ForEach(mnemonic.count/2..<(mnemonic.count), id:\.self) { i in
                             TextField("Word #\(i+1)", text: $mnemonic[i])
-                                
+                            
                                 .disableAutocorrection(true)
 #if os(iOS)
                                 .textInputAutocapitalization(.never)
@@ -63,13 +63,13 @@ struct EnterSeedsView: View {
         .modifier(ActivityIndicatorModifier(isLoading: isBusy))
         .alert(alertTitleString, isPresented: $showAlert) {
             switch alertType {
-                case .resetWalletConfirm:
-                    Button("Proceed", role: .destructive) {
-                        resetWallet()
-                    }
-                    Button("Cancel", role: .cancel) {}
-                case .resetWalletError:
-                    Button("OK", role: .cancel) {}
+            case .resetWalletConfirm:
+                Button("Proceed", role: .destructive) {
+                    resetWallet()
+                }
+                Button("Cancel", role: .cancel) {}
+            case .resetWalletError:
+                Button("OK", role: .cancel) {}
             }
         } message: { Text(alertBodyString) }
     }

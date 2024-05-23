@@ -22,7 +22,7 @@ struct NetworkSelectView: View {
     init(model: Binding<any FatCrabProtocol>) {
         self._model = model
     }
-
+    
     var body: some View {
         VStack {
             List {
@@ -54,7 +54,7 @@ struct NetworkSelectView: View {
             Button("Cancel", role: .cancel) {}
         } message: { Text(alertBodyString) }
     }        
-
+    
     func networkString(for network: Network) -> String {
         switch network {
         case .bitcoin:
@@ -73,7 +73,7 @@ struct NetworkSelectView: View {
         alertBodyString = "Are you sure you want to switch to \(networkString(for: network))!"
         showAlert = true
     }
-
+    
     func resetWallet(to network: Network) {
         isBusy = true
         

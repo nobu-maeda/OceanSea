@@ -40,7 +40,7 @@ struct TradeDetailView: View {
                 } header: {
                     Text("Order Summary")
                 }
-
+                
                 Section {
                     TradeDetailExplainView(tradeType: tradeType, orderType: orderType, orderAmount: orderAmount, orderPrice: orderPrice)
                 } header: {
@@ -83,29 +83,29 @@ struct TradeDetailView: View {
             }
             .alert(alertTitleString, isPresented: $showAlert) {
                 switch alertType {
-                    case .cancelOrder:
-                        if let trade = trade  {
-                            switch trade {
-                            case .maker(let maker):
-                                Button("Ok", role: .destructive) {
-                                    isBusy = true
-                                    Task {
-                                        await cancelOrder(for: maker)
-                                        Task { @MainActor in
-                                            isBusy = false
-                                            dismiss.callAsFunction()
-                                        }
+                case .cancelOrder:
+                    if let trade = trade  {
+                        switch trade {
+                        case .maker(let maker):
+                            Button("Ok", role: .destructive) {
+                                isBusy = true
+                                Task {
+                                    await cancelOrder(for: maker)
+                                    Task { @MainActor in
+                                        isBusy = false
+                                        dismiss.callAsFunction()
                                     }
                                 }
-                                Button("Cancel", role: .cancel) {}
-                            case .taker:
-                                Text("Cannot cancel order for Taker trade")
                             }
-                        } else {
-                            Text("Cannot cancel order without a Maker Trade")
+                            Button("Cancel", role: .cancel) {}
+                        case .taker:
+                            Text("Cannot cancel order for Taker trade")
                         }
-                    case .okAlert:
-                        Button("OK", role: .cancel) {}
+                    } else {
+                        Text("Cannot cancel order without a Maker Trade")
+                    }
+                case .okAlert:
+                    Button("OK", role: .cancel) {}
                 }
             } message: { Text(alertBodyString) }
         }

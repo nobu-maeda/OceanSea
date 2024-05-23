@@ -80,7 +80,7 @@ struct TradeDetailActionView: View {
                             .textInputAutocapitalization(.never)
                             .textFieldStyle(.roundedBorder)
 #endif
-                                
+                            
                             Button() {
                                 notifyTaker(of: fatcrabTxId, by: maker)
                             } label: {

@@ -17,7 +17,7 @@ public struct NetworkStorage {
             return nil
         }
     }
-
+    
     public static func write(network: Network) {
         let networkString = network.toString()
         NetworkStorage().bitcoinNetwork = networkString

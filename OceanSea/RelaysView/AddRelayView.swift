@@ -35,7 +35,7 @@ struct AddRelayView: View {
                             addRelay()
                         }
                     }
-                    
+                
                     .disableAutocorrection(true)
 #if os(iOS)
                     .textInputAutocapitalization(.never)
@@ -59,7 +59,7 @@ struct AddRelayView: View {
             .alert(alertTitleString, isPresented: $showAlert, actions: {
                 Button("OK", role: .cancel) {}}, message: {
                     Text(alertBodyString)
-            })
+                })
         }
         .onAppear(perform: { focusedField = .relayUrl })
 #if os(macOS)

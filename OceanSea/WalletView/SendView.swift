@@ -41,7 +41,7 @@ struct SendView: View {
         .modifier(ActivityIndicatorModifier(isLoading: isBusy))
         .alert(alertTitleString, isPresented: $showAlert, actions: { Button("OK", role: .cancel) {}}, message: { Text(alertBodyString) })
     }
-                                          
+    
     func sendFunds() {
         isBusy = true
         
@@ -66,14 +66,14 @@ struct SendView: View {
                 showAlert = true
                 
             } catch let fatCrabError as FatCrabError {
-              alertTitleString = "Error"
-              alertBodyString = fatCrabError.description()
-              showAlert = true
+                alertTitleString = "Error"
+                alertBodyString = fatCrabError.description()
+                showAlert = true
             }
             catch {
-              alertTitleString = "Error"
-              alertBodyString = error.localizedDescription
-              showAlert = true
+                alertTitleString = "Error"
+                alertBodyString = error.localizedDescription
+                showAlert = true
             }
             
             isBusy = false

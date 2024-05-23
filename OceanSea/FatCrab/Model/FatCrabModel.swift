@@ -48,11 +48,11 @@ import OSLog
         let info = BlockchainInfo.electrum(url: url, network: network)
         let appDir = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)
         
-        #if DEBUG
+#if DEBUG
         let prodLvl = ProductionLevel.debug
-        #else
+#else
         let prodLvl = ProductionLevel.production
-        #endif
+#endif
         
         mnemonic = []
         trustedPendingAmount = 0
@@ -105,7 +105,7 @@ import OSLog
             
             // Restore trades
             await restoreTrades()
-        
+            
             // Everything restored - Reconnect relays
             try trader.reconnect()
             
@@ -157,7 +157,7 @@ import OSLog
             let orders = envelopes.reduce(into: [UUID: FatCrabOrderEnvelope]()) {
                 $0[UUID(uuidString: $1.order().tradeUuid)!] = $1
             }
-
+            
             Task { @MainActor in
                 queriedOrders = orders
             }
@@ -236,7 +236,7 @@ import OSLog
             let sellMakers = trader.getSellMakers();
             let buyTakers = trader.getBuyTakers();
             let sellTakers = trader.getSellTakers();
-                
+            
             Task { @MainActor [buyMakers, sellMakers, buyTakers, sellTakers] in
                 buyMakers.forEach { (uuid: String, buyMaker: FatCrabBuyMaker) in
                     if !trades.contains(where: { $0.key == UUID(uuidString: uuid) }) {
